@@ -1,0 +1,16 @@
+<plugin name="RubyEditor" version="@QTCREATOR_VERSION@" compatVersion="@QTCREATOR_VERSION@">
+    <vendor>Meique.org</vendor>
+    <copyright>(C) 2014 Hugo Parente Lima</copyright>
+    <license>
+GNU Lesser General Public License Usage
+
+Alternatively, this plugin may be used under the terms of the GNU Lesser General Public License version 2.1 as published by the Free Software Foundation.  Please review the following information to ensure the GNU Lesser General Public License version 2.1 requirements will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+    </license>
+    <category>Ruby</category>
+    <description>Ruby editor component.</description>
+    <url>http://www.meique.org</url>
+    <dependencyList>
+        <dependency name="TextEditor" version="@QTCREATOR_VERSION@"/>
+        <dependency name="CppTools" version="@QTCREATOR_VERSION@"/>
+    </dependencyList>
+</plugin>

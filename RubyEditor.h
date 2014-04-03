@@ -17,11 +17,11 @@ public:
     Core::Id id() const override;
 
 private slots:
-    void scheduleDocumentUpdate();
-    void updateDocumentNow();
+    void scheduleCodeModelUpdate();
+    void updateCodeModel();
 
 private:
-    QTimer m_updateDocumentTimer;
+    QTimer m_updateCodeModelTimer;
 };
 
 }

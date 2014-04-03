@@ -1,5 +1,6 @@
 #include "RubyEditor.h"
 
+#include "RubyCodeModel.h"
 #include "RubyEditorConstants.h"
 #include "RubyEditorWidget.h"
 
@@ -10,10 +11,10 @@ static const auto UpdateDocumentDefaultInterval = 150;
 RubyEditor::RubyEditor(RubyEditorWidget* parent)
     : TextEditor::BaseTextEditor(parent)
 {
-    m_updateDocumentTimer.setSingleShot(true);
-    m_updateDocumentTimer.setInterval(UpdateDocumentDefaultInterval);
-    connect(&m_updateDocumentTimer, SIGNAL(timeout()), this, SLOT(updateDocumentNow()));
-    connect(this, SIGNAL(contentsChanged()), this, SLOT(scheduleDocumentUpdate()));
+    m_updateCodeModelTimer.setSingleShot(true);
+    m_updateCodeModelTimer.setInterval(UpdateDocumentDefaultInterval);
+    connect(&m_updateCodeModelTimer, SIGNAL(timeout()), this, SLOT(updateCodeModel()));
+    connect(this, SIGNAL(contentsChanged()), this, SLOT(scheduleCodeModelUpdate()));
 }
 
 Core::Id RubyEditor::id() const
@@ -21,14 +22,14 @@ Core::Id RubyEditor::id() const
     return Core::Id(Constants::EditorId);
 }
 
-void RubyEditor::scheduleDocumentUpdate()
+void RubyEditor::scheduleCodeModelUpdate()
 {
-    m_updateDocumentTimer.start();
+    m_updateCodeModelTimer.start();
 }
 
-void RubyEditor::updateDocumentNow()
+void RubyEditor::updateCodeModel()
 {
-    puts("Seems a good time to do a semantic highlight");
+    RubyCodeModel::instance()->updateModel(document()->filePath());
 }
 
 }

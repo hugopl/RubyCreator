@@ -4,10 +4,13 @@
 #include <coreplugin/editormanager/ieditor.h>
 #include <coreplugin/idocument.h>
 
+#include "RubyCodeModel.h"
+
 namespace RubyEditor {
 
 RubyCurrentDocumentFilter::RubyCurrentDocumentFilter()
-    : m_enabled(false)
+    : m_icon(":/codemodel/images/func.png")
+    , m_enabled(false)
 {
     setId("Ruby methods in current Document");
     setDisplayName(tr("Ruby Methods in Current Document"));
@@ -25,12 +28,16 @@ QList<Locator::FilterEntry> RubyCurrentDocumentFilter::matchesFor(QFutureInterfa
     if (!m_enabled)
         return list;
 
-    list << Locator::FilterEntry(this, "rubyeditor ftw!", 0);
+    RubyCodeModel* codeModel = RubyCodeModel::instance();
+    for (RubySymbol symbol : codeModel->methodsIn(m_fileName))
+        list << Locator::FilterEntry(this, symbol.name, qVariantFromValue(symbol), m_icon);
     return list;
 }
 
 void RubyCurrentDocumentFilter::accept(Locator::FilterEntry selection) const
 {
+    RubySymbol symbol = selection.internalData.value<RubySymbol>();
+    Core::EditorManager::openEditorAt(m_fileName, symbol.line, symbol.column);
 }
 
 void RubyCurrentDocumentFilter::refresh(QFutureInterface<void>& future)
@@ -45,7 +52,8 @@ void RubyCurrentDocumentFilter::onCurrentEditorChanged(Core::IEditor* editor)
         return;
     }
 
-    m_enabled = editor->document()->filePath().endsWith(".rb");
+    m_fileName = editor->document()->filePath();
+    m_enabled = m_fileName.endsWith(".rb");
 
 }
 

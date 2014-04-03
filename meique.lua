@@ -14,11 +14,13 @@ configureFile("RubyEditor.pluginspec.in", "RubyEditor.pluginspec")
 QT_VERSION = "4.8"
 qtCore = findPackage("QtCore", QT_VERSION)
 qtGui = findPackage("QtGui", QT_VERSION)
+ruby = findPackage("ruby-2.1")
 
 plugin = Library:new("RubyEditor")
 plugin:useQtAutomoc()
 plugin:use(qtCore)
 plugin:use(qtGui)
+plugin:use(ruby)
 
 -- QtCreator include paths
 plugin:addIncludePath(qtcSrc.."/src/plugins")
@@ -32,6 +34,7 @@ plugin:addFiles([[
     RubyHighlighter.cpp
     RubyScanner.cpp
     RubyCurrentDocumentFilter.cpp
+    RubyCodeModel.cpp
 ]])
 plugin:addQtResource("RubyEditor.qrc")
 

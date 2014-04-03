@@ -3,6 +3,8 @@
 #include "RubyEditorConstants.h"
 #include "RubyEditorWidget.h"
 
+#include <texteditor/texteditorsettings.h>
+
 namespace RubyEditor {
 
 RubyEditorFactory::RubyEditorFactory(QObject* parent)
@@ -15,6 +17,7 @@ RubyEditorFactory::RubyEditorFactory(QObject* parent)
 Core::IEditor* RubyEditorFactory::createEditor(QWidget* parent)
 {
     RubyEditorWidget* widget = new RubyEditorWidget(parent);
+    TextEditor::TextEditorSettings::initializeEditor(widget);
     return widget->editor();
 }
 

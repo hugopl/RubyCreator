@@ -12,8 +12,8 @@ _, _, QTCREATOR_VERSION = string.find(s, "QTCREATOR_VERSION = (3.0.%d)")
 configureFile("RubyEditor.pluginspec.in", "RubyEditor.pluginspec")
 
 QT_VERSION = "4.8"
-qtCore = findPackage("QtCore", QT_VERSION, REQUIRED)
-qtGui = findPackage("QtGui", QT_VERSION, REQUIRED)
+qtCore = findPackage("QtCore", QT_VERSION)
+qtGui = findPackage("QtGui", QT_VERSION)
 
 plugin = Library:new("RubyEditor")
 plugin:useQtAutomoc()
@@ -29,6 +29,8 @@ plugin:addFiles([[
     RubyEditorPlugin.cpp
     RubyEditorFactory.cpp
     RubyEditorWidget.cpp
+    RubyHighlighter.cpp
+    RubyScanner.cpp
 ]])
 plugin:addQtResource("RubyEditor.qrc")
 

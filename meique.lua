@@ -25,6 +25,21 @@ plugin:addIncludePath(qtcSrc.."/src/plugins")
 plugin:addIncludePath(qtcSrc.."/src/libs")
 
 plugin:addFiles([[
+    RubyEditor.cpp
     RubyEditorPlugin.cpp
+    RubyEditorFactory.cpp
+    RubyEditorWidget.cpp
 ]])
 plugin:addQtResource("RubyEditor.qrc")
+
+-- Hardcoded QtCreator libraries path
+plugin:addLibraryPaths([[
+/usr/lib/qtcreator
+/usr/lib/qtcreator/plugins
+/usr/lib/qtcreator/plugins/QtProject
+]])
+
+plugin:addLinkLibraries([[
+Core
+TextEditor
+]])

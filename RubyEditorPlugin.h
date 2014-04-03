@@ -3,6 +3,10 @@
 
 #include <extensionsystem/iplugin.h>
 
+namespace RubyEditor {
+
+class RubyEditorFactory;
+
 class RubyEditorPlugin : public ExtensionSystem::IPlugin
 {
     Q_OBJECT
@@ -11,10 +15,16 @@ class RubyEditorPlugin : public ExtensionSystem::IPlugin
 public:
 
     RubyEditorPlugin();
+    ~RubyEditorPlugin();
 
     virtual bool initialize(const QStringList& arguments, QString* errorString) override;
     virtual void extensionsInitialized() override;
+
+private:
+    RubyEditorFactory* m_factory;
 };
+
+}
 
 #endif
 

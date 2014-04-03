@@ -11,6 +11,5 @@ Alternatively, this plugin may be used under the terms of the GNU Lesser General
     <url>http://www.meique.org</url>
     <dependencyList>
         <dependency name="TextEditor" version="@QTCREATOR_VERSION@"/>
-        <dependency name="CppTools" version="@QTCREATOR_VERSION@"/>
     </dependencyList>
 </plugin>

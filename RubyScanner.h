@@ -46,7 +46,7 @@ public:
         Keyword,
         Type,
         ClassField,
-        MagicAttr,
+        Global,
         Operator,
         Comment,
         Doxygen,
@@ -100,7 +100,6 @@ private:
     SourceCodeStream m_src;
     int m_state;
     static QSet<QString> m_keywords;
-    static QSet<QString> m_magics;
     static QSet<QString> m_builtins;
 
     RubyScanner(const RubyScanner&) = delete;

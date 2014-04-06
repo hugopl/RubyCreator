@@ -88,7 +88,6 @@ static void copyIdentifiers(const char * const words[], size_t bytesCount, QSet<
 }
 
 QSet<QString> RubyScanner::m_keywords;
-QSet<QString> RubyScanner::m_magics;
 QSet<QString> RubyScanner::m_builtins;
 
 RubyScanner::RubyScanner(const QChar* text, const int length)
@@ -149,7 +148,7 @@ RubyToken RubyScanner::onDefaultState()
     if (first == QLatin1Char('\'') || first == QLatin1Char('\"'))
         return readStringLiteral(first);
 
-    if (first.isLetter() || (first == QLatin1Char('_')))
+    if (first.isLetter() || first == QLatin1Char('_') || first == QLatin1Char('@') || first == QLatin1Char('$'))
         return readIdentifier();
 
     if (first.isDigit())
@@ -240,12 +239,14 @@ RubyToken RubyScanner::readIdentifier()
     QString value = m_src.value();
 
     RubyToken::Kind kind = RubyToken::Identifier;
-    if (value == QLatin1String("self"))
+    if (value.at(0) == QLatin1Char('@'))
+        kind = RubyToken::ClassField;
+    else if (value.at(0) == QLatin1Char('$'))
+        kind = RubyToken::Global;
+    else if (value == QLatin1String("self"))
         kind = RubyToken::ClassField;
     else if (m_builtins.contains(value))
         kind = RubyToken::Type;
-    else if (m_magics.contains(value))
-        kind = RubyToken::MagicAttr;
     else if (m_keywords.contains(value))
         kind = RubyToken::Keyword;
 

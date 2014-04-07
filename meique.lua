@@ -31,6 +31,7 @@ plugin:addFiles([[
     RubyEditorWidget.cpp
     RubyHighlighter.cpp
     RubyScanner.cpp
+    RubyCurrentDocumentFilter.cpp
 ]])
 plugin:addQtResource("RubyEditor.qrc")
 

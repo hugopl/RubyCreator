@@ -1,5 +1,6 @@
 #include "RubyEditorPlugin.h"
 
+#include "RubyCurrentDocumentFilter.h"
 #include "RubyEditorFactory.h"
 #include <coreplugin/icore.h>
 #include <coreplugin/mimedatabase.h>
@@ -23,6 +24,7 @@ bool RubyEditorPlugin::initialize(const QStringList&, QString* errorString)
 
     m_factory = new RubyEditorFactory(this);
     addObject(m_factory);
+    addAutoReleasedObject(new RubyCurrentDocumentFilter);
 
     return true;
 }

@@ -10,7 +10,6 @@ namespace RubyEditor {
 
 RubyCurrentDocumentFilter::RubyCurrentDocumentFilter()
     : m_icon(":/codemodel/images/func.png")
-    , m_enabled(false)
 {
     setId("Ruby methods in current Document");
     setDisplayName(tr("Ruby Methods in Current Document"));
@@ -25,9 +24,6 @@ RubyCurrentDocumentFilter::RubyCurrentDocumentFilter()
 QList<Locator::FilterEntry> RubyCurrentDocumentFilter::matchesFor(QFutureInterface<Locator::FilterEntry>&, const QString& entry)
 {
     QList<Locator::FilterEntry> list;
-    if (!m_enabled || m_fileName.isEmpty())
-        return list;
-
     QStringMatcher matcher(entry, Qt::CaseInsensitive);
     RubyCodeModel* codeModel = RubyCodeModel::instance();
 
@@ -51,12 +47,12 @@ void RubyCurrentDocumentFilter::refresh(QFutureInterface<void>&)
 void RubyCurrentDocumentFilter::onCurrentEditorChanged(Core::IEditor* editor)
 {
     if (!editor) {
-        m_enabled = false;
+        setEnabled(false);
         return;
     }
 
     m_fileName = editor->document()->filePath();
-    m_enabled = m_fileName.endsWith(".rb");
+    setEnabled(m_fileName.endsWith(".rb"));
 
 }
 

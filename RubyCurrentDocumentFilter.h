@@ -22,7 +22,6 @@ private slots:
 private:
     QIcon m_icon;
     QString m_fileName;
-    bool m_enabled;
 };
 
 }

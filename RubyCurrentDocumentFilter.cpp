@@ -22,15 +22,19 @@ RubyCurrentDocumentFilter::RubyCurrentDocumentFilter()
 
 }
 
-QList<Locator::FilterEntry> RubyCurrentDocumentFilter::matchesFor(QFutureInterface<Locator::FilterEntry>& future, const QString& entry)
+QList<Locator::FilterEntry> RubyCurrentDocumentFilter::matchesFor(QFutureInterface<Locator::FilterEntry>&, const QString& entry)
 {
     QList<Locator::FilterEntry> list;
-    if (!m_enabled)
+    if (!m_enabled || m_fileName.isEmpty())
         return list;
 
+    QStringMatcher matcher(entry, Qt::CaseInsensitive);
     RubyCodeModel* codeModel = RubyCodeModel::instance();
-    for (RubySymbol symbol : codeModel->methodsIn(m_fileName))
-        list << Locator::FilterEntry(this, symbol.name, qVariantFromValue(symbol), m_icon);
+
+    for (RubySymbol symbol : codeModel->methodsIn(m_fileName)) {
+        if (matcher.indexIn(symbol.name) != -1)
+            list << Locator::FilterEntry(this, symbol.name, qVariantFromValue(symbol), m_icon);
+    }
     return list;
 }
 
@@ -40,9 +44,8 @@ void RubyCurrentDocumentFilter::accept(Locator::FilterEntry selection) const
     Core::EditorManager::openEditorAt(m_fileName, symbol.line, symbol.column);
 }
 
-void RubyCurrentDocumentFilter::refresh(QFutureInterface<void>& future)
+void RubyCurrentDocumentFilter::refresh(QFutureInterface<void>&)
 {
-    puts(__func__);
 }
 
 void RubyCurrentDocumentFilter::onCurrentEditorChanged(Core::IEditor* editor)

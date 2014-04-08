@@ -16,8 +16,16 @@ RubyCodeModel::RubyCodeModel()
     RUBY_INIT_STACK;
     ruby_init();
     ruby_init_loadpath();
-    const char*  options[]  =  { "", "/home/hugo/src/rubyeditor/RubyParser.rb", 0 };
+    const char*  options[]  =  { "", "-enil", 0 };
     ruby_exec_node(ruby_options(2, const_cast<char**>(options)));
+
+    QFile parser(":/rubyeditor/RubyParser.rb");
+    parser.open(QFile::ReadOnly);
+    QByteArray parserData = parser.readAll();
+
+    int result;
+    rb_eval_string_protect(parserData.data(), &result);
+    Q_ASSERT(result == 0);
 
     m_getMethodDeclarations = rb_intern("get_method_declarations");
     Q_ASSERT(m_getMethodDeclarations);

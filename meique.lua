@@ -14,4 +14,40 @@ qtCore = findPackage("QtCore", QT_VERSION)
 qtGui = findPackage("QtGui", QT_VERSION)
 ruby = findPackage("ruby-2.1")
 
-addSubdirectory("rubyeditor")
+editor = Library:new("RubySupport")
+editor:useQtAutomoc()
+editor:use(qtCore)
+editor:use(qtGui)
+editor:use(ruby)
+
+configureFile("RubySupport.pluginspec.in", "RubySupport.pluginspec")
+
+-- QtCreator include paths
+editor:addIncludePath(qtcSrc.."/src/plugins")
+editor:addIncludePath(qtcSrc.."/src/libs")
+
+editor:addFiles([[
+    editor/RubyCodeModel.cpp
+    editor/RubyCurrentDocumentFilter.cpp
+    editor/RubyEditor.cpp
+    editor/RubyEditorFactory.cpp
+    editor/RubyEditorWidget.cpp
+    editor/RubyHighlighter.cpp
+    editor/RubyScanner.cpp
+
+    RubyPlugin.cpp
+]])
+editor:addIncludePath("editor")
+editor:addQtResource("Ruby.qrc")
+
+-- Hardcoded QtCreator libraries path
+editor:addLibraryPaths([[
+/usr/lib/qtcreator
+/usr/lib/qtcreator/plugins
+/usr/lib/qtcreator/plugins/QtProject
+]])
+
+editor:addLinkLibraries([[
+Core
+TextEditor
+]])

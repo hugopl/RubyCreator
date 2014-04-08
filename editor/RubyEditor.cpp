@@ -1,14 +1,14 @@
 #include "RubyEditor.h"
 
 #include "RubyCodeModel.h"
-#include "RubyEditorConstants.h"
+#include "RubyConstants.h"
 #include "RubyEditorWidget.h"
 
-namespace RubyEditor {
+namespace Ruby {
 
 static const auto UpdateDocumentDefaultInterval = 150;
 
-RubyEditor::RubyEditor(RubyEditorWidget* parent)
+Editor::Editor(EditorWidget* parent)
     : TextEditor::BaseTextEditor(parent)
 {
     m_updateCodeModelTimer.setSingleShot(true);
@@ -17,19 +17,19 @@ RubyEditor::RubyEditor(RubyEditorWidget* parent)
     connect(this, SIGNAL(contentsChanged()), this, SLOT(scheduleCodeModelUpdate()));
 }
 
-Core::Id RubyEditor::id() const
+Core::Id Editor::id() const
 {
     return Core::Id(Constants::EditorId);
 }
 
-void RubyEditor::scheduleCodeModelUpdate()
+void Editor::scheduleCodeModelUpdate()
 {
     m_updateCodeModelTimer.start();
 }
 
-void RubyEditor::updateCodeModel()
+void Editor::updateCodeModel()
 {
-    RubyCodeModel::instance()->updateModel(document()->filePath());
+    CodeModel::instance()->updateModel(document()->filePath());
 }
 
 }

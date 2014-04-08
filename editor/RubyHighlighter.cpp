@@ -5,9 +5,9 @@
 #include <texteditor/texteditorconstants.h>
 #include <QDebug>
 
-namespace RubyEditor {
+namespace Ruby {
 
-RubyHighlighter::RubyHighlighter(TextEditor::BaseTextDocument* parent)
+Highlighter::Highlighter(TextEditor::BaseTextDocument* parent)
     : TextEditor::SyntaxHighlighter(parent)
 {
     static QVector<TextEditor::TextStyle> categories;
@@ -29,7 +29,7 @@ RubyHighlighter::RubyHighlighter(TextEditor::BaseTextDocument* parent)
 }
 
 
-void RubyHighlighter::highlightBlock(const QString& text)
+void Highlighter::highlightBlock(const QString& text)
 {
     int initialState = previousBlockState();
     if (initialState == -1)
@@ -37,13 +37,13 @@ void RubyHighlighter::highlightBlock(const QString& text)
     setCurrentBlockState(highlightLine(text, initialState));
 }
 
-int RubyHighlighter::highlightLine(const QString& text, int state)
+int Highlighter::highlightLine(const QString& text, int state)
 {
-    RubyScanner scanner(text.constData(), text.size());
+    Scanner scanner(text.constData(), text.size());
     scanner.setState(state);
 
-    RubyToken token;
-    while ((token = scanner.read()).kind != RubyToken::EndOfBlock)
+    Token token;
+    while ((token = scanner.read()).kind != Token::EndOfBlock)
         setFormat(token.position, token.length, formatForCategory(token.kind));
 
     return scanner.state();

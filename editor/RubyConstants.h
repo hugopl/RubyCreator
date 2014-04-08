@@ -1,9 +1,9 @@
-#ifndef RubyConstants_h
-#define RubyConstants_h
+#ifndef Ruby_Constants_h
+#define Ruby_Constants_h
 
 #include <QtGlobal>
 
-namespace RubyEditor {
+namespace Ruby {
 namespace Constants {
 
 const char EditorId[] = "RubyEditor.RubyEditor";

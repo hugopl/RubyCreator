@@ -3,13 +3,13 @@
 
 #include <coreplugin/editormanager/ieditorfactory.h>
 
-namespace RubyEditor {
+namespace Ruby {
 
-class RubyEditorFactory : public Core::IEditorFactory
+class EditorFactory : public Core::IEditorFactory
 {
     Q_OBJECT
 public:
-    RubyEditorFactory(QObject* parent);
+    EditorFactory(QObject* parent);
     Core::IEditor* createEditor(QWidget *parent) override;
 };
 

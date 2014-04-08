@@ -1,22 +1,22 @@
 #include "RubyEditorFactory.h"
 
-#include "RubyEditorConstants.h"
+#include "RubyConstants.h"
 #include "RubyEditorWidget.h"
 
 #include <texteditor/texteditorsettings.h>
 
-namespace RubyEditor {
+namespace Ruby {
 
-RubyEditorFactory::RubyEditorFactory(QObject* parent)
+EditorFactory::EditorFactory(QObject* parent)
 {
     setId(Constants::EditorId);
     setDisplayName(tr(Constants::EditorDisplayName));
     addMimeType(QLatin1String(Constants::MimeType));
 }
 
-Core::IEditor* RubyEditorFactory::createEditor(QWidget* parent)
+Core::IEditor* EditorFactory::createEditor(QWidget* parent)
 {
-    RubyEditorWidget* widget = new RubyEditorWidget(parent);
+    EditorWidget* widget = new EditorWidget(parent);
     TextEditor::TextEditorSettings::initializeEditor(widget);
     return widget->editor();
 }

@@ -3,12 +3,12 @@
 
 #include <texteditor/syntaxhighlighter.h>
 
-namespace RubyEditor {
+namespace Ruby {
 
-class RubyHighlighter :  public TextEditor::SyntaxHighlighter
+class Highlighter :  public TextEditor::SyntaxHighlighter
 {
 public:
-    RubyHighlighter(TextEditor::BaseTextDocument* parent);
+    Highlighter(TextEditor::BaseTextDocument* parent);
 protected:
     virtual void highlightBlock(const QString& text) override;
 private:

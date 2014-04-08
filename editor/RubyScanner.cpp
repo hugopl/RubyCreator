@@ -32,7 +32,7 @@
 #include <QString>
 #include <QSet>
 
-namespace RubyEditor {
+namespace Ruby {
 
 static const char* const RUBY_KEYWORDS[] = {
     "BEGIN",
@@ -87,10 +87,10 @@ static void copyIdentifiers(const char * const words[], size_t bytesCount, QSet<
         result.insert(QLatin1String(words[i]));
 }
 
-QSet<QString> RubyScanner::m_keywords;
-QSet<QString> RubyScanner::m_builtins;
+QSet<QString> Scanner::m_keywords;
+QSet<QString> Scanner::m_builtins;
 
-RubyScanner::RubyScanner(const QChar* text, const int length)
+Scanner::Scanner(const QChar* text, const int length)
     : m_src(text, length)
     , m_state(0)
 {
@@ -98,21 +98,21 @@ RubyScanner::RubyScanner(const QChar* text, const int length)
         copyIdentifiers(RUBY_KEYWORDS, sizeof(RUBY_KEYWORDS), m_keywords);
 }
 
-void RubyScanner::setState(int state)
+void Scanner::setState(int state)
 {
     m_state = state;
 }
 
-int RubyScanner::state() const
+int Scanner::state() const
 {
     return m_state;
 }
 
-RubyToken RubyScanner::read()
+Token Scanner::read()
 {
     m_src.setAnchor();
     if (m_src.isEnd())
-        return { RubyToken::EndOfBlock, m_src.anchor(), 0 };
+        return { Token::EndOfBlock, m_src.anchor(), 0 };
 
     State state;
     QChar saved;
@@ -127,19 +127,19 @@ RubyToken RubyScanner::read()
     }
 }
 
-QString RubyScanner::value(const RubyToken& tk) const
+QString Scanner::value(const Token& tk) const
 {
     return m_src.value(tk.position, tk.length);
 }
 
-RubyToken RubyScanner::onDefaultState()
+Token Scanner::onDefaultState()
 {
     QChar first = m_src.peek();
     m_src.move();
 
     if (first == QLatin1Char('\\') && m_src.peek() == QLatin1Char('\n')) {
         m_src.move();
-        return { RubyToken::Whitespace, m_src.anchor(), 2 };
+        return { Token::Whitespace, m_src.anchor(), 2 };
     }
 
     if (first == QLatin1Char('.') && m_src.peek().isDigit())
@@ -170,7 +170,7 @@ RubyToken RubyScanner::onDefaultState()
  * @brief Lexer::passEscapeCharacter
  * @return returns true if escape sequence doesn't end with newline
  */
-void RubyScanner::checkEscapeSequence(QChar quoteChar)
+void Scanner::checkEscapeSequence(QChar quoteChar)
 {
     if (m_src.peek() == QLatin1Char('\\')) {
         m_src.move();
@@ -183,7 +183,7 @@ void RubyScanner::checkEscapeSequence(QChar quoteChar)
 /**
   reads single-line string literal, surrounded by ' or " quotes
   */
-RubyToken RubyScanner::readStringLiteral(QChar quoteChar)
+Token Scanner::readStringLiteral(QChar quoteChar)
 {
     QChar ch = m_src.peek();
     if (ch == quoteChar && m_src.peek(1) == quoteChar) {
@@ -199,13 +199,13 @@ RubyToken RubyScanner::readStringLiteral(QChar quoteChar)
     if (ch == quoteChar)
         clearState();
     m_src.move();
-    return { RubyToken::String, m_src.anchor(), m_src.length() };
+    return { Token::String, m_src.anchor(), m_src.length() };
 }
 
 /**
   reads multi-line string literal, surrounded by ''' or """ sequencies
   */
-RubyToken RubyScanner::readMultiLineStringLiteral(QChar quoteChar)
+Token Scanner::readMultiLineStringLiteral(QChar quoteChar)
 {
     for (;;) {
         QChar ch = m_src.peek();
@@ -223,13 +223,13 @@ RubyToken RubyScanner::readMultiLineStringLiteral(QChar quoteChar)
         m_src.move();
     }
 
-    return { RubyToken::String, m_src.anchor(), m_src.length() };
+    return { Token::String, m_src.anchor(), m_src.length() };
 }
 
 /**
   reads identifier and classifies it
   */
-RubyToken RubyScanner::readIdentifier()
+Token Scanner::readIdentifier()
 {
     QChar ch = m_src.peek();
     while (ch.isLetterOrNumber() || (ch == QLatin1Char('_'))) {
@@ -238,17 +238,17 @@ RubyToken RubyScanner::readIdentifier()
     }
     QString value = m_src.value();
 
-    RubyToken::Kind kind = RubyToken::Identifier;
+    Token::Kind kind = Token::Identifier;
     if (value.at(0) == QLatin1Char('@'))
-        kind = RubyToken::ClassField;
+        kind = Token::ClassField;
     else if (value.at(0) == QLatin1Char('$'))
-        kind = RubyToken::Global;
+        kind = Token::Global;
     else if (value == QLatin1String("self"))
-        kind = RubyToken::ClassField;
+        kind = Token::ClassField;
     else if (m_builtins.contains(value))
-        kind = RubyToken::Type;
+        kind = Token::Type;
     else if (m_keywords.contains(value))
-        kind = RubyToken::Keyword;
+        kind = Token::Keyword;
 
     return { kind, m_src.anchor(), m_src.length() };
 }
@@ -275,7 +275,7 @@ inline static bool isValidIntegerSuffix(QChar ch)
     return (ch == QLatin1Char('l') || ch == QLatin1Char('L'));
 }
 
-RubyToken RubyScanner::readNumber()
+Token Scanner::readNumber()
 {
     if (!m_src.isEnd()) {
         QChar ch = m_src.peek();
@@ -297,10 +297,10 @@ RubyToken RubyScanner::readNumber()
         if (isValidIntegerSuffix(m_src.peek()))
             m_src.move();
     }
-    return { RubyToken::Number, m_src.anchor(), m_src.length() };
+    return { Token::Number, m_src.anchor(), m_src.length() };
 }
 
-RubyToken RubyScanner::readFloatNumber()
+Token Scanner::readFloatNumber()
 {
     enum
     {
@@ -346,49 +346,49 @@ RubyToken RubyScanner::readFloatNumber()
             || (ch == QLatin1Char('j') || ch == QLatin1Char('J')))
         m_src.move();
 
-    return { RubyToken::Number, m_src.anchor(), m_src.length() };
+    return { Token::Number, m_src.anchor(), m_src.length() };
 }
 
 /**
   reads single-line python comment, started with "#"
   */
-RubyToken RubyScanner::readComment()
+Token Scanner::readComment()
 {
     QChar ch = m_src.peek();
     while (ch != QLatin1Char('\n') && !ch.isNull()) {
         m_src.move();
         ch = m_src.peek();
     }
-    return { RubyToken::Comment, m_src.anchor(), m_src.length() };
+    return { Token::Comment, m_src.anchor(), m_src.length() };
 }
 
 /**
   reads single-line python doxygen comment, started with "##"
   */
-RubyToken RubyScanner::readDoxygenComment()
+Token Scanner::readDoxygenComment()
 {
     QChar ch = m_src.peek();
     while (ch != QLatin1Char('\n') && !ch.isNull()) {
         m_src.move();
         ch = m_src.peek();
     }
-    return { RubyToken::Doxygen, m_src.anchor(), m_src.length() };
+    return { Token::Doxygen, m_src.anchor(), m_src.length() };
 }
 
 /**
   reads whitespace
   */
-RubyToken RubyScanner::readWhiteSpace()
+Token Scanner::readWhiteSpace()
 {
     while (m_src.peek().isSpace())
         m_src.move();
-    return { RubyToken::Whitespace, m_src.anchor(), m_src.length() };
+    return { Token::Whitespace, m_src.anchor(), m_src.length() };
 }
 
 /**
   reads punctuation symbols, excluding some special
   */
-RubyToken RubyScanner::readOperator()
+Token Scanner::readOperator()
 {
     const QString EXCLUDED_CHARS = QLatin1String("\'\"_#");
     QChar ch = m_src.peek();
@@ -396,20 +396,20 @@ RubyToken RubyScanner::readOperator()
         m_src.move();
         ch = m_src.peek();
     }
-    return { RubyToken::Operator, m_src.anchor(), m_src.length() };
+    return { Token::Operator, m_src.anchor(), m_src.length() };
 }
 
-void RubyScanner::clearState()
+void Scanner::clearState()
 {
     m_state = 0;
 }
 
-void RubyScanner::saveState(State state, QChar savedData)
+void Scanner::saveState(State state, QChar savedData)
 {
     m_state = (state << 16) | static_cast<int>(savedData.unicode());
 }
 
-void RubyScanner::parseState(State &state, QChar &savedData) const
+void Scanner::parseState(State &state, QChar &savedData) const
 {
     state = static_cast<State>(m_state >> 16);
     savedData = static_cast<ushort>(m_state);

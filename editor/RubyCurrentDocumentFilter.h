@@ -5,13 +5,13 @@
 
 namespace Core { class IEditor; }
 
-namespace RubyEditor {
+namespace Ruby {
 
-class RubyCurrentDocumentFilter : public  Locator::ILocatorFilter
+class CurrentDocumentFilter : public  Locator::ILocatorFilter
 {
     Q_OBJECT
 public:
-    explicit RubyCurrentDocumentFilter();
+    explicit CurrentDocumentFilter();
 
     QList<Locator::FilterEntry> matchesFor(QFutureInterface<Locator::FilterEntry>& future, const QString& entry) override;
     void accept(Locator::FilterEntry selection) const override;

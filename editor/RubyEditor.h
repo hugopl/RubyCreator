@@ -1,18 +1,18 @@
-#ifndef RubyEditor_h
-#define RubyEditor_h
+#ifndef Ruby_Editor_h
+#define Ruby_Editor_h
 
 #include <texteditor/basetexteditor.h>
 #include <QTimer>
 
-namespace RubyEditor {
+namespace Ruby {
 
-class RubyEditorWidget;
+class EditorWidget;
 
-class RubyEditor : public TextEditor::BaseTextEditor
+class Editor : public TextEditor::BaseTextEditor
 {
     Q_OBJECT
 public:
-    RubyEditor(RubyEditorWidget* parent);
+    Editor(EditorWidget* parent);
 
     Core::Id id() const override;
 

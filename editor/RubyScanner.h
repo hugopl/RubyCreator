@@ -27,72 +27,82 @@
 **
 ****************************************************************************/
 
-#ifndef SourceCodeStream_h
-#define SourceCodeStream_h
+#ifndef RubyScanner_h
+#define RubyScanner_h
+
+#include "SourceCodeStream.h"
 
 #include <QString>
+#include <QSet>
 
-namespace RubyEditor {
+namespace Ruby {
 
-class SourceCodeStream
+class Token {
+public:
+    enum Kind
+    {
+        Number = 0,
+        String,
+        Keyword,
+        Type,
+        ClassField,
+        Global,
+        Operator,
+        Comment,
+        Doxygen,
+        Identifier,
+        Whitespace,
+        ImportedModule,
+
+        FormatsAmount,
+        EndOfBlock
+    };
+
+    Kind kind;
+    int position;
+    int length;
+};
+
+class Scanner
 {
 public:
-    SourceCodeStream(const QChar* text, int length)
-        :m_text(text)
-        ,m_textLength(length)
-        ,m_position(0)
-        ,m_markedPosition(0)
-    {}
+    enum State {
+        State_Default,
+        State_String,
+        State_MultiLineString
+    };
 
-    inline void setAnchor()
-    {
-        m_markedPosition = m_position;
-    }
+    Scanner(const QChar* text, const int length);
 
-    inline void move()
-    {
-        ++m_position;
-    }
-
-    inline int length() const
-    {
-        return m_position - m_markedPosition;
-    }
-
-    inline int anchor() const
-    {
-        return m_markedPosition;
-    }
-
-    inline bool isEnd() const
-    {
-        return m_position >= m_textLength;
-    }
-
-    inline QChar peek(int offset = 0) const
-    {
-        int pos = m_position + offset;
-        if (pos >= m_textLength)
-            return QLatin1Char('\0');
-        return m_text[pos];
-    }
-
-    inline QString value() const
-    {
-        const QChar* start = m_text + m_markedPosition;
-        return QString(start, length());
-    }
-
-    inline QString value(int begin, int length) const
-    {
-        return QString(m_text + begin, length);
-    }
+    void setState(int state);
+    int state() const;
+    Token read();
+    QString value(const Token& tk) const;
 
 private:
-    const QChar* m_text;
-    const int m_textLength;
-    int m_position;
-    int m_markedPosition;
+    Token onDefaultState();
+
+    void checkEscapeSequence(QChar quoteChar);
+    Token readStringLiteral(QChar quoteChar);
+    Token readMultiLineStringLiteral(QChar quoteChar);
+    Token readIdentifier();
+    Token readNumber();
+    Token readFloatNumber();
+    Token readComment();
+    Token readDoxygenComment();
+    Token readWhiteSpace();
+    Token readOperator();
+
+    void clearState();
+    void saveState(State state, QChar savedData);
+    void parseState(State& state, QChar& savedData) const;
+
+    SourceCodeStream m_src;
+    int m_state;
+    static QSet<QString> m_keywords;
+    static QSet<QString> m_builtins;
+
+    Scanner(const Scanner&) = delete;
 };
 
 }

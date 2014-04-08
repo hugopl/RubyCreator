@@ -6,9 +6,9 @@
 
 #include "RubyCodeModel.h"
 
-namespace RubyEditor {
+namespace Ruby {
 
-RubyCurrentDocumentFilter::RubyCurrentDocumentFilter()
+CurrentDocumentFilter::CurrentDocumentFilter()
     : m_icon(":/codemodel/images/func.png")
 {
     setId("Ruby methods in current Document");
@@ -21,30 +21,30 @@ RubyCurrentDocumentFilter::RubyCurrentDocumentFilter()
 
 }
 
-QList<Locator::FilterEntry> RubyCurrentDocumentFilter::matchesFor(QFutureInterface<Locator::FilterEntry>&, const QString& entry)
+QList<Locator::FilterEntry> CurrentDocumentFilter::matchesFor(QFutureInterface<Locator::FilterEntry>&, const QString& entry)
 {
     QList<Locator::FilterEntry> list;
     QStringMatcher matcher(entry, Qt::CaseInsensitive);
-    RubyCodeModel* codeModel = RubyCodeModel::instance();
+    CodeModel* codeModel = CodeModel::instance();
 
-    for (RubySymbol symbol : codeModel->methodsIn(m_fileName)) {
+    for (Symbol symbol : codeModel->methodsIn(m_fileName)) {
         if (matcher.indexIn(symbol.name) != -1)
             list << Locator::FilterEntry(this, symbol.name, qVariantFromValue(symbol), m_icon);
     }
     return list;
 }
 
-void RubyCurrentDocumentFilter::accept(Locator::FilterEntry selection) const
+void CurrentDocumentFilter::accept(Locator::FilterEntry selection) const
 {
-    RubySymbol symbol = selection.internalData.value<RubySymbol>();
+    Symbol symbol = selection.internalData.value<Symbol>();
     Core::EditorManager::openEditorAt(m_fileName, symbol.line, symbol.column);
 }
 
-void RubyCurrentDocumentFilter::refresh(QFutureInterface<void>&)
+void CurrentDocumentFilter::refresh(QFutureInterface<void>&)
 {
 }
 
-void RubyCurrentDocumentFilter::onCurrentEditorChanged(Core::IEditor* editor)
+void CurrentDocumentFilter::onCurrentEditorChanged(Core::IEditor* editor)
 {
     if (!editor) {
         setEnabled(false);
@@ -53,7 +53,6 @@ void RubyCurrentDocumentFilter::onCurrentEditorChanged(Core::IEditor* editor)
 
     m_fileName = editor->document()->filePath();
     setEnabled(m_fileName.endsWith(".rb"));
-
 }
 
 }

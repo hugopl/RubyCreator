@@ -3,13 +3,13 @@
 
 #include <texteditor/basetexteditor.h>
 
-namespace RubyEditor {
+namespace Ruby {
 
-class RubyEditorWidget : public TextEditor::BaseTextEditorWidget
+class EditorWidget : public TextEditor::BaseTextEditorWidget
 {
     Q_OBJECT
 public:
-    RubyEditorWidget(QWidget* parent);
+    EditorWidget(QWidget* parent);
     TextEditor::BaseTextEditor* createEditor() override;
 };
 

@@ -4,14 +4,14 @@
 #include <QFile>
 #include <QDebug>
 
-namespace RubyEditor {
+namespace Ruby {
 
-RubySymbol::RubySymbol(const QString& name, int line, int column)
+Symbol::Symbol(const QString& name, int line, int column)
     : name(name), line(line), column(column)
 {
 }
 
-RubyCodeModel::RubyCodeModel()
+CodeModel::CodeModel()
 {
     RUBY_INIT_STACK;
     ruby_init();
@@ -19,7 +19,7 @@ RubyCodeModel::RubyCodeModel()
     const char*  options[]  =  { "", "-enil", 0 };
     ruby_exec_node(ruby_options(2, const_cast<char**>(options)));
 
-    QFile parser(":/rubyeditor/RubyParser.rb");
+    QFile parser(":/rubysupport/RubyParser.rb");
     parser.open(QFile::ReadOnly);
     QByteArray parserData = parser.readAll();
 
@@ -31,18 +31,18 @@ RubyCodeModel::RubyCodeModel()
     Q_ASSERT(m_getMethodDeclarations);
 }
 
-RubyCodeModel::~RubyCodeModel()
+CodeModel::~CodeModel()
 {
     ruby_cleanup(0);
 }
 
-RubyCodeModel* RubyCodeModel::instance()
+CodeModel* CodeModel::instance()
 {
-    static RubyCodeModel model;
+    static CodeModel model;
     return &model;
 }
 
-void RubyCodeModel::updateModel(const QString& file)
+void CodeModel::updateModel(const QString& file)
 {
     QElapsedTimer timer;
     timer.start();
@@ -56,20 +56,20 @@ void RubyCodeModel::updateModel(const QString& file)
     VALUE result = rb_funcall(rb_cObject, m_getMethodDeclarations, 1, input);
     char* resultData = StringValuePtr(result);
 
-    QList<RubySymbol> symbols;
+    QList<Symbol> symbols;
 
     QByteArray foo(resultData);
     foreach (QByteArray line, foo.split('\n')) {
         if (line.isEmpty())
             continue;
         QList<QByteArray> d = line.split(' ');
-        symbols << RubySymbol(d[2], atoi(d[0]), atoi(d[1]));
+        symbols << Symbol(d[2], atoi(d[0]), atoi(d[1]));
     }
     m_symbols[file] = symbols;
     qDebug() << "Code model updated in" << timer.elapsed() << "ms";
 }
 
-QList<RubySymbol> RubyCodeModel::methodsIn(const QString& file)
+QList<Symbol> CodeModel::methodsIn(const QString& file)
 {
     return m_symbols[file];
 }

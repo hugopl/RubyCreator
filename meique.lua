@@ -35,9 +35,11 @@ editor:addFiles([[
     editor/RubyHighlighter.cpp
     editor/RubyScanner.cpp
 
+    projectmanager/RubyProjectManager.cpp
+    projectmanager/RubyProject.cpp
+
     RubyPlugin.cpp
 ]])
-editor:addIncludePath("editor")
 editor:addQtResource("Ruby.qrc")
 
 -- Hardcoded QtCreator libraries path
@@ -50,4 +52,5 @@ editor:addLibraryPaths([[
 editor:addLinkLibraries([[
 Core
 TextEditor
+ProjectExplorer
 ]])

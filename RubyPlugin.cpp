@@ -1,7 +1,8 @@
 #include "RubyPlugin.h"
 
-#include "RubyCurrentDocumentFilter.h"
-#include "RubyEditorFactory.h"
+#include "editor/RubyCurrentDocumentFilter.h"
+#include "editor/RubyEditorFactory.h"
+#include "projectmanager/RubyProjectManager.h"
 #include <coreplugin/icore.h>
 #include <coreplugin/mimedatabase.h>
 #include <QtPlugin>
@@ -25,6 +26,7 @@ bool Plugin::initialize(const QStringList&, QString* errorString)
     m_factory = new EditorFactory(this);
     addObject(m_factory);
     addAutoReleasedObject(new CurrentDocumentFilter);
+    addAutoReleasedObject(new ProjectManager);
 
     return true;
 }

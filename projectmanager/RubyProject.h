@@ -2,6 +2,7 @@
 #define Ruby_Project
 
 #include <projectexplorer/project.h>
+#include <projectexplorer/projectnodes.h>
 
 namespace Ruby {
 
@@ -18,12 +19,16 @@ public:
     ProjectExplorer::IProjectManager* projectManager() const override;
     ProjectExplorer::ProjectNode* rootProjectNode() const override;
 
-    virtual QStringList files(FilesMode fileMode) const override;
+    QStringList files(FilesMode) const override;
 private:
     ProjectManager* m_projectManager;
-    QString m_projectName;
     Document* m_document;
     ProjectNode* m_rootNode;
+
+    QDir m_projectDir;
+    QStringList m_files;
+
+    void populateProject(const QDir& dir, ProjectExplorer::FolderNode* parent);
 };
 
 }

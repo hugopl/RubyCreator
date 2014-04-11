@@ -14,8 +14,6 @@ class Editor : public TextEditor::BaseTextEditor
 public:
     Editor(EditorWidget* parent);
 
-    Core::Id id() const override;
-
 private slots:
     void scheduleCodeModelUpdate();
     void updateCodeModel();

@@ -1,20 +1,20 @@
 #ifndef RubyCurrentDocumentFilter_h
 #define RubyCurrentDocumentFilter_h
 
-#include <locator/ilocatorfilter.h>
+#include <coreplugin/locator/ilocatorfilter.h>
 
 namespace Core { class IEditor; }
 
 namespace Ruby {
 
-class CurrentDocumentFilter : public  Locator::ILocatorFilter
+class CurrentDocumentFilter : public  Core::ILocatorFilter
 {
     Q_OBJECT
 public:
     explicit CurrentDocumentFilter();
 
-    QList<Locator::FilterEntry> matchesFor(QFutureInterface<Locator::FilterEntry>& future, const QString& entry) override;
-    void accept(Locator::FilterEntry selection) const override;
+    QList<Core::LocatorFilterEntry> matchesFor(QFutureInterface<Core::LocatorFilterEntry>& future, const QString& entry) override;
+    void accept(Core::LocatorFilterEntry selection) const override;
     void refresh(QFutureInterface<void>& future) override;
 private slots:
     void onCurrentEditorChanged(Core::IEditor* editor);

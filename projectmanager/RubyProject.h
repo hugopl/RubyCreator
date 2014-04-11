@@ -13,11 +13,10 @@ class Project : public ProjectExplorer::Project
 {
 public:
     Project(ProjectManager* projectManager, const QString& fileName);
-    virtual QString displayName() const override;
-    virtual Core::Id id() const override;
-    virtual Core::IDocument* document() const override;
-    virtual ProjectExplorer::IProjectManager* projectManager() const override;
-    virtual ProjectExplorer::ProjectNode* rootProjectNode() const override;
+    QString displayName() const override;
+    Core::IDocument* document() const override;
+    ProjectExplorer::IProjectManager* projectManager() const override;
+    ProjectExplorer::ProjectNode* rootProjectNode() const override;
 
     virtual QStringList files(FilesMode fileMode) const override;
 private:

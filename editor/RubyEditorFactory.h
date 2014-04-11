@@ -10,7 +10,7 @@ class EditorFactory : public Core::IEditorFactory
     Q_OBJECT
 public:
     EditorFactory(QObject* parent);
-    Core::IEditor* createEditor(QWidget *parent) override;
+    Core::IEditor* createEditor() override;
 };
 
 }

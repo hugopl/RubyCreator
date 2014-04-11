@@ -9,7 +9,7 @@ class EditorWidget : public TextEditor::BaseTextEditorWidget
 {
     Q_OBJECT
 public:
-    EditorWidget(QWidget* parent);
+    EditorWidget();
     TextEditor::BaseTextEditor* createEditor() override;
 };
 

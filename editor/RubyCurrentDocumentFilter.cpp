@@ -21,20 +21,20 @@ CurrentDocumentFilter::CurrentDocumentFilter()
 
 }
 
-QList<Locator::FilterEntry> CurrentDocumentFilter::matchesFor(QFutureInterface<Locator::FilterEntry>&, const QString& entry)
+QList<Core::LocatorFilterEntry> CurrentDocumentFilter::matchesFor(QFutureInterface<Core::LocatorFilterEntry>&, const QString& entry)
 {
-    QList<Locator::FilterEntry> list;
+    QList<Core::LocatorFilterEntry> list;
     QStringMatcher matcher(entry, Qt::CaseInsensitive);
     CodeModel* codeModel = CodeModel::instance();
 
     for (Symbol symbol : codeModel->methodsIn(m_fileName)) {
         if (matcher.indexIn(symbol.name) != -1)
-            list << Locator::FilterEntry(this, symbol.name, qVariantFromValue(symbol), m_icon);
+            list << Core::LocatorFilterEntry(this, symbol.name, qVariantFromValue(symbol), m_icon);
     }
     return list;
 }
 
-void CurrentDocumentFilter::accept(Locator::FilterEntry selection) const
+void CurrentDocumentFilter::accept(Core::LocatorFilterEntry selection) const
 {
     Symbol symbol = selection.internalData.value<Symbol>();
     Core::EditorManager::openEditorAt(m_fileName, symbol.line, symbol.column);

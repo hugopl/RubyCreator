@@ -1,4 +1,4 @@
-requiresMeique(0.93)
+requiresMeique("0.93")
 GCC:addCustomFlags("-std=c++0x")
 
 qtcSrc = option("QtCreatorSources", "Where the QtCreator sources are located")
@@ -7,26 +7,27 @@ f = io.open(qtcSrc.."/qtcreator.pri", "r")
 abortIf(f == nil, qtcSrc.."/qtcreator.pri not found!")
 s = f:read("*all")
 f:close()
-_, _, QTCREATOR_VERSION = string.find(s, "QTCREATOR_VERSION = (3.0.%d)")
+_, _, QTCREATOR_VERSION = string.find(s, "QTCREATOR_VERSION = (3.0.%d+)")
 
-QT_VERSION = "4.8"
-qtCore = findPackage("QtCore", QT_VERSION)
-qtGui = findPackage("QtGui", QT_VERSION)
+qtCore = findPackage("Qt5Core")
+qtGui = findPackage("Qt5Gui")
+qtWidgets = findPackage("Qt5Widgets")
 ruby = findPackage("ruby-2.1")
 
-editor = Library:new("RubySupport")
-editor:useQtAutomoc()
-editor:use(qtCore)
-editor:use(qtGui)
-editor:use(ruby)
+plugin = Library:new("RubySupport")
+plugin:useQtAutomoc()
+plugin:use(qtCore)
+plugin:use(qtGui)
+plugin:use(ruby)
+plugin:use(qtWidgets)
 
 configureFile("RubySupport.pluginspec.in", "RubySupport.pluginspec")
 
 -- QtCreator include paths
-editor:addIncludePath(qtcSrc.."/src/plugins")
-editor:addIncludePath(qtcSrc.."/src/libs")
+plugin:addIncludePath(qtcSrc.."/src/plugins")
+plugin:addIncludePath(qtcSrc.."/src/libs")
 
-editor:addFiles([[
+plugin:addFiles([[
     editor/RubyCodeModel.cpp
     editor/RubyCurrentDocumentFilter.cpp
     editor/RubyEditor.cpp
@@ -40,16 +41,16 @@ editor:addFiles([[
 
     RubyPlugin.cpp
 ]])
-editor:addQtResource("Ruby.qrc")
+plugin:addQtResource("Ruby.qrc")
 
 -- Hardcoded QtCreator libraries path
-editor:addLibraryPaths([[
+plugin:addLibraryPaths([[
 /usr/lib/qtcreator
 /usr/lib/qtcreator/plugins
 /usr/lib/qtcreator/plugins/QtProject
 ]])
 
-editor:addLinkLibraries([[
+plugin:addLinkLibraries([[
 Core
 TextEditor
 ProjectExplorer

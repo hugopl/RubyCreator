@@ -7,10 +7,12 @@
 
 namespace Ruby {
 
-EditorWidget::EditorWidget(QWidget* parent)
-    : TextEditor::BaseTextEditorWidget(parent)
+EditorWidget::EditorWidget()
 {
-    new Highlighter(baseTextDocument().data());
+    setParenthesesMatchingEnabled(true);
+    setMarksVisible(true);
+
+    new Highlighter(baseTextDocument());
 }
 
 TextEditor::BaseTextEditor* EditorWidget::createEditor()

@@ -4,6 +4,8 @@
 #include "RubyConstants.h"
 #include "RubyEditorWidget.h"
 
+#include <texteditor/texteditorconstants.h>
+
 namespace Ruby {
 
 static const auto UpdateDocumentDefaultInterval = 150;
@@ -11,15 +13,16 @@ static const auto UpdateDocumentDefaultInterval = 150;
 Editor::Editor(EditorWidget* parent)
     : TextEditor::BaseTextEditor(parent)
 {
+    setId(Constants::EditorId);
+    setContext(Core::Context(Constants::EditorId, TextEditor::Constants::C_TEXTEDITOR));
+
     m_updateCodeModelTimer.setSingleShot(true);
     m_updateCodeModelTimer.setInterval(UpdateDocumentDefaultInterval);
-    connect(&m_updateCodeModelTimer, SIGNAL(timeout()), this, SLOT(updateCodeModel()));
-    connect(this, SIGNAL(contentsChanged()), this, SLOT(scheduleCodeModelUpdate()));
-}
+    connect(&m_updateCodeModelTimer, &QTimer::timeout, this, &Editor::updateCodeModel);
+    // There's no contentsChanged signal on Core::IDocument interface.
+    connect(document(), SIGNAL(contentsChanged()), this, SLOT(scheduleCodeModelUpdate()));
 
-Core::Id Editor::id() const
-{
-    return Core::Id(Constants::EditorId);
+    CodeModel::instance();
 }
 
 void Editor::scheduleCodeModelUpdate()

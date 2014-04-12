@@ -3,6 +3,7 @@
 #include "RubyConstants.h"
 #include "RubyEditorWidget.h"
 
+#include <texteditor/texteditoractionhandler.h>
 #include <texteditor/texteditorsettings.h>
 
 namespace Ruby {
@@ -13,6 +14,11 @@ EditorFactory::EditorFactory(QObject* parent)
     setId(Constants::EditorId);
     setDisplayName(tr(Constants::EditorDisplayName));
     addMimeType(QLatin1String(Constants::MimeType));
+    new TextEditor::TextEditorActionHandler(this,
+                              Constants::EditorId,
+                              TextEditor::TextEditorActionHandler::Format
+                              | TextEditor::TextEditorActionHandler::UnCommentSelection
+                              | TextEditor::TextEditorActionHandler::UnCollapseAll);
 }
 
 Core::IEditor* EditorFactory::createEditor()

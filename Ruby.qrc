@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/rubysupport">
         <file>Ruby.mimetypes.xml</file>
-        <file alias="RubyParser.rb">editor/RubyParser.rb</file>
     </qresource>
 </RCC>

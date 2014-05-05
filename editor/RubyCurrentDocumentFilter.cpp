@@ -27,9 +27,11 @@ QList<Core::LocatorFilterEntry> CurrentDocumentFilter::matchesFor(QFutureInterfa
     QStringMatcher matcher(entry, Qt::CaseInsensitive);
     CodeModel* codeModel = CodeModel::instance();
 
-    for (Symbol symbol : codeModel->methodsIn(m_fileName)) {
-        if (matcher.indexIn(symbol.name) != -1)
+    for (Symbol symbol : codeModel->symbolsIn(m_fileName)) {
+        if (matcher.indexIn(symbol.name) != -1) {
             list << Core::LocatorFilterEntry(this, symbol.name, qVariantFromValue(symbol), m_icon);
+            list.last().extraInfo = symbol.context;
+        }
     }
     return list;
 }

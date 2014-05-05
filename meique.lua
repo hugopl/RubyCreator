@@ -12,13 +12,11 @@ _, _, QTCREATOR_VERSION = string.find(s, "QTCREATOR_VERSION = (3.%d.%d+)")
 qtCore = findPackage("Qt5Core")
 qtGui = findPackage("Qt5Gui")
 qtWidgets = findPackage("Qt5Widgets")
-ruby = findPackage("ruby-2.1")
 
 plugin = Library:new("RubySupport")
 plugin:useQtAutomoc()
 plugin:use(qtCore)
 plugin:use(qtGui)
-plugin:use(ruby)
 plugin:use(qtWidgets)
 
 configureFile("RubySupport.pluginspec.in", "RubySupport.pluginspec")
@@ -36,6 +34,7 @@ plugin:addFiles([[
     editor/RubyHighlighter.cpp
     editor/RubyIndenter.cpp
     editor/RubyScanner.cpp
+    editor/RubySimpleScanner.cpp
 
     projectmanager/RubyProjectManager.cpp
     projectmanager/RubyProject.cpp

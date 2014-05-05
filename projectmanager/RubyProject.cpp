@@ -1,5 +1,6 @@
 #include "RubyProject.h"
 
+#include "editor/RubyCodeModel.h"
 #include "RubyConstants.h"
 #include "RubyDocument.h"
 #include "RubyProjectManager.h"
@@ -7,6 +8,7 @@
 
 #include <QDebug>
 #include <QFileInfo>
+#include <QThread>
 
 namespace Ruby {
 
@@ -67,6 +69,9 @@ void Project::populateProject(const QDir& dir, ProjectExplorer::FolderNode* pare
         }
     }
     parent->addFileNodes(files);
+
+    CodeModel::instance()->updateModels(m_files);
+    emit fileListChanged();
 }
 
 }

@@ -1,21 +1,14 @@
 #ifndef Ruby_CodeModel_h
 #define Ruby_CodeModel_h
 
+#include <QDateTime>
 #include <QMetaType>
 #include <QObject>
 #include <QHash>
-#include <ruby.h>
+
+#include "RubySymbol.h"
 
 namespace Ruby {
-
-struct Symbol
-{
-    Symbol() {}
-    Symbol(const QString& name, int line, int column);
-    QString name;
-    int line;
-    int column;
-};
 
 class CodeModel : QObject
 {
@@ -26,14 +19,15 @@ public:
     CodeModel(const CodeModel&) = delete;
 
     static CodeModel* instance();
-    void updateModel(const QString& file);
 
-    QList<Symbol> methodsIn(const QString& file);
+    QList<Symbol> symbolsIn(const QString& file);
+
+public slots:
+    void updateModel(const QString& file);
+    void updateModels(const QStringList& files);
 
 private:
-    ID m_getMethodDeclarations;
-
-    QHash<QString, QList<Symbol> > m_symbols;
+    QHash<QString, SymbolGroup> m_symbols;
 };
 
 }

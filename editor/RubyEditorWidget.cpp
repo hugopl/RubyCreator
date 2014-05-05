@@ -2,6 +2,7 @@
 
 #include "RubyEditor.h"
 #include "RubyHighlighter.h"
+#include "RubyIndenter.h"
 
 #include <texteditor/basetextdocument.h>
 
@@ -12,7 +13,10 @@ EditorWidget::EditorWidget()
     setParenthesesMatchingEnabled(true);
     setMarksVisible(true);
 
-    new Highlighter(baseTextDocument());
+    TextEditor::BaseTextDocument* baseDoc = baseTextDocument();
+    baseDoc->setIndenter(new Indenter());
+
+    new Highlighter(baseDoc);
 }
 
 TextEditor::BaseTextEditor* EditorWidget::createEditor()

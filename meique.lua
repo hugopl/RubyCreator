@@ -7,7 +7,7 @@ f = io.open(qtcSrc.."/qtcreator.pri", "r")
 abortIf(f == nil, qtcSrc.."/qtcreator.pri not found!")
 s = f:read("*all")
 f:close()
-_, _, QTCREATOR_VERSION = string.find(s, "QTCREATOR_VERSION = (3.0.%d+)")
+_, _, QTCREATOR_VERSION = string.find(s, "QTCREATOR_VERSION = (3.%d.%d+)")
 
 qtCore = findPackage("Qt5Core")
 qtGui = findPackage("Qt5Gui")
@@ -34,6 +34,7 @@ plugin:addFiles([[
     editor/RubyEditorFactory.cpp
     editor/RubyEditorWidget.cpp
     editor/RubyHighlighter.cpp
+    editor/RubyIndenter.cpp
     editor/RubyScanner.cpp
 
     projectmanager/RubyProjectManager.cpp

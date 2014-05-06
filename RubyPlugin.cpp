@@ -1,8 +1,10 @@
 #include "RubyPlugin.h"
 
-#include "editor/RubyCurrentDocumentFilter.h"
+#include "editor/RubyCodeModel.h"
 #include "editor/RubyEditorFactory.h"
+#include "editor/RubySymbolFilter.h"
 #include "projectmanager/RubyProjectManager.h"
+
 #include <coreplugin/icore.h>
 #include <coreplugin/mimedatabase.h>
 #include <QtPlugin>
@@ -25,7 +27,12 @@ bool Plugin::initialize(const QStringList&, QString* errorString)
 
     m_factory = new EditorFactory(this);
     addObject(m_factory);
-    addAutoReleasedObject(new CurrentDocumentFilter);
+    addAutoReleasedObject(new SymbolFilter([](const QString& file) {
+        return CodeModel::instance()->methodsIn(file);
+    }, "Ruby Methods in Current Document", '.'));
+    addAutoReleasedObject(new SymbolFilter([](const QString&) {
+        return CodeModel::instance()->allMethods();
+    }, "Ruby methods", 'm'));
     addAutoReleasedObject(new ProjectManager);
 
     return true;

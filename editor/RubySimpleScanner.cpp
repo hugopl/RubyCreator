@@ -18,6 +18,10 @@ Symbol SimpleScanner::nextSymbol()
     static QRegExp startBlock("^[^#]*\\b(begin|case|do|if|while|until)\\b");
     static QRegExp endDef("^[^#]*\\bend\\b");
 
+    // TODO:
+    // - Skip multiline string.
+    // - Don't consider keyword when it' on strings.
+
     QString line;
 
     Symbol symbol;

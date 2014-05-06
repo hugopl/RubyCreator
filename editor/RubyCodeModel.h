@@ -20,7 +20,8 @@ public:
 
     static CodeModel* instance();
 
-    QList<Symbol> symbolsIn(const QString& file);
+    QList<Symbol> methodsIn(const QString& file) const;
+    QList<Symbol> allMethods() const;
 
 public slots:
     void updateModel(const QString& file);
@@ -31,7 +32,5 @@ private:
 };
 
 }
-
-Q_DECLARE_METATYPE(Ruby::Symbol)
 
 #endif

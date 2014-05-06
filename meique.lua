@@ -27,7 +27,7 @@ plugin:addIncludePath(qtcSrc.."/src/libs")
 
 plugin:addFiles([[
     editor/RubyCodeModel.cpp
-    editor/RubyCurrentDocumentFilter.cpp
+    editor/RubySymbolFilter.cpp
     editor/RubyEditor.cpp
     editor/RubyEditorFactory.cpp
     editor/RubyEditorWidget.cpp

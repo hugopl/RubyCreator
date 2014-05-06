@@ -52,16 +52,27 @@ void CodeModel::updateModel(const QString& file)
 
     Symbol symbol;
     group.symbols.clear();
-    while (!(symbol = scanner.nextSymbol()).name.isNull())
+    while (!(symbol = scanner.nextSymbol()).name.isNull()) {
+        symbol.file = file;
         group.symbols << symbol;
+    }
 
     group.lastUpdate = QDateTime::currentDateTime();
     qDebug() << "Code model updated in" << timer.elapsed() << "ms " << file;
 }
 
-QList<Symbol> CodeModel::symbolsIn(const QString& file)
+QList<Symbol> CodeModel::methodsIn(const QString& file) const
 {
     return m_symbols[file].symbols;
+}
+
+QList<Symbol> CodeModel::allMethods() const
+{
+    // TODO: cache this!?
+    QList<Symbol> result;
+    for (const SymbolGroup& group : m_symbols)
+        result << group.symbols;
+    return result;
 }
 
 }

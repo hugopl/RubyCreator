@@ -11,6 +11,7 @@ struct Symbol
     Symbol(const QString& name, int line, int column);
     QString name;
     QString context;
+    QString file;
     int line;
     int column;
 };
@@ -22,5 +23,7 @@ struct SymbolGroup
 };
 
 }
+
+Q_DECLARE_METATYPE(Ruby::Symbol)
 
 #endif

@@ -1,5 +1,7 @@
 #include "RubyIndenter.h"
 
+#include "RubySimpleScanner.h"
+
 #include <texteditor/tabsettings.h>
 #include <QRegExp>
 #include <QSet>
@@ -22,7 +24,7 @@ void Indenter::indentBlock(QTextDocument*, const QTextBlock& block, const QChar&
 
     int indentation = settings.indentationColumn(previousLine);
 
-    if (isElectricLine(previousLine))
+    if (Language::endKeyword.indexIn(block.text()) == -1 &&  isElectricLine(previousLine))
         indentation += TAB_SIZE;
 
     settings.indentLine(block, indentation);
@@ -30,11 +32,10 @@ void Indenter::indentBlock(QTextDocument*, const QTextBlock& block, const QChar&
 
 bool Indenter::isElectricLine(const QString& line) const
 {
-    static QRegExp r("^\\s*(if|def|class|module)");
     if (line.isEmpty())
         return false;
 
-    return r.indexIn(line) != -1;
+    return Language::startOfBlock.indexIn(line) != -1 || Language::symbolDefinition.indexIn(line) != -1;
 }
 
 } // namespace Ruby

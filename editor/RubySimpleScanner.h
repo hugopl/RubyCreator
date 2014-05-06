@@ -8,6 +8,12 @@
 
 namespace Ruby {
 
+namespace Language {
+extern QRegExp symbolDefinition;
+extern QRegExp startOfBlock;
+extern QRegExp endKeyword;
+}
+
 class SimpleScanner
 {
 public:

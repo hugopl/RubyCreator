@@ -1,5 +1,6 @@
 #include "RubyEditorWidget.h"
 
+#include "RubyAutoCompleter.h"
 #include "RubyEditor.h"
 #include "RubyHighlighter.h"
 #include "RubyIndenter.h"
@@ -12,6 +13,8 @@ EditorWidget::EditorWidget()
 {
     setParenthesesMatchingEnabled(true);
     setMarksVisible(true);
+    setCodeFoldingSupported(true);
+    setAutoCompleter(new AutoCompleter);
 
     TextEditor::BaseTextDocument* baseDoc = baseTextDocument();
     baseDoc->setIndenter(new Indenter());

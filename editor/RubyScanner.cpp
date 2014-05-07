@@ -88,7 +88,6 @@ static void copyIdentifiers(const char * const words[], size_t bytesCount, QSet<
 }
 
 QSet<QString> Scanner::m_keywords;
-QSet<QString> Scanner::m_builtins;
 
 Scanner::Scanner(const QChar* text, const int length)
     : m_src(text, length)
@@ -239,17 +238,23 @@ Token Scanner::readIdentifier()
     QString value = m_src.value();
 
     Token::Kind kind = Token::Identifier;
-    if (value.at(0) == QLatin1Char('@'))
+    if (value[0] == QLatin1Char('@')) {
         kind = Token::ClassField;
-    else if (value.at(0) == QLatin1Char('$'))
+    } else if (value.at(0) == QLatin1Char('$')) {
         kind = Token::Global;
-    else if (value == QLatin1String("self"))
+    } else if (value == QLatin1String("self")) {
         kind = Token::ClassField;
-    else if (m_builtins.contains(value))
-        kind = Token::Type;
-    else if (m_keywords.contains(value))
+    } else if (m_keywords.contains(value)) {
         kind = Token::Keyword;
-
+    } else if (value[0].isUpper()) {
+        kind = Token::Constant;
+        for (const QChar& ch : value) {
+            if (ch.isLower()) {
+                kind = Token::Type;
+                break;
+            }
+        }
+    }
     return { kind, m_src.anchor(), m_src.length() };
 }
 

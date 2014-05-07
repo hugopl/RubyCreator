@@ -52,9 +52,8 @@ public:
         Doxygen,
         Identifier,
         Whitespace,
-        ImportedModule,
+        Constant,
 
-        FormatsAmount,
         EndOfBlock
     };
 
@@ -100,7 +99,6 @@ private:
     SourceCodeStream m_src;
     int m_state;
     static QSet<QString> m_keywords;
-    static QSet<QString> m_builtins;
 
     Scanner(const Scanner&) = delete;
 };

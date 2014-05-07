@@ -29,36 +29,39 @@ CodeModel* CodeModel::instance()
 
 void CodeModel::updateModels(const QStringList& files)
 {
-    for (const QString& file : files)
-        updateModel(file);
-}
-
-void CodeModel::updateModel(const QString& file)
-{
     QElapsedTimer timer;
     timer.start();
 
-    QFileInfo info(file);
-    SymbolGroup& group = m_symbols[file];
+    for (const QString& file : files) {
+        QFileInfo info(file);
+        SymbolGroup& group = m_symbols[file];
 
-    if (!group.lastUpdate.isNull() && group.lastUpdate > info.lastModified())
-        return;
+        if (!group.lastUpdate.isNull() && group.lastUpdate > info.lastModified())
+            continue;
 
-    QFile f(file);
-    if (!f.open(QFile::ReadOnly))
-        return;
+        QFile fp(file);
+        if (!fp.open(QFile::ReadOnly))
+            continue;
+        updateModel(file, fp);
+    }
 
-    SimpleScanner scanner(&f);
+    qDebug() << "Code model updated in" << timer.elapsed() << "ms";
+}
+
+void CodeModel::updateModel(const QString& fileName, QIODevice& contents)
+{
+    SimpleScanner scanner(&contents);
+
+    SymbolGroup& group = m_symbols[fileName];
+    group.symbols.clear();
 
     Symbol symbol;
-    group.symbols.clear();
     while (!(symbol = scanner.nextSymbol()).name.isNull()) {
-        symbol.file = file;
+        symbol.file = fileName;
         group.symbols << symbol;
     }
 
     group.lastUpdate = QDateTime::currentDateTime();
-    qDebug() << "Code model updated in" << timer.elapsed() << "ms " << file;
 }
 
 QList<Symbol> CodeModel::methodsIn(const QString& file) const

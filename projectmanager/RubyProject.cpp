@@ -21,6 +21,7 @@ Project::Project(ProjectManager* projectManager, const QString& fileName)
     m_rootNode = new ProjectNode(m_projectDir.dirName());
 
     populateProject(m_projectDir, m_rootNode);
+    CodeModel::instance()->updateModels(m_files);
 }
 
 
@@ -70,7 +71,6 @@ void Project::populateProject(const QDir& dir, ProjectExplorer::FolderNode* pare
     }
     parent->addFileNodes(files);
 
-    CodeModel::instance()->updateModels(m_files);
     emit fileListChanged();
 }
 

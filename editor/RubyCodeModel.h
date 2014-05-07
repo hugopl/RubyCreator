@@ -3,6 +3,7 @@
 
 #include <QDateTime>
 #include <QMetaType>
+#include <QIODevice>
 #include <QObject>
 #include <QHash>
 
@@ -25,7 +26,8 @@ public:
     QList<Symbol> allMethodsNamed(const QString& name) const;
 
 public slots:
-    void updateModel(const QString& file);
+    // pass a QIODevice because the file may not be saved on file system.
+    void updateModel(const QString& fileName, QIODevice &contents);
     void updateModels(const QStringList& files);
 
 private:

@@ -159,24 +159,24 @@ Token Scanner::onDefaultState()
         return readComment();
     }
 
+    if (first == QLatin1Char('/'))
+        return readRegexp();
+
     if (first.isSpace())
         return readWhiteSpace();
 
     return readOperator();
 }
 
-/**
- * @brief Lexer::passEscapeCharacter
- * @return returns true if escape sequence doesn't end with newline
- */
-void Scanner::checkEscapeSequence(QChar quoteChar)
+bool Scanner::checkEscapeSequence()
 {
     if (m_src.peek() == QLatin1Char('\\')) {
         m_src.move();
         QChar ch = m_src.peek();
         if (ch == QLatin1Char('\n') || ch.isNull())
-            saveState(State_String, quoteChar);
+            return true;
     }
+    return false;
 }
 
 /**
@@ -191,7 +191,8 @@ Token Scanner::readStringLiteral(QChar quoteChar)
     }
 
     while (ch != quoteChar && !ch.isNull()) {
-        checkEscapeSequence(quoteChar);
+        if (checkEscapeSequence())
+            saveState(State_String, quoteChar);
         m_src.move();
         ch = m_src.peek();
     }
@@ -199,6 +200,20 @@ Token Scanner::readStringLiteral(QChar quoteChar)
         clearState();
     m_src.move();
     return { Token::String, m_src.anchor(), m_src.length() };
+}
+
+Token Scanner::readRegexp()
+{
+    QLatin1Char slash('/');
+    QChar ch = m_src.peek();
+
+    while (ch != slash && !ch.isNull()) {
+        checkEscapeSequence();
+        m_src.move();
+        ch = m_src.peek();
+    }
+    m_src.move();
+    return { Token::Regexp, m_src.anchor(), m_src.length() };
 }
 
 /**

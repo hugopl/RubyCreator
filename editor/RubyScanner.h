@@ -46,13 +46,14 @@ public:
         Keyword,
         Type,
         ClassField,
-        Global,
         Operator,
         Comment,
         Doxygen,
         Identifier,
         Whitespace,
         Constant,
+        Global,
+        Regexp,
 
         EndOfBlock
     };
@@ -81,8 +82,9 @@ public:
 private:
     Token onDefaultState();
 
-    void checkEscapeSequence(QChar quoteChar);
+    bool checkEscapeSequence();
     Token readStringLiteral(QChar quoteChar);
+    Token readRegexp();
     Token readMultiLineStringLiteral(QChar quoteChar);
     Token readIdentifier();
     Token readNumber();

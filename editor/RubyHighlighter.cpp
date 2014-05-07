@@ -19,7 +19,6 @@ Highlighter::Highlighter(TextEditor::BaseTextDocument* parent)
                                                    TextEditor::C_KEYWORD,
                                                    TextEditor::C_TYPE,
                                                    TextEditor::C_FIELD,
-                                                   TextEditor::C_JS_SCOPE_VAR,
                                                    TextEditor::C_OPERATOR,
                                                    TextEditor::C_COMMENT,
                                                    TextEditor::C_DOXYGEN_COMMENT,
@@ -29,6 +28,14 @@ Highlighter::Highlighter(TextEditor::BaseTextDocument* parent)
     QTextCharFormat constantFormat = m_formats[Token::Type];
     constantFormat.setFontWeight(100);
     m_formats << constantFormat;
+
+    QTextCharFormat globalFormat = m_formats[Token::ClassField];
+    globalFormat.setFontWeight(100);
+    m_formats << globalFormat;
+
+    QTextCharFormat regexFormat = fontSettings.toTextCharFormat(TextEditor::C_JS_SCOPE_VAR);
+    regexFormat.setFontItalic(false);
+    m_formats << regexFormat;
 }
 
 void Highlighter::highlightBlock(const QString& text)

@@ -18,7 +18,8 @@ EditorFactory::EditorFactory(QObject* parent)
                               Constants::EditorId,
                               TextEditor::TextEditorActionHandler::Format
                               | TextEditor::TextEditorActionHandler::UnCommentSelection
-                              | TextEditor::TextEditorActionHandler::UnCollapseAll);
+                              | TextEditor::TextEditorActionHandler::UnCollapseAll
+                              | TextEditor::TextEditorActionHandler::FollowSymbolUnderCursor);
 }
 
 Core::IEditor* EditorFactory::createEditor()

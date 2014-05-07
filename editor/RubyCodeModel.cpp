@@ -75,6 +75,19 @@ QList<Symbol> CodeModel::allMethods() const
     return result;
 }
 
+QList<Symbol> CodeModel::allMethodsNamed(const QString& name) const
+{
+    QList<Symbol> result;
+    // FIXME: Replace this linear brute force approach
+    for (const SymbolGroup& group : m_symbols) {
+        for (const Symbol& symbol : group.symbols) {
+            if (symbol.name == name)
+                result << symbol;
+        }
+    }
+    return result;
+}
+
 }
 
 #include "RubyCodeModel.moc"

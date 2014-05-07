@@ -22,6 +22,7 @@ public:
 
     QList<Symbol> methodsIn(const QString& file) const;
     QList<Symbol> allMethods() const;
+    QList<Symbol> allMethodsNamed(const QString& name) const;
 
 public slots:
     void updateModel(const QString& file);

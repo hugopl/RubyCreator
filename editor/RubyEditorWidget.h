@@ -11,6 +11,10 @@ class EditorWidget : public TextEditor::BaseTextEditorWidget
 public:
     EditorWidget();
     TextEditor::BaseTextEditor* createEditor() override;
+
+    Link findLinkAt(const QTextCursor& cursor, bool, bool inNextSplit) override;
+private:
+    QRegExp m_wordRegex;
 };
 
 }

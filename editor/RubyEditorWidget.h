@@ -2,6 +2,7 @@
 #define RubyEditorWidget_h
 
 #include <texteditor/basetexteditor.h>
+#include <utils/uncommentselection.h>
 
 namespace Ruby {
 
@@ -13,8 +14,10 @@ public:
     TextEditor::BaseTextEditor* createEditor() override;
 
     Link findLinkAt(const QTextCursor& cursor, bool, bool inNextSplit) override;
+    void unCommentSelection() override;
 private:
     QRegExp m_wordRegex;
+    Utils::CommentDefinition m_commentDefinition;
 };
 
 }

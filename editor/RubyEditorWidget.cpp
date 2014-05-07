@@ -25,6 +25,10 @@ EditorWidget::EditorWidget()
     TextEditor::BaseTextDocument* baseDoc = baseTextDocument();
     baseDoc->setIndenter(new Indenter());
 
+    m_commentDefinition.multiLineStart.clear();
+    m_commentDefinition.multiLineEnd.clear();
+    m_commentDefinition.singleLine = QLatin1Char('#');
+
     new Highlighter(baseDoc);
 }
 
@@ -68,6 +72,11 @@ TextEditor::BaseTextEditorWidget::Link EditorWidget::findLinkAt(const QTextCurso
     link.targetFileName = symbols.last().file;
 
     return link;
+}
+
+void EditorWidget::unCommentSelection()
+{
+    Utils::unCommentSelection(this, m_commentDefinition);
 }
 
 }

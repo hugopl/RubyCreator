@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/rubysupport">
         <file>Ruby.mimetypes.xml</file>
+        <file>Ruby.png</file>
     </qresource>
 </RCC>

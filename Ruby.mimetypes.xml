@@ -1,5 +1,11 @@
 <?xml version="1.0"?>
 <mime-info xmlns='http://www.freedesktop.org/standards/shared-mime-info'>
+  <mime-type type="text/x-rubycreator-project">
+    <sub-class-of type="text/plain"/>
+    <comment>Ruby project file</comment>
+    <glob pattern="*.rubyproject"/>
+  </mime-type>
+
   <mime-type type="text/x-ruby">
     <sub-class-of type="text/plain"/>
     <comment>Ruby source file</comment>

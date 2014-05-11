@@ -37,8 +37,9 @@ plugin:addFiles([[
     editor/RubyScanner.cpp
     editor/RubySimpleScanner.cpp
 
-    projectmanager/RubyProjectManager.cpp
     projectmanager/RubyProject.cpp
+    projectmanager/RubyProjectManager.cpp
+    projectmanager/RubyProjectWizard.cpp
 
     RubyPlugin.cpp
 ]])

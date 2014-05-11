@@ -11,6 +11,7 @@ const char ProjectId[] = "Ruby.Project";
 const char EditorDisplayName[] = QT_TRANSLATE_NOOP("OpenWith::Editors", "Ruby Editor");
 
 const char MimeType[] = "text/x-ruby";
+const char ProjectMimeType[] = "text/x-rubycreator-project";
 
 }
 }

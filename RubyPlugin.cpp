@@ -4,6 +4,7 @@
 #include "editor/RubyEditorFactory.h"
 #include "editor/RubySymbolFilter.h"
 #include "projectmanager/RubyProjectManager.h"
+#include "projectmanager/RubyProjectWizard.h"
 
 #include <coreplugin/icore.h>
 #include <coreplugin/mimedatabase.h>
@@ -35,6 +36,7 @@ bool Plugin::initialize(const QStringList&, QString* errorString)
     }, "Ruby methods", 'm'));
     addAutoReleasedObject(new ProjectManager);
 
+    addAutoReleasedObject(new ProjectWizard);
     return true;
 }
 

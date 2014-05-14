@@ -9,7 +9,7 @@
 
 namespace Ruby {
 
-static const int TAB_SIZE = 4;
+static const int TAB_SIZE = 2;
 
 void Indenter::indentBlock(QTextDocument*, const QTextBlock& block, const QChar&, const TextEditor::TabSettings& settings)
 {

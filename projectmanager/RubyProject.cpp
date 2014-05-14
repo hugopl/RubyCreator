@@ -54,7 +54,7 @@ void Project::populateProject(const QDir& dir, ProjectExplorer::FolderNode* pare
 {
     using namespace ProjectExplorer;
 
-    static QStringList nameFilter = QStringList() << "*.rb";
+    static QStringList nameFilter = QStringList() << "*.rb" << "*.erb" << "config.ru" << "Gemfile" << "Rakefile";
     QList<FolderNode*> folders;
     QList<FileNode*> files;
 

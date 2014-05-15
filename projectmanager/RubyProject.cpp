@@ -17,6 +17,7 @@ Project::Project(ProjectManager* projectManager, const QString& fileName)
     , m_document(new Document)
     , m_nameFilter({"*.rb", "*.erb", "config.ru", "Gemfile", "Rakefile"})
 {
+    m_document->setFilePath(fileName);
     m_projectDir = QFileInfo(fileName).dir();
     m_rootNode = new ProjectNode(m_projectDir.dirName());
 

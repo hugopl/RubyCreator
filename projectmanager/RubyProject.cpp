@@ -58,10 +58,15 @@ void Project::populateProject()
     QSet<QString> oldFiles(m_files);
     m_files.clear();
     recursiveScanDirectory(m_projectDir, m_files);
-    emit fileListChanged();
 
-    removeNodes(oldFiles - m_files);
-    addNodes(m_files - oldFiles);
+    auto removedFiles = oldFiles - m_files;
+    auto addedFiles = m_files - oldFiles;
+
+    removeNodes(removedFiles);
+    addNodes(addedFiles);
+
+    if (removedFiles.size() || addedFiles.size())
+        emit fileListChanged();
 }
 
 void Project::recursiveScanDirectory(const QDir& dir, QSet<QString>& container)

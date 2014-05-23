@@ -5,6 +5,8 @@
 #include <projectexplorer/projectnodes.h>
 
 #include <QFileSystemWatcher>
+#include <QElapsedTimer>
+#include <QTimer>
 
 namespace Ruby {
 
@@ -25,6 +27,7 @@ public:
     QStringList files(FilesMode) const override;
 
 private slots:
+    void scheduleProjectScan();
     void populateProject();
 private:
     ProjectManager* m_projectManager;
@@ -37,6 +40,8 @@ private:
 
     const QStringList m_nameFilter;
 
+    QElapsedTimer m_lastProjectScan;
+    QTimer m_projectScanTimer;
 
     void recursiveScanDirectory(const QDir& dir, QSet<QString>& container);
     void addNodes(const QSet<QString>& nodes);

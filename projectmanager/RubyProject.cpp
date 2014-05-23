@@ -12,6 +12,8 @@
 
 namespace Ruby {
 
+const int MIN_TIME_BETWEEN_PROJECT_SCANS = 4500;
+
 Project::Project(ProjectManager* projectManager, const QString& fileName)
     : m_projectManager(projectManager)
     , m_document(new Document)
@@ -21,10 +23,13 @@ Project::Project(ProjectManager* projectManager, const QString& fileName)
     m_projectDir = QFileInfo(fileName).dir();
     m_rootNode = new ProjectNode(m_projectDir.dirName());
 
+    m_projectScanTimer.setSingleShot(true);
+    connect(&m_projectScanTimer, &QTimer::timeout, this, &Project::populateProject);
+
     populateProject();
     CodeModel::instance()->updateModels(files(AllFiles));
 
-    connect(&m_fsWatcher, &QFileSystemWatcher::directoryChanged, this, &Project::populateProject);
+    connect(&m_fsWatcher, &QFileSystemWatcher::directoryChanged, this, &Project::scheduleProjectScan);
 }
 
 
@@ -53,8 +58,22 @@ QStringList Project::files(FilesMode) const
     return QStringList(m_files.toList());
 }
 
+void Project::scheduleProjectScan()
+{
+    auto elapsedTime = m_lastProjectScan.elapsed();
+    if (elapsedTime < MIN_TIME_BETWEEN_PROJECT_SCANS) {
+        if (!m_projectScanTimer.isActive()) {
+            m_projectScanTimer.setInterval(MIN_TIME_BETWEEN_PROJECT_SCANS - elapsedTime);
+            m_projectScanTimer.start();
+        }
+    } else {
+        populateProject();
+    }
+}
+
 void Project::populateProject()
 {
+    m_lastProjectScan.start();
     QSet<QString> oldFiles(m_files);
     m_files.clear();
     recursiveScanDirectory(m_projectDir, m_files);

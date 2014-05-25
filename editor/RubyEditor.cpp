@@ -39,7 +39,7 @@ void Editor::updateCodeModel()
     QByteArray textData = baseTextDocument()->plainText().toUtf8();
     QBuffer buffer(&textData);
     buffer.open(QBuffer::ReadOnly);
-    CodeModel::instance()->updateModel(document()->filePath(), buffer);
+    CodeModel::instance()->updateFile(document()->filePath(), buffer);
 }
 
 }

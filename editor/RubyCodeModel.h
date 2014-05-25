@@ -20,15 +20,16 @@ public:
     CodeModel(const CodeModel&) = delete;
 
     static CodeModel* instance();
+    void removeSymbolsFrom(const QString& file);
+    void addFile(const QString& file);
+    void addFiles(const QStringList& files);
+    // pass a QIODevice because the file may not be saved on file system.
+    void updateFile(const QString& fileName, QIODevice &contents);
 
     QList<Symbol> methodsIn(const QString& file) const;
     QList<Symbol> allMethods() const;
     QList<Symbol> allMethodsNamed(const QString& name) const;
 
-public slots:
-    // pass a QIODevice because the file may not be saved on file system.
-    void updateModel(const QString& fileName, QIODevice &contents);
-    void updateModels(const QStringList& files);
 
 private:
     QHash<QString, SymbolGroup> m_symbols;

@@ -27,28 +27,37 @@ CodeModel* CodeModel::instance()
     return &model;
 }
 
-void CodeModel::updateModels(const QStringList& files)
+void CodeModel::removeSymbolsFrom(const QString& file)
+{
+    m_symbols.remove(file);
+}
+
+void CodeModel::addFile(const QString& file)
+{
+    QFileInfo info(file);
+    SymbolGroup& group = m_symbols[file];
+
+    if (!group.lastUpdate.isNull() && group.lastUpdate > info.lastModified())
+        return;
+
+    QFile fp(file);
+    if (!fp.open(QFile::ReadOnly))
+        return;
+    updateFile(file, fp);
+}
+
+void CodeModel::addFiles(const QStringList& files)
 {
     QElapsedTimer timer;
     timer.start();
 
-    for (const QString& file : files) {
-        QFileInfo info(file);
-        SymbolGroup& group = m_symbols[file];
-
-        if (!group.lastUpdate.isNull() && group.lastUpdate > info.lastModified())
-            continue;
-
-        QFile fp(file);
-        if (!fp.open(QFile::ReadOnly))
-            continue;
-        updateModel(file, fp);
-    }
+    for (const QString& file : files)
+        addFile(file);
 
     qDebug() << "Code model updated in" << timer.elapsed() << "ms";
 }
 
-void CodeModel::updateModel(const QString& fileName, QIODevice& contents)
+void CodeModel::updateFile(const QString& fileName, QIODevice& contents)
 {
     SimpleScanner scanner(&contents);
 

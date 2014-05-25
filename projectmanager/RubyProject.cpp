@@ -27,7 +27,7 @@ Project::Project(ProjectManager* projectManager, const QString& fileName)
     connect(&m_projectScanTimer, &QTimer::timeout, this, &Project::populateProject);
 
     populateProject();
-    CodeModel::instance()->updateModels(files(AllFiles));
+    CodeModel::instance()->addFiles(files(AllFiles));
 
     connect(&m_fsWatcher, &QFileSystemWatcher::directoryChanged, this, &Project::scheduleProjectScan);
 }
@@ -83,6 +83,11 @@ void Project::populateProject()
 
     removeNodes(removedFiles);
     addNodes(addedFiles);
+
+    for (const QString& file : removedFiles)
+        CodeModel::instance()->removeSymbolsFrom(file);
+    for (const QString& file : addedFiles)
+        CodeModel::instance()->addFile(file);
 
     if (removedFiles.size() || addedFiles.size())
         emit fileListChanged();

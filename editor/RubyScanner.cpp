@@ -147,7 +147,7 @@ Token Scanner::onDefaultState()
     if (first == QLatin1Char('\'') || first == QLatin1Char('\"'))
         return readStringLiteral(first);
 
-    if (first.isLetter() || first == QLatin1Char('_') || first == QLatin1Char('@') || first == QLatin1Char('$'))
+    if (first.isLetter() || first == QLatin1Char('_') || first == QLatin1Char('@') || first == QLatin1Char('$') || first == QLatin1Char(':'))
         return readIdentifier();
 
     if (first.isDigit())
@@ -255,6 +255,8 @@ Token Scanner::readIdentifier()
     Token::Kind kind = Token::Identifier;
     if (value[0] == QLatin1Char('@')) {
         kind = Token::ClassField;
+    } else if (value.length() > 1 && value.at(0) == QLatin1Char(':')) {
+        kind = Token::Symbol;
     } else if (value.at(0) == QLatin1Char('$')) {
         kind = Token::Global;
     } else if (value == QLatin1String("self")) {

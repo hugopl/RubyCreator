@@ -54,6 +54,7 @@ public:
         Constant,
         Global,
         Regexp,
+        Symbol,
 
         EndOfBlock
     };

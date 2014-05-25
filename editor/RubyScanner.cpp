@@ -397,9 +397,9 @@ Token Scanner::readWhiteSpace()
   */
 Token Scanner::readOperator()
 {
-    const QString EXCLUDED_CHARS = QLatin1String("\'\"_#");
+    const QString operators = QStringLiteral("[]{}()<=>+-/*%!");
     QChar ch = m_src.peek();
-    while (ch.isPunct() && !EXCLUDED_CHARS.contains(ch)) {
+    while (operators.contains(ch)) {
         m_src.move();
         ch = m_src.peek();
     }

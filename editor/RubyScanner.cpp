@@ -232,7 +232,7 @@ Token Scanner::readMultiLineStringLiteral(QChar quoteChar)
 Token Scanner::readIdentifier()
 {
     QChar ch = m_src.peek();
-    while (ch.isLetterOrNumber() || (ch == QLatin1Char('_'))) {
+    while (ch.isLetterOrNumber() || ch == QLatin1Char('_') || ch == QLatin1Char('?') || ch == QLatin1Char('!')) {
         m_src.move();
         ch = m_src.peek();
     }

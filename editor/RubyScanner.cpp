@@ -31,6 +31,7 @@
 
 #include <QString>
 #include <QSet>
+#include <QDebug>
 
 namespace Ruby {
 
@@ -126,7 +127,7 @@ Token Scanner::onDefaultState()
         return { Token::Whitespace, m_src.anchor(), 2 };
     }
 
-    if (first == QLatin1Char('.') && m_src.peek().isDigit())
+    if (first.isDigit())
         return readFloatNumber();
 
     if (first == QLatin1Char('\'') || first == QLatin1Char('\"'))
@@ -315,7 +316,8 @@ Token Scanner::readFloatNumber()
         State_FRACTION,
         State_EXPONENT
     } state;
-    state = (m_src.peek(-1) == QLatin1Char('.')) ? State_FRACTION : State_INTEGER;
+    state = State_INTEGER;
+    bool hadFraction = false;
 
     for (;;) {
         QChar ch = m_src.peek();
@@ -323,10 +325,13 @@ Token Scanner::readFloatNumber()
             break;
 
         if (state == State_INTEGER) {
-            if (ch == QLatin1Char('.'))
+            if (ch == QLatin1Char('.') && m_src.peek(1).isDigit() && !hadFraction) {
+                m_src.move();
+                hadFraction = true;
                 state = State_FRACTION;
-            else if (!ch.isDigit())
+            } else if (!ch.isDigit()) {
                 break;
+            }
         } else if (state == State_FRACTION) {
             if (ch == QLatin1Char('e') || ch == QLatin1Char('E')) {
                 QChar next = m_src.peek(1);
@@ -347,11 +352,6 @@ Token Scanner::readFloatNumber()
         }
         m_src.move();
     }
-
-    QChar ch = m_src.peek();
-    if ((state == State_INTEGER && (ch == QLatin1Char('l') || ch == QLatin1Char('L')))
-            || (ch == QLatin1Char('j') || ch == QLatin1Char('J')))
-        m_src.move();
 
     return { Token::Number, m_src.anchor(), m_src.length() };
 }

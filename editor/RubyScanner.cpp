@@ -79,22 +79,12 @@ static const char* const RUBY_KEYWORDS[] = {
     "yield"
 };
 
-/// Copies identifiers from array to QSet
-static void copyIdentifiers(const char * const words[], size_t bytesCount, QSet<QString> &result)
-{
-    const size_t count = bytesCount / sizeof(const char * const);
-    for (size_t i = 0; i < count; ++i)
-        result.insert(QLatin1String(words[i]));
-}
+static const int N_KEYWORDS = std::extent<decltype(RUBY_KEYWORDS)>::value;
 
-QSet<QString> Scanner::m_keywords;
-
-Scanner::Scanner(const QChar* text, const int length)
-    : m_src(text, length)
+Scanner::Scanner(const QString* text)
+    : m_src(text)
     , m_state(0)
 {
-    if (m_keywords.empty())
-        copyIdentifiers(RUBY_KEYWORDS, sizeof(RUBY_KEYWORDS), m_keywords);
 }
 
 void Scanner::setState(int state)
@@ -124,11 +114,6 @@ Token Scanner::read()
     default:
         return onDefaultState();
     }
-}
-
-QString Scanner::value(const Token& tk) const
-{
-    return m_src.value(tk.position, tk.length);
 }
 
 Token Scanner::onDefaultState()
@@ -250,10 +235,10 @@ Token Scanner::readIdentifier()
         m_src.move();
         ch = m_src.peek();
     }
-    QString value = m_src.value();
+    QStringRef value = m_src.value();
 
     Token::Kind kind = Token::Identifier;
-    if (value[0] == QLatin1Char('@')) {
+    if (value.at(0) == QLatin1Char('@')) {
         kind = Token::ClassField;
     } else if (value.length() > 1 && value.at(0) == QLatin1Char(':')) {
         kind = Token::Symbol;
@@ -261,12 +246,12 @@ Token Scanner::readIdentifier()
         kind = Token::Global;
     } else if (value == QLatin1String("self")) {
         kind = Token::ClassField;
-    } else if (m_keywords.contains(value)) {
+    } else if (std::find(&RUBY_KEYWORDS[0], &RUBY_KEYWORDS[N_KEYWORDS], value) != &RUBY_KEYWORDS[N_KEYWORDS]) {
         kind = Token::Keyword;
-    } else if (value[0].isUpper()) {
+    } else if (value.at(0).isUpper()) {
         kind = Token::Constant;
-        for (const QChar& ch : value) {
-            if (ch.isLower()) {
+        for (int i = 0; i < value.length(); ++i) {
+            if (value.at(i).isLower()) {
                 kind = Token::Type;
                 break;
             }

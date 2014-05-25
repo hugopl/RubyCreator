@@ -73,12 +73,11 @@ public:
         State_MultiLineString
     };
 
-    Scanner(const QChar* text, const int length);
+    Scanner(const QString* text);
 
     void setState(int state);
     int state() const;
     Token read();
-    QString value(const Token& tk) const;
 
 private:
     Token onDefaultState();
@@ -101,7 +100,6 @@ private:
 
     SourceCodeStream m_src;
     int m_state;
-    static QSet<QString> m_keywords;
 
     Scanner(const Scanner&) = delete;
 };

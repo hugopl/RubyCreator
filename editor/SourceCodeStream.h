@@ -37,11 +37,12 @@ namespace Ruby {
 class SourceCodeStream
 {
 public:
-    SourceCodeStream(const QChar* text, int length)
-        :m_text(text)
-        ,m_textLength(length)
-        ,m_position(0)
-        ,m_markedPosition(0)
+    SourceCodeStream(const QString* text)
+        : m_text(text)
+        , m_textPtr(m_text->data())
+        , m_textLength(text->length())
+        , m_position(0)
+        , m_markedPosition(0)
     {}
 
     inline void setAnchor()
@@ -74,22 +75,22 @@ public:
         int pos = m_position + offset;
         if (pos >= m_textLength)
             return QLatin1Char('\0');
-        return m_text[pos];
+        return m_textPtr[pos];
     }
 
-    inline QString value() const
+    inline QStringRef value() const
     {
-        const QChar* start = m_text + m_markedPosition;
-        return QString(start, length());
+        return QStringRef(m_text, m_markedPosition, length());
     }
 
-    inline QString value(int begin, int length) const
+    inline QStringRef value(int begin, int length) const
     {
-        return QString(m_text + begin, length);
+        return QStringRef(m_text, begin, length);
     }
 
 private:
-    const QChar* m_text;
+    const QString* m_text;
+    const QChar* m_textPtr;
     const int m_textLength;
     int m_position;
     int m_markedPosition;

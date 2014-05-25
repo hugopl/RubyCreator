@@ -36,7 +36,7 @@ void Highlighter::highlightBlock(const QString& text)
 
 int Highlighter::highlightLine(const QString& text, int state)
 {
-    Scanner scanner(text.constData(), text.size());
+    Scanner scanner(&text);
     scanner.setState(state);
 
     Token token;

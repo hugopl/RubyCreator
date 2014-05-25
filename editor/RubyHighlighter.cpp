@@ -11,31 +11,18 @@ namespace Ruby {
 
 Highlighter::Highlighter(TextEditor::BaseTextDocument* parent)
     : TextEditor::SyntaxHighlighter(parent)
+    , m_formats(Token::EndOfBlock)
 {
-    const TextEditor::FontSettings fontSettings = TextEditor::TextEditorSettings::fontSettings();
-    m_formats = fontSettings.toTextCharFormats({
-                                                   TextEditor::C_NUMBER,
-                                                   TextEditor::C_STRING,
-                                                   TextEditor::C_KEYWORD,
-                                                   TextEditor::C_TYPE,
-                                                   TextEditor::C_FIELD,
-                                                   TextEditor::C_OPERATOR,
-                                                   TextEditor::C_COMMENT,
-                                                   TextEditor::C_DOXYGEN_COMMENT,
-                                                   TextEditor::C_TEXT,
-                                                   TextEditor::C_VISUAL_WHITESPACE
-                                               });
-    QTextCharFormat constantFormat = m_formats[Token::Type];
-    constantFormat.setFontWeight(100);
-    m_formats << constantFormat;
-
-    QTextCharFormat globalFormat = m_formats[Token::ClassField];
-    globalFormat.setFontWeight(100);
-    m_formats << globalFormat;
-
-    QTextCharFormat regexFormat = fontSettings.toTextCharFormat(TextEditor::C_JS_SCOPE_VAR);
-    regexFormat.setFontItalic(false);
-    m_formats << regexFormat;
+    m_formats[Token::Keyword].setFontWeight(100);
+    m_formats[Token::String].setForeground(QColor(191, 3, 3));
+    m_formats[Token::Comment].setForeground(QColor(137, 136, 135));
+    m_formats[Token::Type].setForeground(QColor(0, 87, 174));
+    m_formats[Token::Constant].setFontWeight(100);
+    m_formats[Token::Constant].setForeground(QColor(187, 17, 136));
+    m_formats[Token::Global].setForeground(QColor(192, 0, 0));
+    m_formats[Token::Regexp].setForeground(QColor(74, 87, 4));
+    m_formats[Token::ClassField].setForeground(QColor(0, 110, 40));
+    m_formats[Token::Number].setForeground(QColor(176, 128, 0));
 }
 
 void Highlighter::highlightBlock(const QString& text)

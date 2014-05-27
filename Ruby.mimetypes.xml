@@ -10,6 +10,7 @@
     <sub-class-of type="text/plain"/>
     <comment>Ruby source file</comment>
     <glob pattern="*.rb"/>
+    <glob pattern="*.rake"/>
     <glob pattern="Gemfile"/>
     <glob pattern="Rakefile"/>
   </mime-type>

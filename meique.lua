@@ -12,6 +12,7 @@ _, _, QTCREATOR_VERSION = string.find(s, "QTCREATOR_VERSION = (3.%d.%d+)")
 qtCore = findPackage("Qt5Core")
 qtGui = findPackage("Qt5Gui")
 qtWidgets = findPackage("Qt5Widgets")
+qtTest = findPackage("Qt5Test")
 
 plugin = Library:new("RubySupport")
 plugin:useQtAutomoc()
@@ -57,3 +58,5 @@ Core
 TextEditor
 ProjectExplorer
 ]])
+
+addSubdirectory("tests")

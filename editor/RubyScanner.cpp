@@ -133,7 +133,7 @@ Token Scanner::onDefaultState()
     if (first == QLatin1Char('\'') || first == QLatin1Char('\"'))
         return readStringLiteral(first);
 
-    if (first.isLetter() || first == QLatin1Char('_') || first == QLatin1Char('@') || first == QLatin1Char('$') || first == QLatin1Char(':'))
+    if (first.isLetter() || first == QLatin1Char('_') || first == QLatin1Char('@') || first == QLatin1Char('$') || (first == QLatin1Char(':') && m_src.peek() != QLatin1Char(':')))
         return readIdentifier();
 
     if (first.isDigit())
@@ -397,7 +397,7 @@ Token Scanner::readWhiteSpace()
   */
 Token Scanner::readOperator()
 {
-    const QString operators = QStringLiteral("[]{}()<=>+-/*%!");
+    const QString operators = QStringLiteral(":[]{}()<=>+-/*%!");
     QChar ch = m_src.peek();
     while (operators.contains(ch)) {
         m_src.move();

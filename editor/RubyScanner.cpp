@@ -139,11 +139,8 @@ Token Scanner::onDefaultState()
     if (first.isDigit())
         return readNumber();
 
-    if (first == QLatin1Char('#')) {
-        if (m_src.peek() == QLatin1Char('#'))
-            return readDoxygenComment();
+    if (first == QLatin1Char('#'))
         return readComment();
-    }
 
     if (first == QLatin1Char('/'))
         return readRegexp();
@@ -367,19 +364,6 @@ Token Scanner::readComment()
         ch = m_src.peek();
     }
     return { Token::Comment, m_src.anchor(), m_src.length() };
-}
-
-/**
-  reads single-line python doxygen comment, started with "##"
-  */
-Token Scanner::readDoxygenComment()
-{
-    QChar ch = m_src.peek();
-    while (ch != QLatin1Char('\n') && !ch.isNull()) {
-        m_src.move();
-        ch = m_src.peek();
-    }
-    return { Token::Doxygen, m_src.anchor(), m_src.length() };
 }
 
 /**

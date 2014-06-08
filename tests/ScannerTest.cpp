@@ -17,7 +17,6 @@ QDebug& operator<<(QDebug& s, Token::Kind t)
     case Token::ClassField: str = "ClassField"; break;
     case Token::Operator: str = "Operator"; break;
     case Token::Comment: str = "Comment"; break;
-    case Token::Doxygen: str = "Doxygen"; break;
     case Token::Identifier: str = "Identifier"; break;
     case Token::Whitespace: str = "Whitespace"; break;
     case Token::Constant: str = "Constant"; break;

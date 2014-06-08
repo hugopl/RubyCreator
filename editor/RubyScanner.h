@@ -48,7 +48,6 @@ public:
         ClassField,
         Operator,
         Comment,
-        Doxygen,
         Identifier,
         Whitespace,
         Constant,

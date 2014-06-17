@@ -29,7 +29,9 @@ QDebug& operator<<(QDebug& s, Token::Kind t)
     return s << str;
 }
 
-QVector<Token::Kind> tokenize(const QString& code, bool debug = false)
+typedef QVector<Token::Kind> Tokens;
+
+Tokens tokenize(const QString& code, bool debug = false)
 {
     Scanner scanner(&code);
     QVector<Token::Kind> tokens;
@@ -44,7 +46,7 @@ QVector<Token::Kind> tokenize(const QString& code, bool debug = false)
 
 void TestScanner::namespaceIsNotASymbol()
 {
-    QVector<Token::Kind> expectedTokens = { Token::Type, Token::Operator, Token::Type, Token::Whitespace, Token::Identifier};
+    Tokens expectedTokens = { Token::Type, Token::Operator, Token::Type, Token::Whitespace, Token::Identifier};
     QCOMPARE(tokenize("Foo::Bar oi"), expectedTokens);
 }
 

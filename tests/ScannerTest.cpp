@@ -72,7 +72,14 @@ void TestScanner::def()
     expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::KeywordSelf, Token::OperatorDot, Token::Method, Token::Whitespace,
                               Token::Parameter};
     QCOMPARE(tokenize("def self.foo bar"), expectedTokens);
-
+    expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::Operator, Token::Parameter, Token::Operator};
+    QCOMPARE(tokenize("def foo(bar)"), expectedTokens);
+    expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::Operator, Token::Parameter,
+                       Token::OperatorComma, Token::Whitespace, Token::Operator, Token::Parameter, Token::Operator};
+    QCOMPARE(tokenize("def foo(bar, &tender)"), expectedTokens);
+    expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::Whitespace, Token::Operator, Token::Parameter,
+                       Token::OperatorComma, Token::Whitespace, Token::Parameter};
+    QCOMPARE(tokenize("def foo &bar, tender"), expectedTokens);
 }
 
 QTEST_APPLESS_MAIN(TestScanner)

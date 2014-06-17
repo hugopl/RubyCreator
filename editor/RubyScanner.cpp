@@ -82,13 +82,14 @@ static const char* const RUBY_KEYWORDS[] = {
 
 static const int N_KEYWORDS = std::extent<decltype(RUBY_KEYWORDS)>::value;
 
-#define METHOD_PATTERN "15_(2_)+(16_(2_)*18_(2_)*)?"
+#define METHOD_PATTERN "15_2_(16_(2_)?18_(2_)?)?"
 
 Scanner::Scanner(const QString* text)
     : m_src(text)
     , m_state(0)
     , m_methodPattern(METHOD_PATTERN "$")
-    , m_parameterPattern(METHOD_PATTERN "8_(2_)+(9_(2_)*(17_)*(2_)*)*$")
+    //                                   METHOD  (          &        parameter,         &
+    , m_parameterPattern(METHOD_PATTERN "8_(2_)?(3_)?((2_)?(3_)?(2_)?9_(2_)?(17_)?(2_)?(3_)?(2_)?)*$")
 {
 }
 

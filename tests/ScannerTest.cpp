@@ -50,5 +50,11 @@ void TestScanner::namespaceIsNotASymbol()
     QCOMPARE(tokenize("Foo::Bar oi"), expectedTokens);
 }
 
+void TestScanner::symbolOnArray()
+{
+    Tokens expectedTokens = { Token::Identifier, Token::Operator, Token::Symbol, Token::Operator };
+    QCOMPARE(tokenize("foo[:bar]"), expectedTokens);
+}
+
 QTEST_APPLESS_MAIN(TestScanner)
 #include "TestScanner.moc"

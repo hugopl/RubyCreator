@@ -91,7 +91,7 @@ private:
     Token readComment();
     Token readDoxygenComment();
     Token readWhiteSpace();
-    Token readOperator();
+    Token readOperator(const QChar& first);
 
     void clearState();
     void saveState(State state, QChar savedData);

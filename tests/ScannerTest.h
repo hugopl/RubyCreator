@@ -8,6 +8,7 @@ class TestScanner: public QObject
 Q_OBJECT
 private slots:
     void namespaceIsNotASymbol();
+    void symbolOnArray();
 };
 
 #endif

@@ -148,7 +148,7 @@ Token Scanner::onDefaultState()
     if (first.isSpace())
         return readWhiteSpace();
 
-    return readOperator();
+    return readOperator(first);
 }
 
 bool Scanner::checkEscapeSequence()
@@ -379,11 +379,14 @@ Token Scanner::readWhiteSpace()
 /**
   reads punctuation symbols, excluding some special
   */
-Token Scanner::readOperator()
+Token Scanner::readOperator(const QChar& first)
 {
-    const QString operators = QStringLiteral(":[]{}()<=>+-/*%!");
+    const QString operators = QStringLiteral("[]{}()<=>+-/*%!");
+    const QString colon = QStringLiteral(":");
+    const QString& acceptedChars = first == QLatin1Char(':') ? colon : operators;
     QChar ch = m_src.peek();
-    while (operators.contains(ch)) {
+
+    while (acceptedChars.contains(ch)) {
         m_src.move();
         ch = m_src.peek();
     }

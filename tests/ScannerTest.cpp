@@ -13,9 +13,14 @@ QDebug& operator<<(QDebug& s, Token::Kind t)
     case Token::Number: str = "Number"; break;
     case Token::String: str = "String"; break;
     case Token::Keyword: str = "Keyword"; break;
+    case Token::KeywordDef: str = "Keyword-Def"; break;
+    case Token::KeywordSelf: str = "Keyword-Def"; break;
+    case Token::Method: str = "Method"; break;
+    case Token::Parameter: str = "Parameter"; break;
     case Token::Type: str = "Type"; break;
     case Token::ClassField: str = "ClassField"; break;
     case Token::Operator: str = "Operator"; break;
+    case Token::OperatorComma: str = "OperatorComma"; break;
     case Token::Comment: str = "Comment"; break;
     case Token::Identifier: str = "Identifier"; break;
     case Token::Whitespace: str = "Whitespace"; break;
@@ -54,6 +59,20 @@ void TestScanner::symbolOnArray()
 {
     Tokens expectedTokens = { Token::Identifier, Token::Operator, Token::Symbol, Token::Operator };
     QCOMPARE(tokenize("foo[:bar]"), expectedTokens);
+}
+
+void TestScanner::def()
+{
+    Tokens expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::Whitespace,
+                              Token::Parameter, Token::OperatorComma, Token::Whitespace, Token::Parameter};
+    QCOMPARE(tokenize("def foo bar, tender"), expectedTokens);
+    expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::Whitespace,
+                              Token::Parameter, Token::Whitespace, Token::OperatorComma, Token::Whitespace, Token::Parameter};
+    QCOMPARE(tokenize("def foo bar  , tender"), expectedTokens);
+    expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::KeywordSelf, Token::OperatorDot, Token::Method, Token::Whitespace,
+                              Token::Parameter};
+    QCOMPARE(tokenize("def self.foo bar"), expectedTokens);
+
 }
 
 QTEST_APPLESS_MAIN(TestScanner)

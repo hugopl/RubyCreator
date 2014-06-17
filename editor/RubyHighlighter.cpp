@@ -14,6 +14,8 @@ Highlighter::Highlighter(TextEditor::BaseTextDocument* parent)
     , m_formats(Token::EndOfBlock)
 {
     m_formats[Token::Keyword].setFontWeight(100);
+    m_formats[Token::KeywordDef] = m_formats[Token::Keyword];
+    m_formats[Token::KeywordSelf] = m_formats[Token::Keyword];
     m_formats[Token::String].setForeground(QColor(191, 3, 3));
     m_formats[Token::Comment].setForeground(QColor(137, 136, 135));
     m_formats[Token::Type].setForeground(QColor(0, 87, 174));
@@ -24,6 +26,10 @@ Highlighter::Highlighter(TextEditor::BaseTextDocument* parent)
     m_formats[Token::ClassField].setForeground(QColor(0, 110, 40));
     m_formats[Token::Number].setForeground(QColor(176, 128, 0));
     m_formats[Token::Symbol].setForeground(QColor(212, 0, 0));
+    m_formats[Token::Method].setForeground(QColor(74, 87, 4));
+    m_formats[Token::Method].setFontWeight(100);
+    m_formats[Token::Parameter].setFontItalic(true);
+    m_formats[Token::Parameter].setForeground(QColor(0, 87, 174));
 }
 
 void Highlighter::highlightBlock(const QString& text)

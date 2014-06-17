@@ -9,6 +9,7 @@ Q_OBJECT
 private slots:
     void namespaceIsNotASymbol();
     void symbolOnArray();
+    void def();
 };
 
 #endif

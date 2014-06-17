@@ -82,9 +82,13 @@ static const char* const RUBY_KEYWORDS[] = {
 
 static const int N_KEYWORDS = std::extent<decltype(RUBY_KEYWORDS)>::value;
 
+#define METHOD_PATTERN "15_(2_)+(16_(2_)*18_(2_)*)?"
+
 Scanner::Scanner(const QString* text)
     : m_src(text)
     , m_state(0)
+    , m_methodPattern(METHOD_PATTERN "$")
+    , m_parameterPattern(METHOD_PATTERN "8_(2_)+(9_(2_)*(17_)*(2_)*)*$")
 {
 }
 
@@ -122,33 +126,38 @@ Token Scanner::onDefaultState()
     QChar first = m_src.peek();
     m_src.move();
 
+    Token token;
+
     if (first == QLatin1Char('\\') && m_src.peek() == QLatin1Char('\n')) {
         m_src.move();
-        return { Token::Whitespace, m_src.anchor(), 2 };
+        token = { Token::Whitespace, m_src.anchor(), 2 };
+    } else if (first.isDigit()) {
+        token = readFloatNumber();
+    } if (first == QLatin1Char('\'') || first == QLatin1Char('\"')) {
+        token = readStringLiteral(first);
+    } else if (first.isLetter() || first == QLatin1Char('_') || first == QLatin1Char('@')
+               || first == QLatin1Char('$') || (first == QLatin1Char(':') && m_src.peek() != QLatin1Char(':'))) {
+        token = readIdentifier();
+    } else if (first.isDigit()) {
+        token = readNumber();
+    } else if (first == QLatin1Char('#')) {
+        token = readComment();
+    } else if (first == QLatin1Char('/')) {
+        token = readRegexp();
+    } else if (first.isSpace()) {
+        token = readWhiteSpace();
+    } else if (first == QLatin1Char(',')) {
+        token = { Token::OperatorComma, m_src.anchor(), m_src.length() };;
+    } else if (first == QLatin1Char('.')) {
+        token = { Token::OperatorDot, m_src.anchor(), m_src.length() };;
+    } else {
+        token = readOperator(first);
     }
 
-    if (first.isDigit())
-        return readFloatNumber();
+    m_tokenSequence += QString::number(token.kind);
+    m_tokenSequence += QLatin1Char('_');
 
-    if (first == QLatin1Char('\'') || first == QLatin1Char('\"'))
-        return readStringLiteral(first);
-
-    if (first.isLetter() || first == QLatin1Char('_') || first == QLatin1Char('@') || first == QLatin1Char('$') || (first == QLatin1Char(':') && m_src.peek() != QLatin1Char(':')))
-        return readIdentifier();
-
-    if (first.isDigit())
-        return readNumber();
-
-    if (first == QLatin1Char('#'))
-        return readComment();
-
-    if (first == QLatin1Char('/'))
-        return readRegexp();
-
-    if (first.isSpace())
-        return readWhiteSpace();
-
-    return readOperator(first);
+    return token;
 }
 
 bool Scanner::checkEscapeSequence()
@@ -243,7 +252,9 @@ Token Scanner::readIdentifier()
     } else if (value.at(0) == QLatin1Char('$')) {
         kind = Token::Global;
     } else if (value == QLatin1String("self")) {
-        kind = Token::ClassField;
+        kind = Token::KeywordSelf;
+    } else if (value == QLatin1String("def")) {
+        kind = Token::KeywordDef;
     } else if (std::find(&RUBY_KEYWORDS[0], &RUBY_KEYWORDS[N_KEYWORDS], value) != &RUBY_KEYWORDS[N_KEYWORDS]) {
         kind = Token::Keyword;
     } else if (value.at(0).isUpper()) {
@@ -255,6 +266,12 @@ Token Scanner::readIdentifier()
             }
         }
     }
+
+    if (kind == Token::Identifier && m_methodPattern.indexIn(m_tokenSequence) != -1)
+        kind = Token::Method;
+    if (kind == Token::Identifier && m_parameterPattern.indexIn(m_tokenSequence) != -1)
+        kind = Token::Parameter;
+
     return { kind, m_src.anchor(), m_src.length() };
 }
 

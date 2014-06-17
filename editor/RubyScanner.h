@@ -32,6 +32,7 @@
 
 #include "SourceCodeStream.h"
 
+#include <QRegExp>
 #include <QString>
 #include <QSet>
 
@@ -41,19 +42,25 @@ class Token {
 public:
     enum Kind
     {
-        Number = 0,
-        String,
-        Keyword,
-        Type,
-        ClassField,
-        Operator,
-        Comment,
-        Identifier,
-        Whitespace,
-        Constant,
-        Global,
-        Regexp,
-        Symbol,
+        Number        = 0,
+        String        = 1,
+        Whitespace    = 2,
+        Operator      = 3,
+        Comment       = 4,
+        Identifier    = 5,
+        Regexp        = 6,
+        Symbol        = 7,
+        Method        = 8,
+        Parameter     = 9,
+        Type          = 10,
+        ClassField    = 11,
+        Constant      = 12,
+        Global        = 13,
+        Keyword       = 14,
+        KeywordDef    = 15,
+        KeywordSelf   = 16,
+        OperatorComma = 17,
+        OperatorDot   = 18,
 
         EndOfBlock
     };
@@ -99,6 +106,10 @@ private:
 
     SourceCodeStream m_src;
     int m_state;
+
+    QString m_tokenSequence;
+    QRegExp m_methodPattern;
+    QRegExp m_parameterPattern;
 
     Scanner(const Scanner&) = delete;
 };

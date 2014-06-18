@@ -15,21 +15,21 @@ Highlighter::Highlighter(TextEditor::BaseTextDocument* parent)
 {
     m_formats[Token::Keyword].setFontWeight(100);
     m_formats[Token::KeywordDef] = m_formats[Token::Keyword];
-    m_formats[Token::KeywordSelf] = m_formats[Token::Keyword];
-    m_formats[Token::String].setForeground(QColor(191, 3, 3));
-    m_formats[Token::Comment].setForeground(QColor(137, 136, 135));
-    m_formats[Token::Type].setForeground(QColor(0, 87, 174));
-    m_formats[Token::Constant].setFontWeight(100);
-    m_formats[Token::Constant].setForeground(QColor(187, 17, 136));
-    m_formats[Token::Global].setForeground(QColor(192, 0, 0));
-    m_formats[Token::Regexp].setForeground(QColor(74, 87, 4));
-    m_formats[Token::ClassField].setForeground(QColor(0, 110, 40));
-    m_formats[Token::Number].setForeground(QColor(176, 128, 0));
-    m_formats[Token::Symbol].setForeground(QColor(212, 0, 0));
-    m_formats[Token::Method].setForeground(QColor(0, 87, 174));
+    m_formats[Token::KeywordSelf].setForeground(QColor(68, 85, 136));
+    m_formats[Token::KeywordSelf].setFontWeight(100);
+    m_formats[Token::String].setForeground(QColor(208, 16, 64));
+    m_formats[Token::Comment].setForeground(QColor(153, 153, 136));
+    m_formats[Token::Type].setForeground(QColor(0, 128, 128));
+    m_formats[Token::Constant].setForeground(QColor(0, 128, 128));
+    m_formats[Token::Global].setForeground(QColor(0, 128, 128));
+    m_formats[Token::Regexp].setForeground(QColor(0, 153, 38));
+    m_formats[Token::ClassField].setForeground(QColor(0, 128, 128));
+    m_formats[Token::Number].setForeground(QColor(0, 153, 153));
+    m_formats[Token::Symbol].setForeground(QColor(153, 0, 115));
+    m_formats[Token::Method].setForeground(QColor(153, 0, 0));
     m_formats[Token::Method].setFontWeight(100);
     m_formats[Token::Parameter].setFontItalic(true);
-    m_formats[Token::Parameter].setForeground(QColor(74, 87, 4));
+    m_formats[Token::Parameter].setForeground(QColor(0, 134, 179));
 }
 
 void Highlighter::highlightBlock(const QString& text)

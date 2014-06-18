@@ -399,8 +399,12 @@ Token Scanner::readWhiteSpace()
   */
 Token Scanner::readOperator(const QChar& first)
 {
-    const QString operators = QStringLiteral("[]{}()<=>+-/*%!");
-    const QString colon = QStringLiteral(":");
+    static const QString singleCharOperators = QStringLiteral("[]{}()");
+    if (singleCharOperators.contains(first))
+        return { Token::Operator, m_src.anchor(), m_src.length() };
+
+    static const QString operators = QStringLiteral("<=>+-/*%!");
+    static const QString colon = QStringLiteral(":");
     const QString& acceptedChars = first == QLatin1Char(':') ? colon : operators;
     QChar ch = m_src.peek();
 

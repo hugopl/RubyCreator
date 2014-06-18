@@ -42,13 +42,27 @@ void Highlighter::highlightBlock(const QString& text)
 
 int Highlighter::highlightLine(const QString& text, int state)
 {
+    m_currentBlockParentheses.clear();
+
     Scanner scanner(&text);
     scanner.setState(state);
 
-    Token token;
-    while ((token = scanner.read()).kind != Token::EndOfBlock)
-        setFormat(token.position, token.length, formatForToken(token));
+    static QString openParenthesis = QStringLiteral("([{");
+    static QString closeParenthesis = QStringLiteral(")]}");
 
+    Token token;
+    while ((token = scanner.read()).kind != Token::EndOfBlock) {
+        setFormat(token.position, token.length, formatForToken(token));
+        if (token.kind == Token::Operator) {
+            QChar ch = text[token.position];
+            if (openParenthesis.contains(ch))
+                m_currentBlockParentheses << Parenthesis(Parenthesis::Opened, ch, token.position);
+            else if (closeParenthesis.contains(ch))
+                m_currentBlockParentheses << Parenthesis(Parenthesis::Closed, ch, token.position);
+        }
+    }
+
+    TextEditor::BaseTextDocumentLayout::setParentheses(currentBlock(), m_currentBlockParentheses);
     return scanner.state();
 }
 

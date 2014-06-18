@@ -1,6 +1,7 @@
 #ifndef RubyHighliter_h
 #define RubyHighliter_h
 
+#include <texteditor/basetextdocumentlayout.h>
 #include <texteditor/syntaxhighlighter.h>
 #include "RubyScanner.h"
 
@@ -17,6 +18,11 @@ private:
     QTextCharFormat formatForToken(const Token &);
 
     QVector<QTextCharFormat> m_formats;
+
+    typedef TextEditor::Parenthesis Parenthesis;
+    typedef TextEditor::Parentheses Parentheses;
+
+    Parentheses m_currentBlockParentheses;
 };
 
 }

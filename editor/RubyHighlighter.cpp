@@ -26,10 +26,10 @@ Highlighter::Highlighter(TextEditor::BaseTextDocument* parent)
     m_formats[Token::ClassField].setForeground(QColor(0, 110, 40));
     m_formats[Token::Number].setForeground(QColor(176, 128, 0));
     m_formats[Token::Symbol].setForeground(QColor(212, 0, 0));
-    m_formats[Token::Method].setForeground(QColor(74, 87, 4));
+    m_formats[Token::Method].setForeground(QColor(0, 87, 174));
     m_formats[Token::Method].setFontWeight(100);
     m_formats[Token::Parameter].setFontItalic(true);
-    m_formats[Token::Parameter].setForeground(QColor(0, 87, 174));
+    m_formats[Token::Parameter].setForeground(QColor(74, 87, 4));
 }
 
 void Highlighter::highlightBlock(const QString& text)

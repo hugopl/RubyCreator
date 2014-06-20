@@ -47,8 +47,6 @@ static const char* const RUBY_KEYWORDS[] = {
     "begin",
     "break",
     "case",
-    "class",
-    "def",
     "defined?",
     "do",
     "else",
@@ -59,7 +57,6 @@ static const char* const RUBY_KEYWORDS[] = {
     "for",
     "if",
     "in",
-    "module",
     "next",
     "nil",
     "not",
@@ -82,15 +79,23 @@ static const char* const RUBY_KEYWORDS[] = {
 
 static const int N_KEYWORDS = std::extent<decltype(RUBY_KEYWORDS)>::value;
 
-#define METHOD_PATTERN "15_2_(16_(2_)?18_(2_)?)?"
+#define SELF_DOT_PATTERN "(16_(2_)?18_(2_)?)?"
+#define METHOD_PATTERN "15_2_" SELF_DOT_PATTERN
 
 Scanner::Scanner(const QString* text)
     : m_src(text)
     , m_state(0)
+    , m_hasContextRecognition(false)
     , m_methodPattern(METHOD_PATTERN "$")
     //                                   METHOD  (          &        parameter,         &
     , m_parameterPattern(METHOD_PATTERN "8_(2_)?(3_)?((2_)?(3_)?(2_)?9_(2_)?(17_)?(2_)?(3_)?(2_)?)*$")
+    , m_contextPattern("(19|20)_2_" SELF_DOT_PATTERN "$")
 {
+}
+
+void Scanner::enableContextRecognition()
+{
+    m_hasContextRecognition = true;
 }
 
 void Scanner::setState(int state)
@@ -120,6 +125,11 @@ Token Scanner::read()
     default:
         return onDefaultState();
     }
+}
+
+QString Scanner::contextName() const
+{
+    return m_context.join("::");
 }
 
 Token Scanner::onDefaultState()
@@ -252,26 +262,26 @@ Token Scanner::readIdentifier()
         kind = Token::Symbol;
     } else if (value.at(0) == QLatin1Char('$')) {
         kind = Token::Global;
+    } else if (value.at(0).isUpper()) {
+        kind = Token::Constant;
+        if (m_hasContextRecognition && m_contextPattern.indexIn(m_tokenSequence) != -1)
+            m_context << value.toString();
+    // TODO: Use gperf for this keywords hash
     } else if (value == QLatin1String("self")) {
         kind = Token::KeywordSelf;
     } else if (value == QLatin1String("def")) {
         kind = Token::KeywordDef;
+    } else if (value == QLatin1String("module")) {
+        kind = Token::KeywordModule;
+    } else if (value == QLatin1String("class")) {
+        kind = Token::KeywordClass;
     } else if (std::find(&RUBY_KEYWORDS[0], &RUBY_KEYWORDS[N_KEYWORDS], value) != &RUBY_KEYWORDS[N_KEYWORDS]) {
         kind = Token::Keyword;
-    } else if (value.at(0).isUpper()) {
-        kind = Token::Constant;
-        for (int i = 0; i < value.length(); ++i) {
-            if (value.at(i).isLower()) {
-                kind = Token::Type;
-                break;
-            }
-        }
-    }
-
-    if (kind == Token::Identifier && m_methodPattern.indexIn(m_tokenSequence) != -1)
+    } else if (m_methodPattern.indexIn(m_tokenSequence) != -1) {
         kind = Token::Method;
-    if (kind == Token::Identifier && m_parameterPattern.indexIn(m_tokenSequence) != -1)
+    } else if (m_parameterPattern.indexIn(m_tokenSequence) != -1) {
         kind = Token::Parameter;
+    }
 
     return { kind, m_src.anchor(), m_src.length() };
 }

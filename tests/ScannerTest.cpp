@@ -1,5 +1,4 @@
 #include "ScannerTest.h"
-#include "RubyScanner.h"
 
 #include <QtTest/QtTest>
 #include <vector>
@@ -15,9 +14,10 @@ QDebug& operator<<(QDebug& s, Token::Kind t)
     case Token::Keyword: str = "Keyword"; break;
     case Token::KeywordDef: str = "Keyword-Def"; break;
     case Token::KeywordSelf: str = "Keyword-Def"; break;
+    case Token::KeywordClass: str = "Keyword-Class"; break;
+    case Token::KeywordModule: str = "Keyword-Module"; break;
     case Token::Method: str = "Method"; break;
     case Token::Parameter: str = "Parameter"; break;
-    case Token::Type: str = "Type"; break;
     case Token::ClassField: str = "ClassField"; break;
     case Token::Operator: str = "Operator"; break;
     case Token::OperatorComma: str = "OperatorComma"; break;
@@ -34,14 +34,23 @@ QDebug& operator<<(QDebug& s, Token::Kind t)
     return s << str;
 }
 
-typedef QVector<Token::Kind> Tokens;
-
-Tokens tokenize(const QString& code, bool debug = false)
+TestScanner::TestScanner(QObject* parent)
+    : QObject(parent)
+    , m_scanner(nullptr)
 {
-    Scanner scanner(&code);
+
+}
+
+TestScanner::Tokens TestScanner::tokenize(const QString& code, bool debug)
+{
+    if (m_scanner)
+        delete m_scanner;
+    m_scanner = new Scanner(&code);
+    m_scanner->enableContextRecognition();
+
     QVector<Token::Kind> tokens;
     Token token;
-    while ((token = scanner.read()).kind != Token::EndOfBlock) {
+    while ((token = m_scanner->read()).kind != Token::EndOfBlock) {
         tokens << token.kind;
         if (debug)
             qDebug() << "> " << token.kind << code.mid(token.position, token.length);
@@ -49,9 +58,16 @@ Tokens tokenize(const QString& code, bool debug = false)
     return tokens;
 }
 
+void TestScanner::cleanup()
+{
+    delete m_scanner;
+    m_scanner = nullptr;
+
+}
+
 void TestScanner::namespaceIsNotASymbol()
 {
-    Tokens expectedTokens = { Token::Type, Token::Operator, Token::Type, Token::Whitespace, Token::Identifier};
+    Tokens expectedTokens = { Token::Constant, Token::Operator, Token::Constant, Token::Whitespace, Token::Identifier};
     QCOMPARE(tokenize("Foo::Bar oi"), expectedTokens);
 }
 
@@ -80,6 +96,20 @@ void TestScanner::def()
     expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::Whitespace, Token::Operator, Token::Parameter,
                        Token::OperatorComma, Token::Whitespace, Token::Parameter};
     QCOMPARE(tokenize("def foo &bar, tender"), expectedTokens);
+}
+
+void TestScanner::context()
+{
+    Tokens expectedTokens = { Token::KeywordClass, Token::Whitespace, Token::Constant };
+    QCOMPARE(tokenize("class Foo"), expectedTokens);
+    QCOMPARE(m_scanner->contextName(), QStringLiteral("Foo"));
+
+    expectedTokens = { Token::KeywordModule, Token::Whitespace, Token::Constant };
+    QCOMPARE(tokenize("module Bar"), expectedTokens);
+    QCOMPARE(m_scanner->contextName(), QStringLiteral("Bar"));
+
+    tokenize("module Foo\n class Bar");
+    QCOMPARE(m_scanner->contextName(), QStringLiteral("Foo::Bar"));
 }
 
 QTEST_APPLESS_MAIN(TestScanner)

@@ -34,6 +34,7 @@
 
 #include <QRegExp>
 #include <QString>
+#include <QStringList>
 #include <QSet>
 
 namespace Ruby {
@@ -42,6 +43,8 @@ class Token {
 public:
     enum Kind
     {
+        // Don't change these numbers until I find a better way to keep track of then in
+        // the regexes used against m_tokenSequence
         Number        = 0,
         String        = 1,
         Whitespace    = 2,
@@ -52,7 +55,6 @@ public:
         Symbol        = 7,
         Method        = 8,
         Parameter     = 9,
-        Type          = 10,
         ClassField    = 11,
         Constant      = 12,
         Global        = 13,
@@ -61,6 +63,8 @@ public:
         KeywordSelf   = 16,
         OperatorComma = 17,
         OperatorDot   = 18,
+        KeywordClass  = 19,
+        KeywordModule = 20,
 
         EndOfBlock
     };
@@ -80,11 +84,13 @@ public:
     };
 
     Scanner(const QString* text);
+    void enableContextRecognition();
 
     void setState(int state);
     int state() const;
     Token read();
 
+    QString contextName() const;
 private:
     Token onDefaultState();
 
@@ -106,10 +112,14 @@ private:
 
     SourceCodeStream m_src;
     int m_state;
+    bool m_hasContextRecognition;
 
     QString m_tokenSequence;
     QRegExp m_methodPattern;
     QRegExp m_parameterPattern;
+    QRegExp m_contextPattern; // class and modules
+
+    QStringList m_context;
 
     Scanner(const Scanner&) = delete;
 };

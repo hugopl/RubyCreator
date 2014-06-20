@@ -29,6 +29,7 @@
 
 #include "RubyScanner.h"
 
+#include <QRegExp>
 #include <QString>
 #include <QSet>
 #include <QDebug>
@@ -44,25 +45,18 @@ static const char* const RUBY_KEYWORDS[] = {
     "__LINE__",
     "alias",
     "and",
-    "begin",
     "break",
-    "case",
     "defined?",
-    "do",
     "else",
     "elsif",
-    "end",
     "ensure",
     "false",
-    "for",
-    "if",
     "in",
     "next",
     "nil",
     "not",
     "or",
     "redo",
-    "rescue",
     "retry",
     "return",
     "self",
@@ -70,10 +64,7 @@ static const char* const RUBY_KEYWORDS[] = {
     "then",
     "true",
     "undef",
-    "unless",
-    "until",
     "when",
-    "while",
     "yield"
 };
 
@@ -81,15 +72,12 @@ static const int N_KEYWORDS = std::extent<decltype(RUBY_KEYWORDS)>::value;
 
 #define SELF_DOT_PATTERN "(16_(2_)?18_(2_)?)?"
 #define METHOD_PATTERN "15_2_" SELF_DOT_PATTERN
+#define CLASS_MODULE_PATTERN "(19|20)_2_" SELF_DOT_PATTERN
 
 Scanner::Scanner(const QString* text)
     : m_src(text)
     , m_state(0)
     , m_hasContextRecognition(false)
-    , m_methodPattern(METHOD_PATTERN "$")
-    //                                   METHOD  (          &        parameter,         &
-    , m_parameterPattern(METHOD_PATTERN "8_(2_)?(3_)?((2_)?(3_)?(2_)?9_(2_)?(17_)?(2_)?(3_)?(2_)?)*$")
-    , m_contextPattern("(19|20)_2_" SELF_DOT_PATTERN "$")
 {
 }
 
@@ -132,6 +120,29 @@ QString Scanner::contextName() const
     return m_context.join("::");
 }
 
+static int numMatches(const QRegExp& regExp, const QString& str)
+{
+    int n = 0;
+    int pos = 0;
+    while ((pos = regExp.indexIn(str, pos)) != -1) {
+        ++n;
+        pos += regExp.matchedLength();
+    }
+    return n;
+}
+
+int Scanner::indentLevel() const
+{
+    //                                                              if        ;if         a=if
+    static QRegExp indentInc("(" CLASS_MODULE_PATTERN "|" METHOD_PATTERN "|^(2_)?21_|26_(2_)?21_|25_(2_)?21_|22_|23_)");
+    int indent = numMatches(indentInc, m_tokenSequence);
+
+    static QRegExp indentDec("_24");
+    indent -= numMatches(indentDec, m_tokenSequence);
+
+    return indent;
+}
+
 Token Scanner::onDefaultState()
 {
     QChar first = m_src.peek();
@@ -158,9 +169,13 @@ Token Scanner::onDefaultState()
     } else if (first.isSpace()) {
         token = readWhiteSpace();
     } else if (first == QLatin1Char(',')) {
-        token = { Token::OperatorComma, m_src.anchor(), m_src.length() };;
+        token = { Token::OperatorComma, m_src.anchor(), m_src.length() };
     } else if (first == QLatin1Char('.')) {
-        token = { Token::OperatorDot, m_src.anchor(), m_src.length() };;
+        token = { Token::OperatorDot, m_src.anchor(), m_src.length() };
+    } else if (first == QLatin1Char('=') && m_src.peek() != QLatin1Char('=')) {
+        token = { Token::OperatorAssign, m_src.anchor(), m_src.length() };
+    } else if (first == QLatin1Char(';')) {
+        token = { Token::OperatorSemiColon, m_src.anchor(), m_src.length() };
     } else {
         token = readOperator(first);
     }
@@ -248,6 +263,12 @@ Token Scanner::readMultiLineStringLiteral(QChar quoteChar)
   */
 Token Scanner::readIdentifier()
 {
+    static QRegExp methodPattern(METHOD_PATTERN "$");
+    //                                              METHOD  (          &        parameter,         &
+    static QRegExp parameterPattern(METHOD_PATTERN "8_(2_)?(3_)?((2_)?(3_)?(2_)?9_(2_)?(17_)?(2_)?(3_)?(2_)?)*$");
+    static QRegExp contextPattern(CLASS_MODULE_PATTERN "$");
+
+
     QChar ch = m_src.peek();
     while (ch.isLetterOrNumber() || ch == QLatin1Char('_') || ch == QLatin1Char('?') || ch == QLatin1Char('!')) {
         m_src.move();
@@ -264,9 +285,11 @@ Token Scanner::readIdentifier()
         kind = Token::Global;
     } else if (value.at(0).isUpper()) {
         kind = Token::Constant;
-        if (m_hasContextRecognition && m_contextPattern.indexIn(m_tokenSequence) != -1)
+        if (m_hasContextRecognition && contextPattern.indexIn(m_tokenSequence) != -1)
             m_context << value.toString();
     // TODO: Use gperf for this keywords hash
+    } else if (value == QLatin1String("end")) {
+        kind = Token::KeywordEnd;
     } else if (value == QLatin1String("self")) {
         kind = Token::KeywordSelf;
     } else if (value == QLatin1String("def")) {
@@ -275,11 +298,21 @@ Token Scanner::readIdentifier()
         kind = Token::KeywordModule;
     } else if (value == QLatin1String("class")) {
         kind = Token::KeywordClass;
+    } else if (value == QLatin1String("if") || value == QLatin1String("unless")) {
+        kind = Token::KeywordFlowControl;
+    } else if (value == QLatin1String("while")
+               || value == QLatin1String("until")
+               ) {
+        kind = Token::KeywordLoop;
+    } else if (value == QLatin1String("do")
+               || value == QLatin1String("begin")
+               || value == QLatin1String("case")) {
+        kind = Token::KeywordBlockStarter;
     } else if (std::find(&RUBY_KEYWORDS[0], &RUBY_KEYWORDS[N_KEYWORDS], value) != &RUBY_KEYWORDS[N_KEYWORDS]) {
         kind = Token::Keyword;
-    } else if (m_methodPattern.indexIn(m_tokenSequence) != -1) {
+    } else if (methodPattern.indexIn(m_tokenSequence) != -1) {
         kind = Token::Method;
-    } else if (m_parameterPattern.indexIn(m_tokenSequence) != -1) {
+    } else if (parameterPattern.indexIn(m_tokenSequence) != -1) {
         kind = Token::Parameter;
     }
 

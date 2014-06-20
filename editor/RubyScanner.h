@@ -32,7 +32,6 @@
 
 #include "SourceCodeStream.h"
 
-#include <QRegExp>
 #include <QString>
 #include <QStringList>
 #include <QSet>
@@ -65,6 +64,12 @@ public:
         OperatorDot   = 18,
         KeywordClass  = 19,
         KeywordModule = 20,
+        KeywordFlowControl  = 21,
+        KeywordLoop         = 22,
+        KeywordBlockStarter = 23,
+        KeywordEnd          = 24,
+        OperatorAssign      = 25,
+        OperatorSemiColon   = 26,
 
         EndOfBlock
     };
@@ -91,6 +96,7 @@ public:
     Token read();
 
     QString contextName() const;
+    int indentLevel() const;
 private:
     Token onDefaultState();
 
@@ -115,9 +121,6 @@ private:
     bool m_hasContextRecognition;
 
     QString m_tokenSequence;
-    QRegExp m_methodPattern;
-    QRegExp m_parameterPattern;
-    QRegExp m_contextPattern; // class and modules
 
     QStringList m_context;
 

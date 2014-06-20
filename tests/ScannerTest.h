@@ -16,6 +16,7 @@ private slots:
     void symbolOnArray();
     void def();
     void context();
+    void indentIf();
 private:
     Ruby::Scanner* m_scanner;
     typedef QVector<Ruby::Token::Kind> Tokens;

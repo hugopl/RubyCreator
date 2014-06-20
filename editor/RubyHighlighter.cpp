@@ -17,6 +17,11 @@ Highlighter::Highlighter(TextEditor::BaseTextDocument* parent)
     m_formats[Token::KeywordDef] = m_formats[Token::Keyword];
     m_formats[Token::KeywordClass] = m_formats[Token::Keyword];
     m_formats[Token::KeywordModule] = m_formats[Token::Keyword];
+    m_formats[Token::KeywordFlowControl] = m_formats[Token::Keyword];
+    m_formats[Token::KeywordLoop] = m_formats[Token::Keyword];
+    m_formats[Token::KeywordBlockStarter] = m_formats[Token::Keyword];
+    m_formats[Token::KeywordEnd] = m_formats[Token::Keyword];
+
     m_formats[Token::KeywordSelf].setForeground(QColor(68, 85, 136));
     m_formats[Token::KeywordSelf].setFontWeight(100);
     m_formats[Token::String].setForeground(QColor(208, 16, 64));
@@ -46,7 +51,7 @@ int Highlighter::highlightLine(const QString& text, int state)
     m_currentBlockParentheses.clear();
 
     Scanner scanner(&text);
-    scanner.setState(state);
+    scanner.setState(state & 0xff);
 
     static QString openParenthesis = QStringLiteral("([{");
     static QString closeParenthesis = QStringLiteral(")]}");
@@ -63,8 +68,14 @@ int Highlighter::highlightLine(const QString& text, int state)
         }
     }
 
+    int indentLevel = state >> 8;
+    int nextIndentLevel = indentLevel + scanner.indentLevel();
+    if (nextIndentLevel < 0)
+        nextIndentLevel = 0;
+
+    TextEditor::BaseTextDocumentLayout::setFoldingIndent(currentBlock(), indentLevel);
     TextEditor::BaseTextDocumentLayout::setParentheses(currentBlock(), m_currentBlockParentheses);
-    return scanner.state();
+    return (nextIndentLevel << 8) | scanner.state();
 }
 
 QTextCharFormat Highlighter::formatForToken(const Token& token)

@@ -112,5 +112,20 @@ void TestScanner::context()
     QCOMPARE(m_scanner->contextName(), QStringLiteral("Foo::Bar"));
 }
 
+void TestScanner::indentIf()
+{
+    tokenize("if foo;end");
+    QCOMPARE(m_scanner->indentLevel(), 0);
+    tokenize("if foo");
+    QCOMPARE(m_scanner->indentLevel(), 1);
+    tokenize("a = 2 if foo");
+    QCOMPARE(m_scanner->indentLevel(), 0);
+    tokenize("a = 2;if foo");
+    QCOMPARE(m_scanner->indentLevel(), 1);
+    // ugliest code style ever
+    tokenize("a = if foo");
+    QCOMPARE(m_scanner->indentLevel(), 1);
+}
+
 QTEST_APPLESS_MAIN(TestScanner)
 #include "TestScanner.moc"

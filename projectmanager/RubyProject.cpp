@@ -17,7 +17,7 @@ const int MIN_TIME_BETWEEN_PROJECT_SCANS = 4500;
 Project::Project(ProjectManager* projectManager, const QString& fileName)
     : m_projectManager(projectManager)
     , m_document(new Document)
-    , m_nameFilter({"*.rb", "*.erb", "*.rake", "*.yml", "*.haml", "config.ru", "Gemfile", "Rakefile"})
+    , m_nameFilter({"*.rb", "*.erb", "*.rake", "*.yml", "*.haml", "*.gemspec", "config.ru", "Gemfile", "Rakefile"})
 {
     m_document->setFilePath(fileName);
     m_projectDir = QFileInfo(fileName).dir();

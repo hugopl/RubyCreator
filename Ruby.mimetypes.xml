@@ -11,6 +11,7 @@
     <comment>Ruby source file</comment>
     <glob pattern="*.rb"/>
     <glob pattern="*.rake"/>
+    <glob pattern="*.gemspec"/>
     <glob pattern="Gemfile"/>
     <glob pattern="Rakefile"/>
   </mime-type>

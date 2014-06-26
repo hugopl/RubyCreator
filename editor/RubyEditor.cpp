@@ -34,12 +34,8 @@ void Editor::scheduleCodeModelUpdate()
 
 void Editor::updateCodeModel()
 {
-    // TODO: This is slow, need write an IODevice that get lines directly from QTextBlocks, since readLine is the only used method.
-    //       the result? the code is copying the file two times in memory :-(, but it works :-D.
-    QByteArray textData = baseTextDocument()->plainText().toUtf8();
-    QBuffer buffer(&textData);
-    buffer.open(QBuffer::ReadOnly);
-    CodeModel::instance()->updateFile(document()->filePath(), buffer);
+    const QString textData = baseTextDocument()->plainText();
+    CodeModel::instance()->updateFile(document()->filePath(), textData);
 }
 
 }

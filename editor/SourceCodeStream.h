@@ -55,6 +55,11 @@ public:
         ++m_position;
     }
 
+    int position() const
+    {
+        return m_position;
+    }
+
     inline int length() const
     {
         return m_position - m_markedPosition;

@@ -97,6 +97,7 @@ public:
 
     QString contextName() const;
     int currentLine() const { return m_line; }
+    int currentColumn(const Token& token) const { return token.position - m_lineStartOffset; }
     int indentLevel() const;
 private:
     Token onDefaultState();
@@ -125,6 +126,7 @@ private:
 
     QStringList m_context;
     int m_line;
+    int m_lineStartOffset;
 
     Scanner(const Scanner&) = delete;
 };

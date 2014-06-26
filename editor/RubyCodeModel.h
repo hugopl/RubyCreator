@@ -24,7 +24,7 @@ public:
     void addFile(const QString& file);
     void addFiles(const QStringList& files);
     // pass a QIODevice because the file may not be saved on file system.
-    void updateFile(const QString& fileName, QIODevice &contents);
+    void updateFile(const QString& fileName, const QString& contents);
 
     QList<Symbol> methodsIn(const QString& file) const;
     QList<Symbol> allMethods() const;

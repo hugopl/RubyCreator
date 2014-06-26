@@ -1,5 +1,5 @@
 #include "RubyCodeModel.h"
-#include "RubySimpleScanner.h"
+#include "RubyScanner.h"
 
 #include <QElapsedTimer>
 #include <QFile>
@@ -43,7 +43,7 @@ void CodeModel::addFile(const QString& file)
     QFile fp(file);
     if (!fp.open(QFile::ReadOnly))
         return;
-    updateFile(file, fp);
+    updateFile(file, fp.readAll());
 }
 
 void CodeModel::addFiles(const QStringList& files)
@@ -57,17 +57,22 @@ void CodeModel::addFiles(const QStringList& files)
     qDebug() << "Code model updated in" << timer.elapsed() << "ms";
 }
 
-void CodeModel::updateFile(const QString& fileName, QIODevice& contents)
+void CodeModel::updateFile(const QString& fileName, const QString& contents)
 {
-    SimpleScanner scanner(&contents);
-
     SymbolGroup& group = m_symbols[fileName];
     group.symbols.clear();
 
-    Symbol symbol;
-    while (!(symbol = scanner.nextSymbol()).name.isNull()) {
-        symbol.file = fileName;
-        group.symbols << symbol;
+    Scanner scanner(&contents);
+    scanner.enableContextRecognition();
+
+    Token token;
+    while ((token = scanner.read()).kind != Token::EndOfBlock) {
+        if (token.kind == Token::Method) {
+            Symbol sym(contents.mid(token.position, token.length), scanner.currentLine(), scanner.currentColumn(token));
+            sym.file = fileName;
+            sym.context = scanner.contextName();
+            group.symbols << sym;
+        }
     }
 
     group.lastUpdate = QDateTime::currentDateTime();

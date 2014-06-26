@@ -79,6 +79,7 @@ Scanner::Scanner(const QString* text)
     , m_state(0)
     , m_hasContextRecognition(false)
     , m_line(1)
+    , m_lineStartOffset(0)
 {
 }
 
@@ -151,6 +152,7 @@ Token Scanner::onDefaultState()
 
     while(first == QLatin1Char('\n')) {
         m_line++;
+        m_lineStartOffset = m_src.position();
         first = m_src.peek();
         m_src.move();
     }

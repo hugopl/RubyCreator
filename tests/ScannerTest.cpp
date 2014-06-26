@@ -108,12 +108,22 @@ void TestScanner::context()
     QCOMPARE(tokenize("module Bar"), expectedTokens);
     QCOMPARE(m_scanner->contextName(), QStringLiteral("Bar"));
 
-    tokenize("module Foo\n class Bar");
+    tokenize("module Foo\n"
+             "  class Bar");
     QCOMPARE(m_scanner->contextName(), QStringLiteral("Foo::Bar"));
 
-    tokenize("module FooBar\n class Klass\nend", true);
+    tokenize("module FooBar\n"
+             "  class Klass\n"
+             "end");
     QCOMPARE(m_scanner->contextName(), QStringLiteral("FooBar"));
 
+    tokenize("module Foo\n"
+             "  class Klass\n"
+             "    def foo\n"
+             "      a = 2 if b"
+             "    end"
+             "  end");
+    QCOMPARE(m_scanner->contextName(), QStringLiteral("Foo"));
 }
 
 void TestScanner::indentIf()

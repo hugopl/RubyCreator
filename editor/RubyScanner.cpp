@@ -74,6 +74,11 @@ static const int N_KEYWORDS = std::extent<decltype(RUBY_KEYWORDS)>::value;
 #define SELF_DOT_PATTERN "(16_(2_)?18_(2_)?)?"
 #define METHOD_PATTERN "15_2_" SELF_DOT_PATTERN
 #define CLASS_MODULE_PATTERN "(19|20)_2_" SELF_DOT_PATTERN
+//                                 if        ;if         a=if
+#define FLOWCTL_SHOULD_INC_INDENT  "^(2_)?21_|26_(2_)?21_|25_(2_)?21_"
+// Version without 21_ at end, used on readIdentifier
+#define FLOWCTL_SHOULD_INC_INDENT2 "^(2_)?" "|26_(2_)?" "|25_(2_)?"
+#define INDENT_INC "(" CLASS_MODULE_PATTERN "|" METHOD_PATTERN "|" FLOWCTL_SHOULD_INC_INDENT "|22_|23_)"
 
 Scanner::Scanner(const QString* text)
     : m_src(text)
@@ -137,11 +142,10 @@ static int numMatches(const QRegExp& regExp, const QString& str)
 
 int Scanner::indentLevel() const
 {
-    //                                                              if        ;if         a=if
-    static QRegExp indentInc("(" CLASS_MODULE_PATTERN "|" METHOD_PATTERN "|^(2_)?21_|26_(2_)?21_|25_(2_)?21_|22_|23_)");
+    static const QRegExp indentInc(INDENT_INC);
     int indent = numMatches(indentInc, m_tokenSequence);
 
-    static QRegExp indentDec("24_");
+    static const QRegExp indentDec("24_");
     indent -= numMatches(indentDec, m_tokenSequence);
 
     return indent;
@@ -273,11 +277,12 @@ Token Scanner::readMultiLineStringLiteral(QChar quoteChar)
   */
 Token Scanner::readIdentifier()
 {
-    static QRegExp methodPattern(METHOD_PATTERN "$");
+    static const QRegExp methodPattern(METHOD_PATTERN "$");
     //                                              METHOD  (          &        parameter,         &
-    static QRegExp parameterPattern(METHOD_PATTERN "8_(2_)?(3_)?((2_)?(3_)?(2_)?9_(2_)?(17_)?(2_)?(3_)?(2_)?)*$");
-    static QRegExp contextPattern(CLASS_MODULE_PATTERN "$");
+    static const QRegExp parameterPattern(METHOD_PATTERN "8_(2_)?(3_)?((2_)?(3_)?(2_)?9_(2_)?(17_)?(2_)?(3_)?(2_)?)*$");
+    static const QRegExp contextPattern(CLASS_MODULE_PATTERN "$");
 
+    static const QRegExp controlFlowShouldIncIndentPattern("("FLOWCTL_SHOULD_INC_INDENT2 ")$");
 
     QChar ch = m_src.peek();
     while (ch.isLetterOrNumber() || ch == QLatin1Char('_') || ch == QLatin1Char('?') || ch == QLatin1Char('!')) {
@@ -320,7 +325,8 @@ Token Scanner::readIdentifier()
         m_indentDepth++;
     } else if (value == QLatin1String("if") || value == QLatin1String("unless")) {
         kind = Token::KeywordFlowControl;
-        m_indentDepth++;
+        if (controlFlowShouldIncIndentPattern.indexIn(m_tokenSequence) != -1)
+            m_indentDepth++;
     } else if (value == QLatin1String("while")
                || value == QLatin1String("until")
                ) {

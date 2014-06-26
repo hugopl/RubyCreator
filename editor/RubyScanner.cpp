@@ -80,6 +80,7 @@ Scanner::Scanner(const QString* text)
     , m_hasContextRecognition(false)
     , m_line(1)
     , m_lineStartOffset(0)
+    , m_indentDepth(0)
 {
 }
 
@@ -150,10 +151,12 @@ Token Scanner::onDefaultState()
     QChar first = m_src.peek();
     m_src.move();
 
+    // Ignore new lines
     while(first == QLatin1Char('\n')) {
         m_line++;
         m_lineStartOffset = m_src.position();
         first = m_src.peek();
+        m_src.setAnchor();
         m_src.move();
     }
 
@@ -291,29 +294,42 @@ Token Scanner::readIdentifier()
         kind = Token::Global;
     } else if (value.at(0).isUpper()) {
         kind = Token::Constant;
-        if (m_hasContextRecognition && contextPattern.indexIn(m_tokenSequence) != -1)
+        if (m_hasContextRecognition && contextPattern.indexIn(m_tokenSequence) != -1) {
             m_context << value.toString();
+            m_contextDepths << m_indentDepth;
+        }
     // TODO: Use gperf for this keywords hash
     } else if (value == QLatin1String("end")) {
         kind = Token::KeywordEnd;
+        m_indentDepth--;
+        if (!m_contextDepths.empty() && m_indentDepth < m_contextDepths.last()) {
+            m_context.pop_back();
+            m_contextDepths.pop_back();
+        }
     } else if (value == QLatin1String("self")) {
         kind = Token::KeywordSelf;
     } else if (value == QLatin1String("def")) {
         kind = Token::KeywordDef;
+        m_indentDepth++;
     } else if (value == QLatin1String("module")) {
         kind = Token::KeywordModule;
+        m_indentDepth++;
     } else if (value == QLatin1String("class")) {
         kind = Token::KeywordClass;
+        m_indentDepth++;
     } else if (value == QLatin1String("if") || value == QLatin1String("unless")) {
         kind = Token::KeywordFlowControl;
+        m_indentDepth++;
     } else if (value == QLatin1String("while")
                || value == QLatin1String("until")
                ) {
         kind = Token::KeywordLoop;
+        m_indentDepth++;
     } else if (value == QLatin1String("do")
                || value == QLatin1String("begin")
                || value == QLatin1String("case")) {
         kind = Token::KeywordBlockStarter;
+        m_indentDepth++;
     } else if (std::find(&RUBY_KEYWORDS[0], &RUBY_KEYWORDS[N_KEYWORDS], value) != &RUBY_KEYWORDS[N_KEYWORDS]) {
         kind = Token::Keyword;
     } else if (methodPattern.indexIn(m_tokenSequence) != -1) {

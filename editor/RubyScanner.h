@@ -128,6 +128,9 @@ private:
     int m_line;
     int m_lineStartOffset;
 
+    QList<int> m_contextDepths;
+    int m_indentDepth;
+
     Scanner(const Scanner&) = delete;
 };
 

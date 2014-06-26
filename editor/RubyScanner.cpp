@@ -282,7 +282,7 @@ Token Scanner::readIdentifier()
     static const QRegExp parameterPattern(METHOD_PATTERN "8_(2_)?(3_)?((2_)?(3_)?(2_)?9_(2_)?(17_)?(2_)?(3_)?(2_)?)*$");
     static const QRegExp contextPattern(CLASS_MODULE_PATTERN "$");
 
-    static const QRegExp controlFlowShouldIncIndentPattern("("FLOWCTL_SHOULD_INC_INDENT2 ")$");
+    static const QRegExp controlFlowShouldIncIndentPattern("(" FLOWCTL_SHOULD_INC_INDENT2 ")$");
 
     QChar ch = m_src.peek();
     while (ch.isLetterOrNumber() || ch == QLatin1Char('_') || ch == QLatin1Char('?') || ch == QLatin1Char('!')) {

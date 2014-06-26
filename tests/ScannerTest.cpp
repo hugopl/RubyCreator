@@ -127,5 +127,11 @@ void TestScanner::indentIf()
     QCOMPARE(m_scanner->indentLevel(), 1);
 }
 
+void TestScanner::lineCount()
+{
+    tokenize("\nif foo\n\nend");
+    QCOMPARE(m_scanner->currentLine(), 4);
+}
+
 QTEST_APPLESS_MAIN(TestScanner)
 #include "TestScanner.moc"

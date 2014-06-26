@@ -96,6 +96,7 @@ public:
     Token read();
 
     QString contextName() const;
+    int currentLine() const { return m_line; }
     int indentLevel() const;
 private:
     Token onDefaultState();
@@ -123,6 +124,7 @@ private:
     QString m_tokenSequence;
 
     QStringList m_context;
+    int m_line;
 
     Scanner(const Scanner&) = delete;
 };

@@ -78,6 +78,7 @@ Scanner::Scanner(const QString* text)
     : m_src(text)
     , m_state(0)
     , m_hasContextRecognition(false)
+    , m_line(1)
 {
 }
 
@@ -148,14 +149,17 @@ Token Scanner::onDefaultState()
     QChar first = m_src.peek();
     m_src.move();
 
+    while(first == QLatin1Char('\n')) {
+        m_line++;
+        first = m_src.peek();
+        m_src.move();
+    }
+
     Token token;
 
-    if (first == QLatin1Char('\\') && m_src.peek() == QLatin1Char('\n')) {
-        m_src.move();
-        token = { Token::Whitespace, m_src.anchor(), 2 };
-    } else if (first.isDigit()) {
+    if (first.isDigit()) {
         token = readFloatNumber();
-    } if (first == QLatin1Char('\'') || first == QLatin1Char('\"')) {
+    } else if (first == QLatin1Char('\'') || first == QLatin1Char('\"')) {
         token = readStringLiteral(first);
     } else if (first.isLetter() || first == QLatin1Char('_') || first == QLatin1Char('@')
                || first == QLatin1Char('$') || (first == QLatin1Char(':') && m_src.peek() != QLatin1Char(':'))) {

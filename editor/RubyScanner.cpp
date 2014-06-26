@@ -141,7 +141,7 @@ int Scanner::indentLevel() const
     static QRegExp indentInc("(" CLASS_MODULE_PATTERN "|" METHOD_PATTERN "|^(2_)?21_|26_(2_)?21_|25_(2_)?21_|22_|23_)");
     int indent = numMatches(indentInc, m_tokenSequence);
 
-    static QRegExp indentDec("_24");
+    static QRegExp indentDec("24_");
     indent -= numMatches(indentDec, m_tokenSequence);
 
     return indent;

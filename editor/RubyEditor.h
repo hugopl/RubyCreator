@@ -14,6 +14,7 @@ class Editor : public TextEditor::BaseTextEditor
 public:
     Editor(EditorWidget* parent);
 
+    TextEditor::CompletionAssistProvider* completionAssistProvider() override;
 private slots:
     void scheduleCodeModelUpdate();
     void updateCodeModel();

@@ -29,6 +29,7 @@ plugin:addIncludePath(qtcSrc.."/src/libs")
 plugin:addFiles([[
     editor/RubyAutoCompleter.cpp
     editor/RubyCodeModel.cpp
+    editor/RubyCompletionAssist.cpp
     editor/RubySymbolFilter.cpp
     editor/RubyEditor.cpp
     editor/RubyEditorFactory.cpp

@@ -1,9 +1,11 @@
 #include "RubyEditor.h"
 
 #include "RubyCodeModel.h"
+#include "RubyCompletionAssist.h"
 #include "RubyConstants.h"
 #include "RubyEditorWidget.h"
 
+#include <extensionsystem/pluginmanager.h>
 #include <texteditor/texteditorconstants.h>
 
 #include <QBuffer>
@@ -25,6 +27,11 @@ Editor::Editor(EditorWidget* parent)
     connect(document(), SIGNAL(contentsChanged()), this, SLOT(scheduleCodeModelUpdate()));
 
     CodeModel::instance();
+}
+
+TextEditor::CompletionAssistProvider*Editor::completionAssistProvider()
+{
+    return ExtensionSystem::PluginManager::getObject<CompletionAssistProvider>();
 }
 
 void Editor::scheduleCodeModelUpdate()

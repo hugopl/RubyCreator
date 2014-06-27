@@ -3,6 +3,7 @@
 #include "editor/RubyCodeModel.h"
 #include "editor/RubyEditorFactory.h"
 #include "editor/RubySymbolFilter.h"
+#include "editor/RubyCompletionAssist.h"
 #include "projectmanager/RubyProjectManager.h"
 #include "projectmanager/RubyProjectWizard.h"
 
@@ -37,6 +38,8 @@ bool Plugin::initialize(const QStringList&, QString* errorString)
     addAutoReleasedObject(new ProjectManager);
 
     addAutoReleasedObject(new ProjectWizard);
+
+    addAutoReleasedObject(new CompletionAssistProvider);
     return true;
 }
 

@@ -19,6 +19,7 @@ public:
         methods.clear();
         identifiers.clear();
         constants.clear();
+        symbols.clear();
     }
 
     QDateTime lastUpdate;

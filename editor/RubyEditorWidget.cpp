@@ -69,7 +69,7 @@ TextEditor::BaseTextEditorWidget::Link EditorWidget::findLinkAt(const QTextCurso
     link.linkTextEnd = link.linkTextStart + word.length();
     link.targetLine = symbols.last().line;
     link.targetColumn = symbols.last().column;
-    link.targetFileName = symbols.last().file;
+    link.targetFileName = *symbols.last().file;
 
     return link;
 }

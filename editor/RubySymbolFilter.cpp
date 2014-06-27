@@ -37,7 +37,7 @@ QList<Core::LocatorFilterEntry> SymbolFilter::matchesFor(QFutureInterface<Core::
 void SymbolFilter::accept(Core::LocatorFilterEntry selection) const
 {
     Symbol symbol = selection.internalData.value<Symbol>();
-    Core::EditorManager::openEditorAt(symbol.file, symbol.line, symbol.column);
+    Core::EditorManager::openEditorAt(*symbol.file, symbol.line, symbol.column);
 }
 
 void SymbolFilter::refresh(QFutureInterface<void>&)

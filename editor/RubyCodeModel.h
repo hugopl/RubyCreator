@@ -27,12 +27,16 @@ public:
     void updateFile(const QString& fileName, const QString& contents);
 
     QList<Symbol> methodsIn(const QString& file) const;
+    QSet<QString> identifiersIn(const QString& file) const;
+    QSet<QString> constantsIn(const QString& file) const;
+    QSet<QString> symbolsIn(const QString& file) const;
     QList<Symbol> allMethods() const;
     QList<Symbol> allMethodsNamed(const QString& name) const;
 
-
 private:
-    QHash<QString, SymbolGroup> m_symbols;
+
+    class Data;
+    QHash<QString, Data*> m_model;
 };
 
 }

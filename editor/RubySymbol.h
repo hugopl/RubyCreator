@@ -7,19 +7,12 @@ namespace Ruby {
 
 struct Symbol
 {
-    Symbol() {}
-    Symbol(const QString& name, int line, int column);
+    Symbol(const QString* file = 0) : file(file) { }
+    const QString* file;
     QString name;
     QString context;
-    QString file;
     int line;
     int column;
-};
-
-struct SymbolGroup
-{
-    QDateTime lastUpdate;
-    QList<Symbol> symbols;
 };
 
 }

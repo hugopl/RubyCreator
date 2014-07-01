@@ -157,13 +157,17 @@ Token Scanner::onDefaultState()
     m_src.move();
 
     // Ignore new lines
+    bool hasNewLine = false;
     while(first == QLatin1Char('\n')) {
+        hasNewLine = true;
         m_line++;
         m_lineStartOffset = m_src.position();
         first = m_src.peek();
         m_src.setAnchor();
         m_src.move();
     }
+    if (hasNewLine)
+        m_tokenSequence.clear();
 
     Token token;
 

@@ -147,5 +147,18 @@ void TestScanner::lineCount()
     QCOMPARE(m_scanner->currentLine(), 4);
 }
 
+void TestScanner::ifs()
+{
+    tokenize("class Foo\n"
+             "  def method\n"
+             "    something do\n"
+             "      if foo\n"
+             "        otherthing\n"
+             "      end\n"
+             "    end\n"
+             "  end");
+    QCOMPARE(m_scanner->contextName(), QStringLiteral("Foo"));
+}
+
 QTEST_APPLESS_MAIN(TestScanner)
 #include "TestScanner.moc"

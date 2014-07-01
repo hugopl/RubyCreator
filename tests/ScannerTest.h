@@ -18,6 +18,7 @@ private slots:
     void context();
     void indentIf();
     void lineCount();
+    void ifs();
 private:
     Ruby::Scanner* m_scanner;
     typedef QVector<Ruby::Token::Kind> Tokens;

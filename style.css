@@ -26,6 +26,7 @@ html, body {
 
 section {
     padding-bottom: 20px;
+    min-width: 840px;
 }
 
 .contents {
@@ -37,6 +38,7 @@ section {
     background-color: #006224;
     padding: 40px;
     font-weight: 400;
+    min-width: 0;
 }
 
 #header .contents {
@@ -44,6 +46,7 @@ section {
     background-repeat: no-repeat;
     min-height: 239px;
     padding-left: 220px;
+    width: 540px;
 }
 
 h1 {
@@ -58,6 +61,7 @@ h2 {
     font-weight: normal;
     font-size: 60px;
     margin: 0px;
+    display: inline-block;
 }
 
 #header * {

@@ -123,6 +123,10 @@ figcaption {
     text-decoration: underline;
 }
 
+#contact * {
+    color: white;
+}
+
 #contact {
     background-color: #006224;
     color: white;

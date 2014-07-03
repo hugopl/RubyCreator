@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>RubyCreator</title>
+        <script src="jquery-1.11.1.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="slick.css"/>
+
+        <script>
+        $(document).ready(function() {
+            $("#carousel").slick({
+                dots: true,
+                speed: 500
+            });
+        });
+        </script>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <section id="header">
+        <div class="contents">
+            <h1>RubyCreator</h1>
+            <h2>Ruby on QtCreator</h2>
+
+            <p>RubyCreator is an effort to add Ruby language support to QtCreator IDE and aim to have most of the features you can find on QtCreator C++ support.</p>
+            <p>Believe me, the plugin is much better then their logo!<p>
+        </div>
+        </section>
+        <section id="features">
+        <div class="contents">
+            <h1>Features</h1>
+
+            <p>Far more than just syntax highlighting!</p>
+            <div id="carousel">
+                <div>
+                    <figure>
+                        <img src="feature-githubhighlight.png">
+                        <figcaption>Code folding and a github like syntax highlight, nice and clean for your eyes.</figcaption>
+                    </figure>
+                </div>
+                <div>
+                    <figure>
+                        <img src="feature-autocompleteassist.png">
+                        <figcaption>Auto completion! RubyCreator know about your symbols, methods and identifiers.</figcaption>
+                    </figure>
+                </div>
+                <div>
+                    <figure>
+                        <img src="feature-ilocator.png">
+                        <figcaption>Fast code navigation through project or current file methods via QtCreator CTRL+K menu.</figcaption>
+                    </figure>
+                </div>
+                <div>
+                    <figure>
+                        <img src="feature-project.png">
+                        <figcaption>Fast navigation through project files via QtCreator CTRL+K menu.</figcaption>
+                    </figure>
+                </div>
+                <div>
+                    <figure>
+                        <img src="feature-wizard.png">
+                        <figcaption>One-step import wizard, just say the directory where you ruby file is and it's done!</figcaption>
+                    </figure>
+                </div>
+                <div>
+                    <figure>
+                        <img src="feature-parenthesis.png">
+                        <figcaption>Parenthesis matching to help you to see where these damn things started!</figcaption>
+                    </figure>
+                </div>
+            </div>
+
+            <h2>Other features</h2>
+
+            <ul>
+                <li>Code navigation via F2, press F2 under a identifier and if there's a method with that name you will be there.</li>
+                <li>Code indentation.</li>
+                <li>Auto completion, type "if foo⏎" and get the "end" keyword placed for you and the cursor on the right place, works for every construct that needs an "end", not only "if".</li>
+            </ul>
+
+            <h2>Features inherited from QtCreator</h2>
+
+            <ul>
+                <li>Code navigation history, are you editing a file and pressed F2 to go to a function but now want to go back? Press ALT + Left/Right to go back/forward on code location you were.</li>
+                <li>Git (subversion, CVS, etc) integration, want to do a git blame? hold ALT and type GB, done.</li>
+                <li>Navigation on git blame/git log outputs, want to see some commit found on a git blame? just click on the hash.</li>
+                <li>It's fast :-D</li>
+            </ul>
+        </div>
+        </section>
+        <section id="installation">
+        <div class="contents">
+            <h1>How to install</h1>
+
+            <p>You need to compile it by yourself, csheck the instructions at <a href="https://github.com/hugopl/RubyCreator">https://github.com/hugopl/RubyCreator</a>.</p>
+            <p>Have a easier way to install and test it is the next goal.</p>
+        </div>
+        </section>
+        <section id="contact">
+        <div class="contents">
+            <h1>Contact</h1>
+
+            <p>You can find me on IRC, hugopl at freenode or send a email to <a href="mailto:hugo.pl@gmail.com">hugo.pl@gmail.com</a>.</p>
+        </div>
+        </section>
+    <script type="text/javascript" src="slick.min.js"/></script>
+    </body>
+</html>

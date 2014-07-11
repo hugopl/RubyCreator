@@ -122,6 +122,12 @@ Token Scanner::read()
     }
 }
 
+void Scanner::readLine()
+{
+    Token token;
+    while ((token = read()).kind != Token::EndOfBlock);
+}
+
 QString Scanner::contextName() const
 {
     return m_context.join("::");

@@ -96,6 +96,7 @@ public:
     void setState(int state);
     int state() const;
     Token read();
+    void readLine();
 
     QString contextName() const;
     int currentLine() const { return m_line; }

@@ -1,6 +1,5 @@
 #include "RubyIndenter.h"
-
-#include "RubySimpleScanner.h"
+#include "RubyScanner.h"
 
 #include <texteditor/tabsettings.h>
 #include <QRegExp>
@@ -9,33 +8,35 @@
 
 namespace Ruby {
 
-static const int TAB_SIZE = 2;
+static bool didBlockStart(const QTextBlock& block) {
+    QString text = block.text();
+    Scanner scanner(&text);
+    scanner.readLine();
+    return scanner.didBlockStart() || scanner.didBlockInterrupt();
+}
 
 void Indenter::indentBlock(QTextDocument*, const QTextBlock& block, const QChar&, const TextEditor::TabSettings& settings)
 {
-    QTextBlock previous = block.previous();
-    QString previousLine = previous.text();
-    while (previousLine.trimmed().isEmpty()) {
-        previous = previous.previous();
-        if (!previous.isValid())
-            return;
-        previousLine = previous.text();
+    bool isNewBlock = false;
+    int state = block.userState();
+    int indent = state >> 8;
+
+    if (indent > 0) {
+        if (didBlockStart(block))
+            indent--;
+    } else if (indent < 0) {
+        QTextBlock previous = block.previous();
+        while (indent == -1 && previous.isValid()) {
+            indent = previous.userState() >> 8;
+            previous = block.previous();
+        }
+        if (didBlockStart(previous))
+            indent++;
+        isNewBlock = true;
     }
 
-    int indentation = settings.indentationColumn(previousLine);
-
-    if (Language::endKeyword.indexIn(block.text()) == -1 &&  isElectricLine(previousLine))
-        indentation += TAB_SIZE;
-
-    settings.indentLine(block, indentation);
+    if (isNewBlock || !block.text().isEmpty())
+        settings.indentLine(block, indent * settings.m_indentSize);
 }
 
-bool Indenter::isElectricLine(const QString& line) const
-{
-    if (line.isEmpty())
-        return false;
-
-    return Language::startOfBlock.indexIn(line) != -1 || Language::symbolDefinition.indexIn(line) != -1;
 }
-
-} // namespace Ruby

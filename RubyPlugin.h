@@ -22,6 +22,8 @@ public:
 
 private:
     EditorFactory* m_factory;
+
+    void initializeToolsSettings();
 };
 
 }

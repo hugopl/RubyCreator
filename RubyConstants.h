@@ -8,6 +8,7 @@ namespace Constants {
 
 const char EditorId[] = "Ruby.RubyEditor";
 const char ProjectId[] = "Ruby.Project";
+const char SettingsId[] = "Ruby.Settings";
 const char EditorDisplayName[] = QT_TRANSLATE_NOOP("OpenWith::Editors", "Ruby Editor");
 
 const char MimeType[] = "text/x-ruby";

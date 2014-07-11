@@ -2,6 +2,7 @@
 
 #include "RubyAutoCompleter.h"
 #include "RubyCodeModel.h"
+#include "RubyConstants.h"
 #include "RubyEditor.h"
 #include "RubyHighlighter.h"
 #include "RubyIndenter.h"
@@ -21,6 +22,7 @@ EditorWidget::EditorWidget()
     setMarksVisible(true);
     setCodeFoldingSupported(true);
     setAutoCompleter(new AutoCompleter);
+    setLanguageSettingsId(Constants::SettingsId);
 
     TextEditor::BaseTextDocument* baseDoc = baseTextDocument();
     baseDoc->setIndenter(new Indenter());

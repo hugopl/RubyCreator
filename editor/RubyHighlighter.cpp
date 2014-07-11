@@ -9,7 +9,7 @@
 
 namespace Ruby {
 
-Highlighter::Highlighter(TextEditor::BaseTextDocument* parent)
+Highlighter::Highlighter(QTextDocument* parent)
     : TextEditor::SyntaxHighlighter(parent)
     , m_formats(Token::EndOfBlock)
 {

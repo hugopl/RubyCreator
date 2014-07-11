@@ -2,6 +2,8 @@
 #include "RubyConstants.h"
 #include "RubyIndenter.h"
 
+#include <extensionsystem/pluginmanager.h>
+#include <texteditor/snippets/isnippetprovider.h>
 #include <texteditor/simplecodestylepreferences.h>
 
 #include <QLabel>
@@ -35,6 +37,11 @@ TextEditor::Indenter* CodeStylePreferencesFactory::createIndenter() const
 
 TextEditor::ISnippetProvider* CodeStylePreferencesFactory::snippetProvider() const
 {
+    const QList<TextEditor::ISnippetProvider *> &providers =
+    ExtensionSystem::PluginManager::getObjects<TextEditor::ISnippetProvider>();
+    foreach (TextEditor::ISnippetProvider *provider, providers)
+        if (provider->groupId() == QLatin1String(Constants::SnippetGroupId))
+            return provider;
     return 0;
 }
 

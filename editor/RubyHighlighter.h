@@ -10,7 +10,7 @@ namespace Ruby {
 class Highlighter :  public TextEditor::SyntaxHighlighter
 {
 public:
-    Highlighter(TextEditor::BaseTextDocument* parent);
+    Highlighter(QTextDocument* parent = 0);
 protected:
     virtual void highlightBlock(const QString& text) override;
 private:

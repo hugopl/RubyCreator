@@ -31,7 +31,7 @@ EditorWidget::EditorWidget()
     m_commentDefinition.multiLineEnd.clear();
     m_commentDefinition.singleLine = QLatin1Char('#');
 
-    new Highlighter(baseDoc);
+    new Highlighter(document());
 }
 
 TextEditor::BaseTextEditor* EditorWidget::createEditor()

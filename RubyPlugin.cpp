@@ -5,6 +5,7 @@
 #include "editor/RubyCodeModel.h"
 #include "editor/RubyCodeStylePreferencesFactory.h"
 #include "editor/RubyEditorFactory.h"
+#include "editor/RubySnippetProvider.h"
 #include "editor/RubySymbolFilter.h"
 #include "editor/RubyCompletionAssist.h"
 #include "projectmanager/RubyProjectManager.h"
@@ -40,6 +41,8 @@ bool Plugin::initialize(const QStringList&, QString* errorString)
         return false;
 
     initializeToolsSettings();
+
+    addAutoReleasedObject(new SnippetProvider);
 
     m_factory = new EditorFactory(this);
     addObject(m_factory);

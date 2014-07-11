@@ -129,16 +129,20 @@ void TestScanner::context()
 void TestScanner::indentIf()
 {
     tokenize("if foo;end");
-    QCOMPARE(m_scanner->indentLevel(), 0);
+    QVERIFY(m_scanner->didBlockStart());
+    QVERIFY(m_scanner->didBlockEnd());
     tokenize("if foo");
-    QCOMPARE(m_scanner->indentLevel(), 1);
+    QVERIFY(m_scanner->didBlockStart());
     tokenize("a = 2 if foo");
-    QCOMPARE(m_scanner->indentLevel(), 0);
+    QVERIFY(!m_scanner->didBlockStart());
     tokenize("a = 2;if foo");
-    QCOMPARE(m_scanner->indentLevel(), 1);
+    QVERIFY(m_scanner->didBlockStart());
     // ugliest code style ever
     tokenize("a = if foo");
-    QCOMPARE(m_scanner->indentLevel(), 1);
+    QVERIFY(m_scanner->didBlockStart());
+
+    // Weird code can show folding mark, but I don't care about show weird code
+    // like "if foo; bar; end; if bleh" this will not be folded or indented correctly
 }
 
 void TestScanner::lineCount()

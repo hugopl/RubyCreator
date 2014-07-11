@@ -47,9 +47,6 @@ static const char* const RUBY_KEYWORDS[] = {
     "and",
     "break",
     "defined?",
-    "else",
-    "elsif",
-    "ensure",
     "false",
     "in",
     "next",
@@ -58,7 +55,6 @@ static const char* const RUBY_KEYWORDS[] = {
     "or",
     "raise",
     "redo",
-    "rescue",
     "retry",
     "return",
     "self",
@@ -130,26 +126,22 @@ QString Scanner::contextName() const
     return m_context.join("::");
 }
 
-static int numMatches(const QRegExp& regExp, const QString& str)
+bool Scanner::didBlockStart()
 {
-    int n = 0;
-    int pos = 0;
-    while ((pos = regExp.indexIn(str, pos)) != -1) {
-        ++n;
-        pos += regExp.matchedLength();
-    }
-    return n;
+    static const QRegExp regex(INDENT_INC);
+    return regex.indexIn(m_tokenSequence) != -1;
 }
 
-int Scanner::indentLevel() const
+bool Scanner::didBlockEnd()
 {
-    static const QRegExp indentInc(INDENT_INC);
-    int indent = numMatches(indentInc, m_tokenSequence);
+    static const QRegExp regex("24_");
+    return regex.indexIn(m_tokenSequence) != -1;
+}
 
-    static const QRegExp indentDec("24_");
-    indent -= numMatches(indentDec, m_tokenSequence);
-
-    return indent;
+bool Scanner::didBlockInterrupt()
+{
+    static const QRegExp regex("27_");
+    return regex.indexIn(m_tokenSequence) != -1;
 }
 
 Token Scanner::onDefaultState()
@@ -342,6 +334,11 @@ Token Scanner::readIdentifier()
                || value == QLatin1String("case")) {
         kind = Token::KeywordBlockStarter;
         m_indentDepth++;
+    } else if (value == QLatin1String("else")
+               || value == QLatin1String("elsif")
+               || value == QLatin1String("ensure")
+               || value == QLatin1String("rescue")) {
+        kind = Token::KeywordElseElsIfRescueEnsure;
     } else if (std::find(&RUBY_KEYWORDS[0], &RUBY_KEYWORDS[N_KEYWORDS], value) != &RUBY_KEYWORDS[N_KEYWORDS]) {
         kind = Token::Keyword;
     } else if (methodPattern.indexIn(m_tokenSequence) != -1) {

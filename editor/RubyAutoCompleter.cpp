@@ -1,5 +1,5 @@
 #include "RubyAutoCompleter.h"
-#include "RubySimpleScanner.h"
+#include "RubyIndenter.h"
 
 #include <QTextBlock>
 #include <QTextCursor>
@@ -86,6 +86,13 @@ bool AutoCompleter::isInComment(const QTextCursor& cursor) const
 
 int AutoCompleter::paragraphSeparatorAboutToBeInserted(QTextCursor& cursor, const TextEditor::TabSettings& tabSettings)
 {
+    QTextBlock block = cursor.block();
+    QString text = block.text().trimmed();
+    if (text == "end" || text == "else" || text.startsWith("elsif") || text.startsWith("rescue") || text == "ensure") {
+        Indenter indenter;
+        indenter.indentBlock(const_cast<QTextDocument*>(block.document()), block, QChar(), tabSettings);
+    }
+
     // This implementation is buggy
 #if 0
     QTextBlock block = cursor.block();

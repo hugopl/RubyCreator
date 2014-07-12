@@ -86,6 +86,8 @@ bool AutoCompleter::isInComment(const QTextCursor& cursor) const
 
 int AutoCompleter::paragraphSeparatorAboutToBeInserted(QTextCursor& cursor, const TextEditor::TabSettings& tabSettings)
 {
+    // This implementation is buggy
+#if 0
     QTextBlock block = cursor.block();
     QString text = block.text();
     const QString textFromCursor = text.mid(cursor.positionInBlock()).trimmed();
@@ -123,6 +125,8 @@ int AutoCompleter::paragraphSeparatorAboutToBeInserted(QTextCursor& cursor, cons
     cursor.setPosition(pos);
 
     return 1;
+#endif
+    return 0;
 }
 
 }

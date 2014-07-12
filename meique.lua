@@ -38,7 +38,6 @@ plugin:addFiles([[
     editor/RubyHighlighter.cpp
     editor/RubyIndenter.cpp
     editor/RubyScanner.cpp
-    editor/RubySimpleScanner.cpp
 
     projectmanager/RubyProject.cpp
     projectmanager/RubyProjectManager.cpp

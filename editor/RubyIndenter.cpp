@@ -30,8 +30,6 @@ void Indenter::indentBlock(QTextDocument*, const QTextBlock& block, const QChar&
             indent = previous.userState() >> 8;
             previous = block.previous();
         }
-        if (didBlockStart(previous))
-            indent++;
         isNewBlock = true;
     }
 

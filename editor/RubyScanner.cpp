@@ -156,7 +156,7 @@ Token Scanner::onDefaultState()
 
     // Ignore new lines
     bool hasNewLine = false;
-    while(first == QLatin1Char('\n')) {
+    while(first == '\n') {
         hasNewLine = true;
         m_line++;
         m_lineStartOffset = m_src.position();
@@ -171,35 +171,35 @@ Token Scanner::onDefaultState()
 
     if (first.isDigit()) {
         token = readFloatNumber();
-    } else if (first == QLatin1Char('\'') || first == QLatin1Char('\"')) {
+    } else if (first == '\'' || first == '\"') {
         token = readStringLiteral(first);
     } else if (first == '`') {
         token = readStringLiteral(first);
-    } else if (first.isLetter() || first == QLatin1Char('_') || first == QLatin1Char('@')
-               || first == QLatin1Char('$') || (first == QLatin1Char(':') && m_src.peek() != QLatin1Char(':'))) {
+    } else if (first.isLetter() || first == '_' || first == '@'
+               || first == '$' || (first == ':' && m_src.peek() != ':')) {
         token = readIdentifier();
     } else if (first.isDigit()) {
         token = readNumber();
-    } else if (first == QLatin1Char('#')) {
+    } else if (first == '#') {
         token = readComment();
-    } else if (first == QLatin1Char('/')) {
+    } else if (first == '/') {
         token = readRegexp();
     } else if (first.isSpace()) {
         token = readWhiteSpace();
-    } else if (first == QLatin1Char(',')) {
+    } else if (first == ',') {
         token = { Token::OperatorComma, m_src.anchor(), m_src.length() };
-    } else if (first == QLatin1Char('.')) {
+    } else if (first == '.') {
         token = { Token::OperatorDot, m_src.anchor(), m_src.length() };
-    } else if (first == QLatin1Char('=') && m_src.peek() != QLatin1Char('=')) {
+    } else if (first == '=' && m_src.peek() != '=') {
         token = { Token::OperatorAssign, m_src.anchor(), m_src.length() };
-    } else if (first == QLatin1Char(';')) {
+    } else if (first == ';') {
         token = { Token::OperatorSemiColon, m_src.anchor(), m_src.length() };
     } else {
         token = readOperator(first);
     }
 
     m_tokenSequence += QString::number(token.kind);
-    m_tokenSequence += QLatin1Char('_');
+    m_tokenSequence += '_';
 
     return token;
 }
@@ -261,7 +261,7 @@ Token Scanner::readStringLiteral(QChar quoteChar)
 
 Token Scanner::readRegexp()
 {
-    QLatin1Char slash('/');
+    const char slash = '/';
     QChar ch = m_src.peek();
 
     while (ch != slash && !ch.isNull()) {
@@ -285,18 +285,18 @@ Token Scanner::readIdentifier()
     static const QRegExp controlFlowShouldIncIndentPattern("(" FLOWCTL_SHOULD_INC_INDENT2 ")$");
 
     QChar ch = m_src.peek();
-    while (ch.isLetterOrNumber() || ch == QLatin1Char('_') || ch == QLatin1Char('?') || ch == QLatin1Char('!')) {
+    while (ch.isLetterOrNumber() || ch == '_' || ch == '?' || ch == '!') {
         m_src.move();
         ch = m_src.peek();
     }
     QStringRef value = m_src.value();
 
     Token::Kind kind = Token::Identifier;
-    if (value.at(0) == QLatin1Char('@')) {
+    if (value.at(0) == '@') {
         kind = Token::ClassField;
-    } else if (value.length() > 1 && value.at(0) == QLatin1Char(':')) {
+    } else if (value.length() > 1 && value.at(0) == ':') {
         kind = Token::Symbol;
-    } else if (value.at(0) == QLatin1Char('$')) {
+    } else if (value.at(0) == '$') {
         kind = Token::Global;
     } else if (value.at(0).isUpper()) {
         kind = Token::Constant;
@@ -356,38 +356,38 @@ Token Scanner::readIdentifier()
 inline static bool isHexDigit(QChar ch)
 {
     return (ch.isDigit()
-            || (ch >= QLatin1Char('a') && ch <= QLatin1Char('f'))
-            || (ch >= QLatin1Char('A') && ch <= QLatin1Char('F')));
+            || (ch >= 'a' && ch <= 'f')
+            || (ch >= 'A' && ch <= 'F'));
 }
 
 inline static bool isOctalDigit(QChar ch)
 {
-    return (ch.isDigit() && ch != QLatin1Char('8') && ch != QLatin1Char('9'));
+    return (ch.isDigit() && ch != '8' && ch != '9');
 }
 
 inline static bool isBinaryDigit(QChar ch)
 {
-    return (ch == QLatin1Char('0') || ch == QLatin1Char('1'));
+    return (ch == '0' || ch == '1');
 }
 
 inline static bool isValidIntegerSuffix(QChar ch)
 {
-    return (ch == QLatin1Char('l') || ch == QLatin1Char('L'));
+    return (ch == 'l' || ch == 'L');
 }
 
 Token Scanner::readNumber()
 {
     if (!m_src.isEnd()) {
         QChar ch = m_src.peek();
-        if (ch.toLower() == QLatin1Char('b')) {
+        if (ch.toLower() == 'b') {
             m_src.move();
             while (isBinaryDigit(m_src.peek()))
                 m_src.move();
-        } else if (ch.toLower() == QLatin1Char('o')) {
+        } else if (ch.toLower() == 'o') {
             m_src.move();
             while (isOctalDigit(m_src.peek()))
                 m_src.move();
-        } else if (ch.toLower() == QLatin1Char('x')) {
+        } else if (ch.toLower() == 'x') {
             m_src.move();
             while (isHexDigit(m_src.peek()))
                 m_src.move();
@@ -417,7 +417,7 @@ Token Scanner::readFloatNumber()
             break;
 
         if (state == State_INTEGER) {
-            if (ch == QLatin1Char('.') && m_src.peek(1).isDigit() && !hadFraction) {
+            if (ch == '.' && m_src.peek(1).isDigit() && !hadFraction) {
                 m_src.move();
                 hadFraction = true;
                 state = State_FRACTION;
@@ -425,11 +425,11 @@ Token Scanner::readFloatNumber()
                 break;
             }
         } else if (state == State_FRACTION) {
-            if (ch == QLatin1Char('e') || ch == QLatin1Char('E')) {
+            if (ch == 'e' || ch == 'E') {
                 QChar next = m_src.peek(1);
                 QChar next2 = m_src.peek(2);
                 bool isExp = next.isDigit()
-                        || (((next == QLatin1Char('-')) || (next == QLatin1Char('+'))) && next2.isDigit());
+                        || (((next == '-') || (next == '+')) && next2.isDigit());
                 if (isExp) {
                     m_src.move();
                     state = State_EXPONENT;
@@ -454,7 +454,7 @@ Token Scanner::readFloatNumber()
 Token Scanner::readComment()
 {
     QChar ch = m_src.peek();
-    while (ch != QLatin1Char('\n') && !ch.isNull()) {
+    while (ch != '\n' && !ch.isNull()) {
         m_src.move();
         ch = m_src.peek();
     }
@@ -482,7 +482,7 @@ Token Scanner::readOperator(const QChar& first)
 
     static const QString operators = QStringLiteral("<=>+-/*%!");
     static const QString colon = QStringLiteral(":");
-    const QString& acceptedChars = first == QLatin1Char(':') ? colon : operators;
+    const QString& acceptedChars = first == ':' ? colon : operators;
     QChar ch = m_src.peek();
 
     while (acceptedChars.contains(ch)) {

@@ -79,7 +79,7 @@ public:
     {
         int pos = m_position + offset;
         if (pos >= m_textLength)
-            return QLatin1Char('\0');
+            return '\0';
         return m_textPtr[pos];
     }
 

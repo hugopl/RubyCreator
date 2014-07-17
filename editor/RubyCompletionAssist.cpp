@@ -53,7 +53,7 @@ TextEditor::IAssistProcessor* CompletionAssistProvider::createProcessor() const
 
 bool CompletionAssistProvider::isActivationCharSequence(const QString& sequence) const
 {
-    return sequence.at(0) == QLatin1Char('.') || sequence.at(0) == QLatin1Char(':');
+    return sequence.at(0) == '.' || sequence.at(0) == ':';
 }
 
 static const QString& nameFor(const QString& s)

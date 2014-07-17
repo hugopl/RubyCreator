@@ -108,7 +108,7 @@ void Project::addNodes(const QSet<QString>& nodes)
 {
     using namespace ProjectExplorer;
 
-    const QLatin1Char sep('/');
+    const char sep = '/';
     QStringList path;
     for (const QString& node : nodes) {
         path = m_projectDir.relativeFilePath(node).split(sep);
@@ -122,7 +122,7 @@ void Project::removeNodes(const QSet<QString>& nodes)
 {
     using namespace ProjectExplorer;
 
-    const QLatin1Char sep('/');
+    const char sep = '/';
     QStringList path;
 
     for (const QString& node : nodes) {

@@ -220,7 +220,7 @@ Token Scanner::readStringLiteral(QChar quoteChar)
 {
     QChar ch = m_src.peek();
 
-    if (ch == '#' && m_src.peek(1) == '{') {
+    if (quoteChar != '\'' && ch == '#' && m_src.peek(1) == '{') {
         m_src.move();
         m_src.move();
         ch = m_src.peek();
@@ -242,7 +242,7 @@ Token Scanner::readStringLiteral(QChar quoteChar)
                 break;
             }
             ch = m_src.peek();
-        } else if (ch == '#' && m_src.peek(1) == '{') {
+        } else if (quoteChar != '\'' && ch == '#' && m_src.peek(1) == '{') {
             saveState(State_String, quoteChar);
             break;
         } else {

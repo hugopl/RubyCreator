@@ -180,6 +180,8 @@ void TestScanner::inStringCode()
 {
     Tokens expectedTokens = { Token::Backtick, Token::InStringCode, Token::Backtick };
     QCOMPARE(tokenize("`Nice #{Hello}`"), expectedTokens);
+    expectedTokens = { Token::String };
+    QCOMPARE(tokenize("'Nice #{Hello}'", true), expectedTokens);
 }
 
 QTEST_APPLESS_MAIN(TestScanner)

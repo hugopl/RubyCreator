@@ -114,7 +114,7 @@ public:
 private:
     Token onDefaultState();
 
-    Token readStringLiteral(QChar quoteChar);
+    Token readStringLiteral(QChar quoteChar, bool stateRestored = false);
     Token readRegexp();
     Token readIdentifier();
     Token readNumber();

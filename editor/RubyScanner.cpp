@@ -115,7 +115,7 @@ Token Scanner::read()
     parseState(state, saved);
     switch (state) {
     case State_String:
-        return readStringLiteral(saved);
+        return readStringLiteral(saved, true);
     default:
         return onDefaultState();
     }
@@ -217,11 +217,11 @@ static Token::Kind tokenKindFor(QChar ch)
     }
 }
 
-Token Scanner::readStringLiteral(QChar quoteChar)
+Token Scanner::readStringLiteral(QChar quoteChar, bool stateRestored)
 {
     QChar ch = m_src.peek();
 
-    if (quoteChar != '\'' && ch == '#' && m_src.peek(1) == '{') {
+    if (stateRestored && quoteChar != '\'' && ch == '#' && m_src.peek(1) == '{') {
         m_src.move();
         m_src.move();
         ch = m_src.peek();

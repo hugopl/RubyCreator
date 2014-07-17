@@ -40,7 +40,7 @@ TextEditor::ISnippetProvider* CodeStylePreferencesFactory::snippetProvider() con
     const QList<TextEditor::ISnippetProvider *> &providers =
     ExtensionSystem::PluginManager::getObjects<TextEditor::ISnippetProvider>();
     foreach (TextEditor::ISnippetProvider *provider, providers)
-        if (provider->groupId() == QLatin1String(Constants::SnippetGroupId))
+        if (provider->groupId() == Constants::SnippetGroupId)
             return provider;
     return 0;
 }

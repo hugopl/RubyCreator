@@ -305,42 +305,38 @@ Token Scanner::readIdentifier()
             m_contextDepths << m_indentDepth;
         }
     // TODO: Use gperf for this keywords hash
-    } else if (value == QLatin1String("end")) {
+    } else if (value == "end") {
         kind = Token::KeywordEnd;
         m_indentDepth--;
         if (!m_contextDepths.empty() && m_indentDepth < m_contextDepths.last()) {
             m_context.pop_back();
             m_contextDepths.pop_back();
         }
-    } else if (value == QLatin1String("self")) {
+    } else if (value == "self") {
         kind = Token::KeywordSelf;
-    } else if (value == QLatin1String("def")) {
+    } else if (value == "def") {
         kind = Token::KeywordDef;
         m_indentDepth++;
-    } else if (value == QLatin1String("module")) {
+    } else if (value == "module") {
         kind = Token::KeywordModule;
         m_indentDepth++;
-    } else if (value == QLatin1String("class")) {
+    } else if (value == "class") {
         kind = Token::KeywordClass;
         m_indentDepth++;
-    } else if (value == QLatin1String("if") || value == QLatin1String("unless")) {
+    } else if (value == "if" || value == "unless") {
         kind = Token::KeywordFlowControl;
         if (controlFlowShouldIncIndentPattern.indexIn(m_tokenSequence) != -1)
             m_indentDepth++;
-    } else if (value == QLatin1String("while")
-               || value == QLatin1String("until")
-               ) {
+    } else if (value == "while" || value == "until") {
         kind = Token::KeywordLoop;
         m_indentDepth++;
-    } else if (value == QLatin1String("do")
-               || value == QLatin1String("begin")
-               || value == QLatin1String("case")) {
+    } else if (value == "do" || value == "begin" || value == "case") {
         kind = Token::KeywordBlockStarter;
         m_indentDepth++;
-    } else if (value == QLatin1String("else")
-               || value == QLatin1String("elsif")
-               || value == QLatin1String("ensure")
-               || value == QLatin1String("rescue")) {
+    } else if (value == "else"
+               || value == "elsif"
+               || value == "ensure"
+               || value == "rescue") {
         kind = Token::KeywordElseElsIfRescueEnsure;
     } else if (std::find(&RUBY_KEYWORDS[0], &RUBY_KEYWORDS[N_KEYWORDS], value) != &RUBY_KEYWORDS[N_KEYWORDS]) {
         kind = Token::Keyword;

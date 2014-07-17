@@ -13,7 +13,7 @@ EditorFactory::EditorFactory(QObject* parent)
 {
     setId(Constants::EditorId);
     setDisplayName(tr(Constants::EditorDisplayName));
-    addMimeType(QLatin1String(Constants::MimeType));
+    addMimeType(Constants::MimeType);
     new TextEditor::TextEditorActionHandler(this,
                               Constants::EditorId,
                               TextEditor::TextEditorActionHandler::Format

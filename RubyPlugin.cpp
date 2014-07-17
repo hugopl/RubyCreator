@@ -38,7 +38,7 @@ Plugin::~Plugin()
 
 bool Plugin::initialize(const QStringList&, QString* errorString)
 {
-    if (!Core::MimeDatabase::addMimeTypes(QLatin1String(":rubysupport/Ruby.mimetypes.xml"), errorString))
+    if (!Core::MimeDatabase::addMimeTypes(":rubysupport/Ruby.mimetypes.xml", errorString))
         return false;
 
     initializeToolsSettings();
@@ -105,7 +105,7 @@ void Plugin::initializeToolsSettings()
 
     // load global settings (after built-in settings are added to the pool)
     QSettings* s = Core::ICore::settings();
-    globalCodeStyle->fromSettings(QLatin1String(Constants::SettingsId), s);
+    globalCodeStyle->fromSettings(Constants::SettingsId, s);
 
     // mimetypes to be handled
     TextEditor::TextEditorSettings::registerMimeTypeForLanguageId(Constants::MimeType, Constants::SettingsId);

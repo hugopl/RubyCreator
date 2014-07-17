@@ -32,6 +32,7 @@ Highlighter::Highlighter(QTextDocument* parent)
     m_formats[Token::KeywordSelf].setForeground(QColor(68, 85, 136));
     m_formats[Token::KeywordSelf].setFontWeight(100);
     m_formats[Token::String].setForeground(QColor(208, 16, 64));
+    m_formats[Token::Backtick] = m_formats[Token::String];
     m_formats[Token::Comment].setForeground(QColor(153, 153, 136));
     m_formats[Token::Constant].setForeground(QColor(0, 128, 128));
     m_formats[Token::Global].setForeground(QColor(0, 128, 128));

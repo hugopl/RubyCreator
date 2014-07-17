@@ -175,6 +175,8 @@ Token Scanner::onDefaultState()
         token = readFloatNumber();
     } else if (first == QLatin1Char('\'') || first == QLatin1Char('\"')) {
         token = readStringLiteral(first);
+    } else if (first == '`') {
+        token = readStringLiteral(first);
     } else if (first.isLetter() || first == QLatin1Char('_') || first == QLatin1Char('@')
                || first == QLatin1Char('$') || (first == QLatin1Char(':') && m_src.peek() != QLatin1Char(':'))) {
         token = readIdentifier();
@@ -235,7 +237,20 @@ Token Scanner::readStringLiteral(QChar quoteChar)
     if (ch == quoteChar)
         clearState();
     m_src.move();
-    return { Token::String, m_src.anchor(), m_src.length() };
+
+    Token::Kind kind;
+    switch(quoteChar.toLatin1()) {
+    case '`':
+        kind = Token::Backtick;
+        break;
+    case '\'':
+    case '"':
+    default:
+        kind = Token::String;
+        break;
+    }
+
+    return { kind, m_src.anchor(), m_src.length() };
 }
 
 Token Scanner::readRegexp()

@@ -56,6 +56,7 @@ static const char* const RUBY_KEYWORDS[] = {
     "or",
     "raise",
     "redo",
+    "require",
     "retry",
     "return",
     "self",

@@ -75,6 +75,7 @@ public:
 
         Backtick,
         InStringCode,
+        KeywordVisibility,
         EndOfBlock
     };
 

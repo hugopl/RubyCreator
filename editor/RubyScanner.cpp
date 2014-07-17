@@ -339,6 +339,8 @@ Token Scanner::readIdentifier()
                || value == "ensure"
                || value == "rescue") {
         kind = Token::KeywordElseElsIfRescueEnsure;
+    } else if (value == "protected" || value == "private" || value == "public") {
+        kind = Token::KeywordVisibility;
     } else if (std::find(&RUBY_KEYWORDS[0], &RUBY_KEYWORDS[N_KEYWORDS], value) != &RUBY_KEYWORDS[N_KEYWORDS]) {
         kind = Token::Keyword;
     } else if (methodPattern.indexIn(m_tokenSequence) != -1) {

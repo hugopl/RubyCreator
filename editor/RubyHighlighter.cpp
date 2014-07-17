@@ -29,6 +29,8 @@ Highlighter::Highlighter(QTextDocument* parent)
         m_formats[tk] = keywordFormat;
 
 
+    m_formats[Token::KeywordVisibility].setForeground(QColor(0, 0, 255));
+    m_formats[Token::KeywordVisibility].setFontWeight(100);
     m_formats[Token::KeywordSelf].setForeground(QColor(68, 85, 136));
     m_formats[Token::KeywordSelf].setFontWeight(100);
     m_formats[Token::String].setForeground(QColor(208, 16, 64));

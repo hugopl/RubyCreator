@@ -115,8 +115,6 @@ Token Scanner::read()
     switch (state) {
     case State_String:
         return readStringLiteral(saved);
-    case State_MultiLineString:
-        return readMultiLineStringLiteral(saved);
     default:
         return onDefaultState();
     }
@@ -206,51 +204,59 @@ Token Scanner::onDefaultState()
     return token;
 }
 
-bool Scanner::checkEscapeSequence()
+static Token::Kind tokenKindFor(QChar ch)
 {
-    if (m_src.peek() == QLatin1Char('\\')) {
-        m_src.move();
-        QChar ch = m_src.peek();
-        if (ch == QLatin1Char('\n') || ch.isNull())
-            return true;
-    }
-    return false;
-}
-
-/**
-  reads single-line string literal, surrounded by ' or " quotes
-  */
-Token Scanner::readStringLiteral(QChar quoteChar)
-{
-    QChar ch = m_src.peek();
-    if (ch == quoteChar && m_src.peek(1) == quoteChar) {
-        saveState(State_MultiLineString, quoteChar);
-        return readMultiLineStringLiteral(quoteChar);
-    }
-
-    while (ch != quoteChar && !ch.isNull()) {
-        if (checkEscapeSequence())
-            saveState(State_String, quoteChar);
-        m_src.move();
-        ch = m_src.peek();
-    }
-    if (ch == quoteChar)
-        clearState();
-    m_src.move();
-
-    Token::Kind kind;
-    switch(quoteChar.toLatin1()) {
+    switch(ch.toLatin1()) {
     case '`':
-        kind = Token::Backtick;
-        break;
+        return Token::Backtick;
     case '\'':
     case '"':
     default:
-        kind = Token::String;
-        break;
+        return Token::String;
+    }
+}
+
+Token Scanner::readStringLiteral(QChar quoteChar)
+{
+    QChar ch = m_src.peek();
+
+    if (ch == '#' && m_src.peek(1) == '{') {
+        m_src.move();
+        m_src.move();
+        ch = m_src.peek();
+        while (ch != '}' && !ch.isNull()) {
+            m_src.move();
+            ch = m_src.peek();
+        }
+        m_src.move();
+        return { Token::InStringCode, m_src.anchor(), m_src.length() };
     }
 
-    return { kind, m_src.anchor(), m_src.length() };
+    while (ch != quoteChar && !ch.isNull()) {
+        if (ch == '\\') {
+            m_src.move();
+            ch = m_src.peek();
+            m_src.move();
+            if (ch == '\n' || ch.isNull()) {
+                saveState(State_String, quoteChar);
+                break;
+            }
+            ch = m_src.peek();
+        } else if (ch == '#' && m_src.peek(1) == '{') {
+            saveState(State_String, quoteChar);
+            break;
+        } else {
+            m_src.move();
+            ch = m_src.peek();
+        }
+    }
+
+    if (ch == quoteChar) {
+        clearState();
+        m_src.move();
+    }
+
+    return { tokenKindFor(quoteChar), m_src.anchor(), m_src.length() };
 }
 
 Token Scanner::readRegexp()
@@ -259,36 +265,11 @@ Token Scanner::readRegexp()
     QChar ch = m_src.peek();
 
     while (ch != slash && !ch.isNull()) {
-        checkEscapeSequence();
         m_src.move();
         ch = m_src.peek();
     }
     m_src.move();
     return { Token::Regexp, m_src.anchor(), m_src.length() };
-}
-
-/**
-  reads multi-line string literal, surrounded by ''' or """ sequencies
-  */
-Token Scanner::readMultiLineStringLiteral(QChar quoteChar)
-{
-    for (;;) {
-        QChar ch = m_src.peek();
-        if (ch.isNull())
-            break;
-        if (ch == quoteChar
-                && (m_src.peek(1) == quoteChar)
-                && (m_src.peek(2) == quoteChar)) {
-            clearState();
-            m_src.move();
-            m_src.move();
-            m_src.move();
-            break;
-        }
-        m_src.move();
-    }
-
-    return { Token::String, m_src.anchor(), m_src.length() };
 }
 
 /**

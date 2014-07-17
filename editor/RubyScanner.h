@@ -74,6 +74,7 @@ public:
         KeywordElseElsIfRescueEnsure = 27,
 
         Backtick,
+        InStringCode,
         EndOfBlock
     };
 
@@ -112,10 +113,8 @@ public:
 private:
     Token onDefaultState();
 
-    bool checkEscapeSequence();
     Token readStringLiteral(QChar quoteChar);
     Token readRegexp();
-    Token readMultiLineStringLiteral(QChar quoteChar);
     Token readIdentifier();
     Token readNumber();
     Token readFloatNumber();

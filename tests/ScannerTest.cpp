@@ -11,6 +11,7 @@ QDebug& operator<<(QDebug& s, Token::Kind t)
     switch(t) {
     case Token::Number: str = "Number"; break;
     case Token::String: str = "String"; break;
+    case Token::InStringCode: str = "InStringCode"; break;
     case Token::Backtick: str = "Backtick"; break;
     case Token::Keyword: str = "Keyword"; break;
     case Token::KeywordDef: str = "Keyword-Def"; break;
@@ -165,10 +166,20 @@ void TestScanner::ifs()
     QCOMPARE(m_scanner->contextName(), QStringLiteral("Foo"));
 }
 
-void TestScanner::backtick()
+void TestScanner::strings()
 {
     Tokens expectedTokens = { Token::Backtick };
     QCOMPARE(tokenize("`Nice \"backtikc\" son`"), expectedTokens);
+    expectedTokens = { Token::Backtick, Token::Backtick };
+    QCOMPARE(tokenize("`Nice \"backt \\\nikc\" son`"), expectedTokens);
+    expectedTokens = { Token::String };
+    QCOMPARE(tokenize("\"Nice \\\"escape!\""), expectedTokens);
+}
+
+void TestScanner::inStringCode()
+{
+    Tokens expectedTokens = { Token::Backtick, Token::InStringCode, Token::Backtick };
+    QCOMPARE(tokenize("`Nice #{Hello}`"), expectedTokens);
 }
 
 QTEST_APPLESS_MAIN(TestScanner)

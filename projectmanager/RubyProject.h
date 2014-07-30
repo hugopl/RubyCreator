@@ -38,8 +38,6 @@ private:
     QSet<QString> m_files;
     QFileSystemWatcher m_fsWatcher;
 
-    const QStringList m_nameFilter;
-
     QElapsedTimer m_lastProjectScan;
     QTimer m_projectScanTimer;
 

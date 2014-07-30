@@ -54,6 +54,9 @@ void CodeModel::removeSymbolsFrom(const QString& file)
 
 void CodeModel::addFile(const QString& file)
 {
+    if (!file.endsWith(".rb") && !file.endsWith(".rake"))
+        return;
+
     QFileInfo info(file);
     Data*& data = m_model[file];
     if (!data)

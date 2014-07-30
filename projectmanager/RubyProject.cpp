@@ -17,7 +17,6 @@ const int MIN_TIME_BETWEEN_PROJECT_SCANS = 4500;
 Project::Project(ProjectManager* projectManager, const QString& fileName)
     : m_projectManager(projectManager)
     , m_document(new Document)
-    , m_nameFilter({"*.rb", "*.erb", "*.rake", "*.yml", "*.haml", "*.gemspec", "config.ru", "Gemfile", "Rakefile"})
 {
     m_document->setFilePath(fileName);
     m_projectDir = QFileInfo(fileName).dir();
@@ -95,7 +94,7 @@ void Project::populateProject()
 
 void Project::recursiveScanDirectory(const QDir& dir, QSet<QString>& container)
 {
-    for (const QFileInfo& info : dir.entryInfoList(m_nameFilter, QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::CaseSensitive)) {
+    for (const QFileInfo& info : dir.entryInfoList(QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::CaseSensitive)) {
         if (info.isDir())
             recursiveScanDirectory(QDir(info.filePath()), container);
         else

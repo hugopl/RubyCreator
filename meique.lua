@@ -1,13 +1,36 @@
 requiresMeique("1.0")
 GCC:addCustomFlags("-std=c++0x")
 
-qtcSrc = option("QtCreatorSources", "Where the QtCreator sources are located")
+qtCreatorLibPath = option("QtCreatorLibDir", "Where QtCreator plugins folder is.", "/usr/lib/qtcreator")
 
-f = io.open(qtcSrc.."/qtcreator.pri", "r")
-abortIf(f == nil, qtcSrc.."/qtcreator.pri not found!")
-s = f:read("*all")
-f:close()
-_, _, QTCREATOR_VERSION = string.find(s, "QTCREATOR_VERSION = (3.%d.%d+)")
+function readQtCVersion()
+    local f = io.popen("qtcreator -version 2>&1", 'r')
+    local s = f:read('*a')
+    f:close()
+    local version = string.match(s, "Qt Creator (%d.%d.%d+)")
+    abortIf(not version, "qtcreator not in your system PATH or we failed to find the QtCreator version in the output of 'qtcreator -version'.")
+    return version
+end
+
+function getQtCreatorSources()
+    if os.execute("test -d "..QTC_DIR) == 0 then
+        return true
+    end
+
+    print("Downloading QtCreator sources... (using wget)")
+    url = string.format("http://download.qt-project.org/official_releases/qtcreator/%s/%s/qt-creator-opensource-src-%s.tar.gz", QTC_SHORT_VERSION, QTC_VERSION, QTC_VERSION)
+    if os.execute("cd "..buildDir().." && wget -c "..url) == 0 then
+        untar = string.format("tar -xf %sqt-creator-opensource-src-%s.tar.gz -C %s", buildDir(), QTC_VERSION, buildDir())
+        print(untar)
+        abortIf(os.execute(untar) ~= 0, "Failed to untar QtCreator sources.")
+    end
+end
+
+QTC_VERSION = readQtCVersion()
+QTC_SHORT_VERSION = string.match(QTC_VERSION, "(%d.%d).%d+")
+QTC_DIR = string.format("%sqt-creator-opensource-src-%s", buildDir(), QTC_VERSION)
+
+getQtCreatorSources()
 
 qtCore = findPackage("Qt5Core")
 qtGui = findPackage("Qt5Gui")
@@ -23,8 +46,8 @@ plugin:use(qtWidgets)
 configureFile("RubySupport.pluginspec.in", "RubySupport.pluginspec")
 
 -- QtCreator include paths
-plugin:addIncludePath(qtcSrc.."/src/plugins")
-plugin:addIncludePath(qtcSrc.."/src/libs")
+plugin:addIncludePath(QTC_DIR.."/src/plugins")
+plugin:addIncludePath(QTC_DIR.."/src/libs")
 
 plugin:addFiles([[
     editor/RubyAutoCompleter.cpp
@@ -47,12 +70,9 @@ plugin:addFiles([[
 ]])
 plugin:addQtResource("Ruby.qrc")
 
--- Hardcoded QtCreator libraries path
-plugin:addLibraryPaths([[
-/usr/lib/qtcreator
-/usr/lib/qtcreator/plugins
-/usr/lib/qtcreator/plugins/QtProject
-]])
+plugin:addLibraryPath(qtCreatorLibPath)
+plugin:addLibraryPath(qtCreatorLibPath.."/plugins")
+plugin:addLibraryPath(qtCreatorLibPath.."/plugins/QtProject")
 
 plugin:addLinkLibraries([[
 Core
@@ -61,3 +81,6 @@ ProjectExplorer
 ]])
 
 addSubdirectory("tests")
+
+plugin:install("plugins")
+plugin:install("RubySupport.pluginspec", "plugins")

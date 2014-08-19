@@ -1,4 +1,4 @@
-requiresMeique("0.93")
+requiresMeique("1.0")
 GCC:addCustomFlags("-std=c++0x")
 
 qtcSrc = option("QtCreatorSources", "Where the QtCreator sources are located")

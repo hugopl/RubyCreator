@@ -17,7 +17,6 @@ static const auto UpdateDocumentDefaultInterval = 150;
 Editor::Editor(EditorWidget* parent)
     : TextEditor::BaseTextEditor(parent)
 {
-    setId(Constants::EditorId);
     setContext(Core::Context(Constants::EditorId, TextEditor::Constants::C_TEXTEDITOR));
 
     m_updateCodeModelTimer.setSingleShot(true);

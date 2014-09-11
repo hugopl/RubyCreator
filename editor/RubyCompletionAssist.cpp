@@ -41,7 +41,7 @@ static KindOfCompletion kindOfCompletion(QTextDocument* document, int& startPosi
     return mayBeAConstant ? MayBeConstant : MayBeAIdentifier;
 }
 
-bool CompletionAssistProvider::supportsEditor(const Core::Id& editorId) const
+bool CompletionAssistProvider::supportsEditor(Core::Id editorId) const
 {
     return editorId == Constants::EditorId;
 }

@@ -25,8 +25,6 @@ public:
     bool removeFiles(const QStringList&, QStringList*) override { return false; }
     bool deleteFiles(const QStringList&) override { return false; }
     bool renameFile(const QString&, const QString&) override { return false; }
-
-    QList<ProjectExplorer::RunConfiguration*> runConfigurationsFor(Node*) override { return QList<ProjectExplorer::RunConfiguration*>(); }
 };
 
 }

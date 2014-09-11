@@ -5,7 +5,7 @@
 #include "editor/RubyCodeModel.h"
 #include "editor/RubyCodeStylePreferencesFactory.h"
 #include "editor/RubyEditorFactory.h"
-#include "editor/RubyHighlighterFactory.h"
+#include "editor/RubyHighlighter.h"
 #include "editor/RubySnippetProvider.h"
 #include "editor/RubySymbolFilter.h"
 #include "editor/RubyCompletionAssist.h"
@@ -17,6 +17,7 @@
 #include <QtPlugin>
 
 #include <texteditor/codestylepool.h>
+#include <texteditor/highlighterfactory.h>
 #include <texteditor/simplecodestylepreferences.h>
 #include <texteditor/tabsettings.h>
 #include <texteditor/texteditorsettings.h>
@@ -43,7 +44,12 @@ bool Plugin::initialize(const QStringList&, QString* errorString)
 
     initializeToolsSettings();
 
-    addAutoReleasedObject(new HighlighterFactory);
+    auto hf = new TextEditor::HighlighterFactory;
+    hf->setId(Constants::EditorId);
+    hf->setProductType<Ruby::Highlighter>();
+    hf->addMimeType(Constants::MimeType);
+    addAutoReleasedObject(hf);
+
     addAutoReleasedObject(new SnippetProvider);
 
     m_factory = new EditorFactory(this);

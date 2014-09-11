@@ -11,7 +11,6 @@ public:
     virtual bool save(QString*, const QString&, bool) override { return false; }
     virtual QString defaultPath() const override { return QString(); }
     virtual QString suggestedFileName() const override { return QString(); }
-    virtual QString mimeType() const override { return QString(); }
 
     virtual bool isModified() const override { return false; }
     virtual bool isSaveAsAllowed() const override { return false; }

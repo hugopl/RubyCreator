@@ -12,12 +12,11 @@ class CompletionAssistProvider : public TextEditor::CompletionAssistProvider
 {
     Q_OBJECT
 public:
-    bool supportsEditor(const Core::Id& editorId) const override;
     TextEditor::IAssistProcessor* createProcessor() const override;
 
     int activationCharSequenceLength() const override { return 1; }
     bool isActivationCharSequence(const QString& sequence) const override;
-
+    bool supportsEditor(Core::Id editorId) const override;
 };
 
 class CompletionAssistProcessor : public TextEditor::IAssistProcessor

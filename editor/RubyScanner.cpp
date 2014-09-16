@@ -172,9 +172,7 @@ Token Scanner::onDefaultState()
 
     if (first.isDigit()) {
         token = readFloatNumber();
-    } else if (first == '\'' || first == '\"') {
-        token = readStringLiteral(first);
-    } else if (first == '`') {
+    } else if (first == '\'' || first == '\"' || first == '`') {
         token = readStringLiteral(first);
     } else if (first.isLetter() || first == '_' || first == '@'
                || first == '$' || (first == ':' && m_src.peek() != ':')) {

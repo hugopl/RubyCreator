@@ -94,10 +94,11 @@ void Project::populateProject()
 
 void Project::recursiveScanDirectory(const QDir& dir, QSet<QString>& container)
 {
+    QRegExp projectFilePattern(".*\\.rubyproject(?:\\.user)?$");
     for (const QFileInfo& info : dir.entryInfoList(QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::CaseSensitive)) {
         if (info.isDir())
             recursiveScanDirectory(QDir(info.filePath()), container);
-        else
+        else if (projectFilePattern.indexIn(info.fileName()) == -1)
             container << info.filePath();
     }
     m_fsWatcher.addPath(dir.absolutePath());

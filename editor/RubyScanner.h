@@ -123,6 +123,7 @@ private:
     Token readDoxygenComment();
     Token readWhiteSpace();
     Token readOperator(const QChar& first);
+    Token readPercentageNotation();
 
     void clearState();
     void saveState(State state, QChar savedData);

@@ -193,6 +193,8 @@ Token Scanner::onDefaultState()
         token = { Token::OperatorAssign, m_src.anchor(), m_src.length() };
     } else if (first == ';') {
         token = { Token::OperatorSemiColon, m_src.anchor(), m_src.length() };
+    } else if (first == '%') {
+        token = readPercentageNotation();
     } else {
         token = readOperator(first);
     }
@@ -487,6 +489,19 @@ Token Scanner::readOperator(const QChar& first)
         ch = m_src.peek();
     }
     return { Token::Operator, m_src.anchor(), m_src.length() };
+}
+
+Token Scanner::readPercentageNotation()
+{
+    QChar ch = m_src.peek();
+    if (ch.isSpace() || ch.isDigit())
+        return { Token::Operator, m_src.anchor(), m_src.length() };
+
+    if (ch.isLetter()) // Don't care if the user wrote the wront % modifier.
+        m_src.move();
+    QChar delimiter = m_src.peek();
+    m_src.move();
+    return readStringLiteral(delimiter, false);
 }
 
 void Scanner::clearState()

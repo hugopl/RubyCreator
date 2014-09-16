@@ -21,6 +21,7 @@ private slots:
     void ifs();
     void strings();
     void inStringCode();
+    void percentageNotation();
 private:
     Ruby::Scanner* m_scanner;
     typedef QVector<Ruby::Token::Kind> Tokens;

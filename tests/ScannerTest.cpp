@@ -187,5 +187,14 @@ void TestScanner::inStringCode()
 
 }
 
+void TestScanner::percentageNotation()
+{
+    Tokens expectedTokens = { Token::String };
+    QCOMPARE(tokenize("%(Hello)"), expectedTokens);
+    QCOMPARE(tokenize("%w/Hello asas/"), expectedTokens);
+    expectedTokens = { Token::Operator, Token::Number };
+    QCOMPARE(tokenize("%2"), expectedTokens);
+}
+
 QTEST_APPLESS_MAIN(TestScanner)
 #include "TestScanner.moc"

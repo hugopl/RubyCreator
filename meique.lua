@@ -17,9 +17,9 @@ function getQtCreatorSources()
         return true
     end
 
-    print("Downloading QtCreator sources... (using wget)")
+    print("Downloading QtCreator sources... (using curl)")
     url = string.format("http://download.qt-project.org/official_releases/qtcreator/%s/%s/qt-creator-opensource-src-%s.tar.gz", QTC_SHORT_VERSION, QTC_VERSION, QTC_VERSION)
-    if os.execute("cd "..buildDir().." && wget -c "..url) == 0 then
+    if os.execute("cd "..buildDir().." && curl -L -O "..url) == 0 then
         untar = string.format("tar -xf %sqt-creator-opensource-src-%s.tar.gz -C %s", buildDir(), QTC_VERSION, buildDir())
         print(untar)
         abortIf(os.execute(untar) ~= 0, "Failed to untar QtCreator sources.")

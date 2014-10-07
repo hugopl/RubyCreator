@@ -28,6 +28,8 @@ end
 
 QTC_VERSION = readQtCVersion()
 QTC_SHORT_VERSION = string.match(QTC_VERSION, "(%d.%d).%d+")
+-- Seems QtCreator guys forgot to upload 3.2.1 tarball, so using 3.2.0.
+QTC_VERSION = QTC_SHORT_VERSION..".0"
 QTC_DIR = string.format("%sqt-creator-opensource-src-%s", buildDir(), QTC_VERSION)
 
 getQtCreatorSources()

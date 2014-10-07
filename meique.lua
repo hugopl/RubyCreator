@@ -85,4 +85,4 @@ ProjectExplorer
 addSubdirectory("tests")
 
 plugin:install("plugins")
-plugin:install("RubySupport.pluginspec", "plugins")
+plugin:install(plugin:buildDir().."/RubySupport.pluginspec", "plugins")

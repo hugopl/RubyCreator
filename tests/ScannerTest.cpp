@@ -23,6 +23,7 @@ QDebug& operator<<(QDebug& s, Token::Kind t)
     case Token::ClassField: str = "ClassField"; break;
     case Token::Operator: str = "Operator"; break;
     case Token::OperatorComma: str = "OperatorComma"; break;
+    case Token::OperatorDot: str = "OperatorDot"; break;
     case Token::Comment: str = "Comment"; break;
     case Token::Identifier: str = "Identifier"; break;
     case Token::Whitespace: str = "Whitespace"; break;
@@ -194,6 +195,8 @@ void TestScanner::percentageNotation()
     QCOMPARE(tokenize("%w/Hello asas/"), expectedTokens);
     expectedTokens = { Token::Operator, Token::Number };
     QCOMPARE(tokenize("%2"), expectedTokens);
+    expectedTokens = { Token::String, Token::OperatorDot, Token::Identifier };
+    QCOMPARE(tokenize("%w(a b).length"), expectedTokens);
 }
 
 QTEST_APPLESS_MAIN(TestScanner)

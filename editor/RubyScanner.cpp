@@ -491,6 +491,16 @@ Token Scanner::readOperator(const QChar& first)
     return { Token::Operator, m_src.anchor(), m_src.length() };
 }
 
+static QChar translateDelimiter(const QChar& ch)
+{
+    switch (ch.toLatin1()) {
+    case '(' : return ')';
+    case '[' : return ')';
+    case '{' : return ')';
+    default: return ch;
+    }
+}
+
 Token Scanner::readPercentageNotation()
 {
     QChar ch = m_src.peek();
@@ -499,7 +509,7 @@ Token Scanner::readPercentageNotation()
 
     if (ch.isLetter()) // Don't care if the user wrote the wront % modifier.
         m_src.move();
-    QChar delimiter = m_src.peek();
+    QChar delimiter = translateDelimiter(m_src.peek());
     m_src.move();
     return readStringLiteral(delimiter, false);
 }

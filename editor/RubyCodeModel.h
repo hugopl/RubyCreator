@@ -14,10 +14,12 @@ namespace Ruby {
 class CodeModel : QObject
 {
     Q_OBJECT
+
+    Q_DISABLE_COPY(CodeModel)
+
 public:
     CodeModel();
     ~CodeModel();
-    CodeModel(const CodeModel&) = delete;
 
     static CodeModel* instance();
     void removeSymbolsFrom(const QString& file);

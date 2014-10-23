@@ -8,9 +8,10 @@
 #include <QElapsedTimer>
 #include <QTimer>
 
+namespace TextEditor { class TextDocument; }
+
 namespace Ruby {
 
-class Document;
 class ProjectManager;
 class ProjectNode;
 
@@ -30,9 +31,9 @@ private slots:
     void scheduleProjectScan();
     void populateProject();
 private:
-    ProjectManager* m_projectManager;
-    Document* m_document;
-    ProjectNode* m_rootNode;
+    ProjectManager *m_projectManager;
+    TextEditor::TextDocument *m_document;
+    ProjectNode *m_rootNode;
 
     QDir m_projectDir;
     QSet<QString> m_files;

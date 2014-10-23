@@ -1,7 +1,7 @@
 #include "RubyHighlighter.h"
 #include "RubyScanner.h"
 
-#include <texteditor/basetextdocument.h>
+#include <texteditor/textdocument.h>
 #include <texteditor/texteditorconstants.h>
 #include <texteditor/texteditorsettings.h>
 #include <texteditor/fontsettings.h>
@@ -13,7 +13,7 @@ Highlighter::Highlighter(QTextDocument* parent)
     : TextEditor::SyntaxHighlighter(parent)
     , m_formats(Token::EndOfBlock)
 {
-    auto& keywordFormat = m_formats[Token::Keyword];
+    QTextCharFormat &keywordFormat = m_formats[Token::Keyword];
     keywordFormat.setFontWeight(75);
     const Token::Kind keywordTokens[] = {
         Token::KeywordDef,
@@ -25,8 +25,8 @@ Highlighter::Highlighter(QTextDocument* parent)
         Token::KeywordEnd,
         Token::KeywordElseElsIfRescueEnsure
     };
-    for (const auto& tk : keywordTokens)
-        m_formats[tk] = keywordFormat;
+    for (int tk = 0; tk < sizeof(keywordTokens) / sizeof(*keywordTokens); ++tk)
+        m_formats[keywordTokens[tk]] = keywordFormat;
 
 
     m_formats[Token::KeywordVisibility].setForeground(QColor(0, 0, 255));
@@ -91,8 +91,8 @@ int Highlighter::highlightLine(const QString& text, int state)
     if (nextIndentLevel < 0)
         nextIndentLevel = 0;
 
-    TextEditor::BaseTextDocumentLayout::setFoldingIndent(currentBlock(), indentLevel);
-    TextEditor::BaseTextDocumentLayout::setParentheses(currentBlock(), m_currentBlockParentheses);
+    TextEditor::TextDocumentLayout::setFoldingIndent(currentBlock(), indentLevel);
+    TextEditor::TextDocumentLayout::setParentheses(currentBlock(), m_currentBlockParentheses);
     return (nextIndentLevel << 8) | scanner.state();
 }
 

@@ -26,9 +26,10 @@ public:
 
     void decorateEditor(TextEditor::SnippetEditorWidget *editor) const override
     {
-        editor->setSyntaxHighlighter(new Highlighter);
-        editor->baseTextDocument()->setIndenter(new Indenter);
-        editor->setAutoCompleter(new AutoCompleter);
+        if (TextEditor::TextDocument *document = editor->textDocument()) {
+            document->setSyntaxHighlighter(new Highlighter);
+            document->setIndenter(new Indenter);
+        }
     }
 };
 

@@ -1,23 +1,32 @@
 #ifndef RubyEditorWidget_h
 #define RubyEditorWidget_h
 
-#include <texteditor/basetexteditor.h>
+#include <texteditor/texteditor.h>
 #include <utils/uncommentselection.h>
 
 namespace Ruby {
 
-class EditorWidget : public TextEditor::BaseTextEditorWidget
+class EditorWidget : public TextEditor::TextEditorWidget
 {
     Q_OBJECT
+
 public:
     EditorWidget();
-    TextEditor::BaseTextEditor* createEditor() override;
 
     Link findLinkAt(const QTextCursor& cursor, bool, bool inNextSplit) override;
     void unCommentSelection() override;
+
+protected:
+    void finalizeInitialization() Q_DECL_OVERRIDE;
+
+private slots:
+    void scheduleCodeModelUpdate();
+    void updateCodeModel();
+
 private:
     QRegExp m_wordRegex;
     Utils::CommentDefinition m_commentDefinition;
+    QTimer m_updateCodeModelTimer;
 };
 
 }

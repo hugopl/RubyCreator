@@ -10,9 +10,10 @@ namespace Ruby {
 
 class CodeModel::Data
 {
+    Q_DISABLE_COPY(CodeModel::Data)
+
 public:
-    Data(const QString& fileName = QString()) : fileName(fileName) {}
-    Data(const Data&) = delete;
+    CodeModel::Data(const QString &fileName = QString()) : fileName(fileName) {}
 
     void clear()
     {
@@ -76,7 +77,7 @@ void CodeModel::addFiles(const QStringList& files)
     QElapsedTimer timer;
     timer.start();
 
-    for (const QString& file : files)
+    foreach (const QString &file, files)
         addFile(file);
 
     qDebug() << "Code model updated in" << timer.elapsed() << "ms";
@@ -153,7 +154,7 @@ QSet<QString> CodeModel::symbolsIn(const QString& file) const
 QList<Symbol> CodeModel::allMethods() const
 {
     QList<Symbol> result;
-    for (const Data* data : m_model)
+    foreach (const Data *data, m_model)
         result << data->methods;
     return result;
 }
@@ -162,8 +163,8 @@ QList<Symbol> CodeModel::allMethodsNamed(const QString& name) const
 {
     QList<Symbol> result;
     // FIXME: Replace this linear brute force approach
-    for (const Data* data : m_model) {
-        for (const Symbol& symbol : data->methods) {
+    foreach (const Data *data, m_model) {
+        foreach (const Symbol &symbol, data->methods) {
             if (symbol.name == name)
                 result << symbol;
         }

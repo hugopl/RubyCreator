@@ -5,12 +5,10 @@
 
 namespace Ruby {
 
-class EditorFactory;
-
 class Plugin : public ExtensionSystem::IPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QtCreatorPlugin")
+    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QtCreatorPlugin" FILE "Ruby.json")
 
 public:
 
@@ -21,8 +19,6 @@ public:
     virtual void extensionsInitialized() override;
 
 private:
-    EditorFactory* m_factory;
-
     void initializeToolsSettings();
 };
 

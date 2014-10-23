@@ -3,11 +3,10 @@
 #include "RubyAutoCompleter.h"
 #include "RubyCodeModel.h"
 #include "../RubyConstants.h"
-#include "RubyEditor.h"
 #include "RubyHighlighter.h"
 #include "RubyIndenter.h"
 
-#include <texteditor/basetextdocument.h>
+#include <texteditor/textdocument.h>
 
 #include <QDebug>
 #include <QTextBlock>
@@ -15,31 +14,25 @@
 
 namespace Ruby {
 
+const int UpdateDocumentDefaultInterval = 150;
+
 EditorWidget::EditorWidget()
     : m_wordRegex(QLatin1String("\\w+"))
 {
-    setParenthesesMatchingEnabled(true);
-    setMarksVisible(true);
-    setCodeFoldingSupported(true);
-    setAutoCompleter(new AutoCompleter);
     setLanguageSettingsId(Constants::SettingsId);
-
-    TextEditor::BaseTextDocument* baseDoc = baseTextDocument();
-    baseDoc->setIndenter(new Indenter());
 
     m_commentDefinition.multiLineStart.clear();
     m_commentDefinition.multiLineEnd.clear();
     m_commentDefinition.singleLine = QLatin1Char('#');
 
-    new Highlighter(document());
+    m_updateCodeModelTimer.setSingleShot(true);
+    m_updateCodeModelTimer.setInterval(UpdateDocumentDefaultInterval);
+    connect(&m_updateCodeModelTimer, &QTimer::timeout, this, &EditorWidget::updateCodeModel);
+
+    CodeModel::instance();
 }
 
-TextEditor::BaseTextEditor* EditorWidget::createEditor()
-{
-    return new Editor(this);
-}
-
-TextEditor::BaseTextEditorWidget::Link EditorWidget::findLinkAt(const QTextCursor& cursor, bool, bool)
+TextEditor::TextEditorWidget::Link EditorWidget::findLinkAt(const QTextCursor& cursor, bool, bool)
 {
     QString text = cursor.block().text();
     if (text.isEmpty())
@@ -81,5 +74,21 @@ void EditorWidget::unCommentSelection()
     Utils::unCommentSelection(this, m_commentDefinition);
 }
 
+void EditorWidget::scheduleCodeModelUpdate()
+{
+    m_updateCodeModelTimer.start();
 }
 
+void EditorWidget::updateCodeModel()
+{
+    const QString textData = textDocument()->plainText();
+    CodeModel::instance()->updateFile(textDocument()->filePath(), textData);
+}
+
+void EditorWidget::finalizeInitialization()
+{
+    connect(document(), SIGNAL(contentsChanged()), this, SLOT(scheduleCodeModelUpdate()));
+    updateCodeModel();
+}
+
+}

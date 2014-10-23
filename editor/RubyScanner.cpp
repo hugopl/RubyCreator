@@ -108,7 +108,7 @@ Token Scanner::read()
 {
     m_src.setAnchor();
     if (m_src.isEnd())
-        return { Token::EndOfBlock, m_src.anchor(), 0 };
+        return Token(Token::EndOfBlock, m_src.anchor(), 0);
 
     State state;
     QChar saved;
@@ -230,7 +230,7 @@ Token Scanner::readStringLiteral(QChar quoteChar, bool stateRestored)
             ch = m_src.peek();
         }
         m_src.move();
-        return { Token::InStringCode, m_src.anchor(), m_src.length() };
+        return Token(Token::InStringCode, m_src.anchor(), m_src.length());
     }
 
     while (ch != quoteChar && !ch.isNull()) {
@@ -257,7 +257,7 @@ Token Scanner::readStringLiteral(QChar quoteChar, bool stateRestored)
         m_src.move();
     }
 
-    return { tokenKindFor(quoteChar), m_src.anchor(), m_src.length() };
+    return Token(tokenKindFor(quoteChar), m_src.anchor(), m_src.length());
 }
 
 Token Scanner::readRegexp()
@@ -270,7 +270,7 @@ Token Scanner::readRegexp()
         ch = m_src.peek();
     }
     m_src.move();
-    return { Token::Regexp, m_src.anchor(), m_src.length() };
+    return Token(Token::Regexp, m_src.anchor(), m_src.length());
 }
 
 /**
@@ -349,7 +349,7 @@ Token Scanner::readIdentifier()
         kind = Token::Parameter;
     }
 
-    return { kind, m_src.anchor(), m_src.length() };
+    return Token(kind, m_src.anchor(), m_src.length());
 }
 
 inline static bool isHexDigit(QChar ch)
@@ -396,7 +396,7 @@ Token Scanner::readNumber()
         if (isValidIntegerSuffix(m_src.peek()))
             m_src.move();
     }
-    return { Token::Number, m_src.anchor(), m_src.length() };
+    return Token(Token::Number, m_src.anchor(), m_src.length());
 }
 
 Token Scanner::readFloatNumber()
@@ -444,7 +444,7 @@ Token Scanner::readFloatNumber()
         m_src.move();
     }
 
-    return { Token::Number, m_src.anchor(), m_src.length() };
+    return Token(Token::Number, m_src.anchor(), m_src.length());
 }
 
 /**
@@ -457,7 +457,7 @@ Token Scanner::readComment()
         m_src.move();
         ch = m_src.peek();
     }
-    return { Token::Comment, m_src.anchor(), m_src.length() };
+    return Token(Token::Comment, m_src.anchor(), m_src.length());
 }
 
 /**
@@ -467,7 +467,7 @@ Token Scanner::readWhiteSpace()
 {
     while (m_src.peek().isSpace())
         m_src.move();
-    return { Token::Whitespace, m_src.anchor(), m_src.length() };
+    return Token(Token::Whitespace, m_src.anchor(), m_src.length());
 }
 
 /**
@@ -477,7 +477,7 @@ Token Scanner::readOperator(const QChar& first)
 {
     static const QString singleCharOperators = QStringLiteral("[]{}()");
     if (singleCharOperators.contains(first))
-        return { Token::Operator, m_src.anchor(), m_src.length() };
+        return Token(Token::Operator, m_src.anchor(), m_src.length());
 
     static const QString operators = QStringLiteral("<=>+-/*%!");
     static const QString colon = QStringLiteral(":");
@@ -488,7 +488,7 @@ Token Scanner::readOperator(const QChar& first)
         m_src.move();
         ch = m_src.peek();
     }
-    return { Token::Operator, m_src.anchor(), m_src.length() };
+    return Token(Token::Operator, m_src.anchor(), m_src.length());
 }
 
 static QChar translateDelimiter(const QChar& ch)
@@ -505,7 +505,7 @@ Token Scanner::readPercentageNotation()
 {
     QChar ch = m_src.peek();
     if (ch.isSpace() || ch.isDigit())
-        return { Token::Operator, m_src.anchor(), m_src.length() };
+        return Token(Token::Operator, m_src.anchor(), m_src.length());
 
     if (ch.isLetter()) // Don't care if the user wrote the wront % modifier.
         m_src.move();

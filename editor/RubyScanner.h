@@ -39,7 +39,8 @@
 
 namespace Ruby {
 
-class Token {
+class Token
+{
 public:
     enum Kind
     {
@@ -79,6 +80,12 @@ public:
         EndOfBlock
     };
 
+    Token(Kind _kind = EndOfBlock, int _position = 0, int _length = 0) :
+        kind(_kind),
+        position(_position),
+        length(_length)
+    {}
+
     Kind kind;
     int position;
     int length;
@@ -86,6 +93,8 @@ public:
 
 class Scanner
 {
+    Q_DISABLE_COPY(Scanner)
+
 public:
     enum State {
         State_Default,
@@ -141,8 +150,6 @@ private:
 
     QList<int> m_contextDepths;
     int m_indentDepth;
-
-    Scanner(const Scanner&) = delete;
 };
 
 }

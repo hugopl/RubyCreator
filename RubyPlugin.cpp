@@ -17,9 +17,9 @@
 #include <QtPlugin>
 
 #include <texteditor/codestylepool.h>
-#include <texteditor/highlighterfactory.h>
 #include <texteditor/simplecodestylepreferences.h>
 #include <texteditor/tabsettings.h>
+#include <texteditor/texteditor.h>
 #include <texteditor/texteditorsettings.h>
 
 namespace Ruby {
@@ -33,8 +33,6 @@ Plugin::~Plugin()
     TextEditor::TextEditorSettings::unregisterCodeStyle(Constants::SettingsId);
     TextEditor::TextEditorSettings::unregisterCodeStylePool(Constants::SettingsId);
     TextEditor::TextEditorSettings::unregisterCodeStyleFactory(Constants::SettingsId);
-
-    removeObject(m_factory);
 }
 
 bool Plugin::initialize(const QStringList&, QString* errorString)
@@ -44,16 +42,9 @@ bool Plugin::initialize(const QStringList&, QString* errorString)
 
     initializeToolsSettings();
 
-    auto hf = new TextEditor::HighlighterFactory;
-    hf->setId(Constants::EditorId);
-    hf->setProductType<Ruby::Highlighter>();
-    hf->addMimeType(Constants::MimeType);
-    addAutoReleasedObject(hf);
-
     addAutoReleasedObject(new SnippetProvider);
 
-    m_factory = new EditorFactory(this);
-    addObject(m_factory);
+    addAutoReleasedObject(new EditorFactory);
     addAutoReleasedObject(new SymbolFilter([](const QString& file) {
         return CodeModel::instance()->methodsIn(file);
     }, "Ruby Methods in Current Document", QLatin1Char('.')));
@@ -117,5 +108,3 @@ void Plugin::initializeToolsSettings()
 }
 
 }
-
-Q_EXPORT_PLUGIN(Ruby::Plugin)

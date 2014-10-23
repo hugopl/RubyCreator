@@ -99,8 +99,6 @@ int AutoCompleter::paragraphSeparatorAboutToBeInserted(QTextCursor& cursor, cons
 
     // This implementation is buggy
 #if 0
-    QTextBlock block = cursor.block();
-    QString text = block.text();
     const QString textFromCursor = text.mid(cursor.positionInBlock()).trimmed();
     if (!textFromCursor.isEmpty())
         return 0;
@@ -111,7 +109,7 @@ int AutoCompleter::paragraphSeparatorAboutToBeInserted(QTextCursor& cursor, cons
     }
 
     int spaces = 0;
-    for (const QChar& c : text) {
+    foreach (const QChar c, text) {
         if (!c.isSpace())
             break;
         spaces++;
@@ -122,9 +120,8 @@ int AutoCompleter::paragraphSeparatorAboutToBeInserted(QTextCursor& cursor, cons
     QTextBlock nextBlock = block.next();
     while (nextBlock.isValid()) {
         line = nextBlock.text();
-        if (Language::endKeyword.indexIn(line) != -1 && line.startsWith(indent)) {
+        if (Language::endKeyword.indexIn(line) != -1 && line.startsWith(indent))
             return 0;
-        }
         if (!line.trimmed().isEmpty())
             break;
         nextBlock = nextBlock.next();

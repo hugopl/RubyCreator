@@ -2,7 +2,6 @@
 
 #include "../editor/RubyCodeModel.h"
 #include "../RubyConstants.h"
-#include "RubyDocument.h"
 #include "RubyProjectManager.h"
 #include "RubyProjectNode.h"
 
@@ -10,13 +9,15 @@
 #include <QFileInfo>
 #include <QThread>
 
+#include <texteditor/textdocument.h>
+
 namespace Ruby {
 
 const int MIN_TIME_BETWEEN_PROJECT_SCANS = 4500;
 
-Project::Project(ProjectManager* projectManager, const QString& fileName)
+Project::Project(ProjectManager* projectManager, const QString &fileName)
     : m_projectManager(projectManager)
-    , m_document(new Document)
+    , m_document(new TextEditor::TextDocument)
 {
     m_document->setFilePath(fileName);
     m_projectDir = QFileInfo(fileName).dir();
@@ -83,9 +84,9 @@ void Project::populateProject()
     removeNodes(removedFiles);
     addNodes(addedFiles);
 
-    for (const QString& file : removedFiles)
+    foreach (const QString &file, removedFiles)
         CodeModel::instance()->removeSymbolsFrom(file);
-    for (const QString& file : addedFiles)
+    foreach (const QString &file, addedFiles)
         CodeModel::instance()->addFile(file);
 
     if (removedFiles.size() || addedFiles.size())
@@ -95,7 +96,7 @@ void Project::populateProject()
 void Project::recursiveScanDirectory(const QDir& dir, QSet<QString>& container)
 {
     QRegExp projectFilePattern(QLatin1String(".*\\.rubyproject(?:\\.user)?$"));
-    for (const QFileInfo& info : dir.entryInfoList(QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::CaseSensitive)) {
+    foreach (const QFileInfo &info, dir.entryInfoList(QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::CaseSensitive)) {
         if (info.isDir())
             recursiveScanDirectory(QDir(info.filePath()), container);
         else if (projectFilePattern.indexIn(info.fileName()) == -1)
@@ -110,7 +111,7 @@ void Project::addNodes(const QSet<QString>& nodes)
 
     const QChar sep = QLatin1Char('/');
     QStringList path;
-    for (const QString& node : nodes) {
+    foreach (const QString &node, nodes) {
         path = m_projectDir.relativeFilePath(node).split(sep);
         path.pop_back();
         FolderNode* folder = findFolderFor(path);
@@ -125,12 +126,12 @@ void Project::removeNodes(const QSet<QString>& nodes)
     const QChar sep = QLatin1Char('/');
     QStringList path;
 
-    for (const QString& node : nodes) {
+    foreach (const QString &node, nodes) {
         path = m_projectDir.relativeFilePath(node).split(sep);
         path.pop_back();
         FolderNode* folder = findFolderFor(path);
 
-        for (FileNode* file : folder->fileNodes()) {
+        foreach (FileNode *file, folder->fileNodes()) {
             if (file->path() == node) {
                 folder->removeFileNodes(QList<FileNode*>() << file);
                 break;
@@ -144,9 +145,9 @@ ProjectExplorer::FolderNode* Project::findFolderFor(const QStringList& path)
     using namespace ProjectExplorer;
     FolderNode* folder = m_rootNode;
 
-    for (const QString& part : path) {
+    foreach (const QString &part, path) {
         bool folderFound = false;
-        for (FolderNode* subFolder : folder->subFolderNodes()) {
+        foreach (FolderNode *subFolder, folder->subFolderNodes()) {
             if (subFolder->displayName() == part) {
                 folder = subFolder;
                 folderFound = true;

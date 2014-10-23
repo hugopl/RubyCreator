@@ -2,10 +2,10 @@
 #include "../RubyConstants.h"
 #include "RubyCodeModel.h"
 
-#include <texteditor/codeassist/basicproposalitem.h>
-#include <texteditor/codeassist/basicproposalitemlistmodel.h>
+#include <texteditor/codeassist/assistproposalitem.h>
 #include <texteditor/codeassist/genericproposal.h>
-#include <texteditor/codeassist/iassistinterface.h>
+#include <texteditor/codeassist/genericproposalmodel.h>
+#include <texteditor/codeassist/assistinterface.h>
 
 #include <QTextDocument>
 #include <QTextBlock>
@@ -69,12 +69,12 @@ static const QString& nameFor(const Symbol& s)
 template<typename T>
 static void addProposalFromSet(QList<TextEditor::BasicProposalItem*>& proposals, const T& container, const QString& myTyping, const QIcon& icon, int order = 0)
 {
-    for (const typename T::value_type& item : container) {
-        const QString& name = nameFor(item);
+    foreach (const typename T::value_type &item, container) {
+        const QString &name = nameFor(item);
         if (myTyping == name)
             continue;
 
-        auto proposal = new TextEditor::BasicProposalItem;
+        auto proposal = new TextEditor::AssistProposalItem;
         proposal->setText(name);
         proposal->setIcon(icon);
         proposal->setOrder(order);
@@ -123,7 +123,8 @@ TextEditor::IAssistProposal* CompletionAssistProcessor::perform(const TextEditor
         return 0;
     }
 
-    TextEditor::BasicProposalItemListModel* model = new TextEditor::BasicProposalItemListModel(proposals);
+    TextEditor::GenericProposalModel *model = new TextEditor::GenericProposalModel;
+    model->loadContent(proposals);
     TextEditor::IAssistProposal* proposal = new TextEditor::GenericProposal(startPosition, model);
     return proposal;
 }

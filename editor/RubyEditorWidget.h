@@ -13,7 +13,7 @@ class EditorWidget : public TextEditor::TextEditorWidget
 public:
     EditorWidget();
 
-    Link findLinkAt(const QTextCursor& cursor, bool, bool inNextSplit) override;
+    Link findLinkAt(const QTextCursor &cursor, bool, bool inNextSplit) override;
     void unCommentSelection() override;
 
 protected:

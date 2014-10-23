@@ -22,12 +22,12 @@ ProjectWizard::ProjectWizard()
     setIcon(QIcon(QLatin1String(":/rubysupport/Ruby.png")));
 }
 
-Core::BaseFileWizard* ProjectWizard::create(QWidget* parent, const Core::WizardDialogParameters& parameters) const
+Core::BaseFileWizard *ProjectWizard::create(QWidget *parent, const Core::WizardDialogParameters &parameters) const
 {
-    Core::BaseFileWizard* wizard = new Core::BaseFileWizard(parent);
+    Core::BaseFileWizard *wizard = new Core::BaseFileWizard(parent);
     wizard->setWindowTitle(displayName());
 
-    Utils::FileWizardPage* page = new Utils::FileWizardPage;
+    Utils::FileWizardPage *page = new Utils::FileWizardPage;
     page->setPath(parameters.defaultPath());
     wizard->addPage(page);
 
@@ -37,10 +37,10 @@ Core::BaseFileWizard* ProjectWizard::create(QWidget* parent, const Core::WizardD
     return wizard;
 }
 
-Core::GeneratedFiles ProjectWizard::generateFiles(const QWizard* widget, QString*) const
+Core::GeneratedFiles ProjectWizard::generateFiles(const QWizard *widget, QString *) const
 {
-    const Core::BaseFileWizard* wizard = qobject_cast<const Core::BaseFileWizard *>(widget);
-    Utils::FileWizardPage* page = wizard->find<Utils::FileWizardPage>();
+    const Core::BaseFileWizard *wizard = qobject_cast<const Core::BaseFileWizard *>(widget);
+    Utils::FileWizardPage *page = wizard->find<Utils::FileWizardPage>();
     const QString projectPath = page->path();
     const QDir dir(projectPath);
     const QString projectName = page->fileName();
@@ -52,7 +52,7 @@ Core::GeneratedFiles ProjectWizard::generateFiles(const QWizard* widget, QString
     return Core::GeneratedFiles() << projectFile;
 }
 
-bool ProjectWizard::postGenerateFiles(const QWizard*, const Core::GeneratedFiles& files, QString* errorMessage)
+bool ProjectWizard::postGenerateFiles(const QWizard*, const Core::GeneratedFiles &files, QString *errorMessage)
 {
     return ProjectExplorer::CustomProjectWizard::postGenerateOpen(files, errorMessage);
 }

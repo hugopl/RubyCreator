@@ -15,7 +15,7 @@ namespace Ruby {
 
 const int MIN_TIME_BETWEEN_PROJECT_SCANS = 4500;
 
-Project::Project(ProjectManager* projectManager, const QString &fileName)
+Project::Project(ProjectManager *projectManager, const QString &fileName)
     : m_projectManager(projectManager)
     , m_document(new TextEditor::TextDocument)
 {
@@ -38,17 +38,17 @@ QString Project::displayName() const
     return m_projectDir.dirName();
 }
 
-Core::IDocument* Project::document() const
+Core::IDocument *Project::document() const
 {
     return m_document;
 }
 
-ProjectExplorer::IProjectManager* Project::projectManager() const
+ProjectExplorer::IProjectManager *Project::projectManager() const
 {
     return m_projectManager;
 }
 
-ProjectExplorer::ProjectNode* Project::rootProjectNode() const
+ProjectExplorer::ProjectNode *Project::rootProjectNode() const
 {
     return m_rootNode;
 }
@@ -93,7 +93,7 @@ void Project::populateProject()
         emit fileListChanged();
 }
 
-void Project::recursiveScanDirectory(const QDir& dir, QSet<QString>& container)
+void Project::recursiveScanDirectory(const QDir &dir, QSet<QString> &container)
 {
     QRegExp projectFilePattern(QLatin1String(".*\\.rubyproject(?:\\.user)?$"));
     foreach (const QFileInfo &info, dir.entryInfoList(QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::CaseSensitive)) {
@@ -105,7 +105,7 @@ void Project::recursiveScanDirectory(const QDir& dir, QSet<QString>& container)
     m_fsWatcher.addPath(dir.absolutePath());
 }
 
-void Project::addNodes(const QSet<QString>& nodes)
+void Project::addNodes(const QSet<QString> &nodes)
 {
     using namespace ProjectExplorer;
 
@@ -114,12 +114,12 @@ void Project::addNodes(const QSet<QString>& nodes)
     foreach (const QString &node, nodes) {
         path = m_projectDir.relativeFilePath(node).split(sep);
         path.pop_back();
-        FolderNode* folder = findFolderFor(path);
+        FolderNode *folder = findFolderFor(path);
         folder->addFileNodes(QList<FileNode*>() << new FileNode(node, SourceType, false));
     }
 }
 
-void Project::removeNodes(const QSet<QString>& nodes)
+void Project::removeNodes(const QSet<QString> &nodes)
 {
     using namespace ProjectExplorer;
 
@@ -129,7 +129,7 @@ void Project::removeNodes(const QSet<QString>& nodes)
     foreach (const QString &node, nodes) {
         path = m_projectDir.relativeFilePath(node).split(sep);
         path.pop_back();
-        FolderNode* folder = findFolderFor(path);
+        FolderNode *folder = findFolderFor(path);
 
         foreach (FileNode *file, folder->fileNodes()) {
             if (file->path() == node) {
@@ -140,10 +140,10 @@ void Project::removeNodes(const QSet<QString>& nodes)
     }
 }
 
-ProjectExplorer::FolderNode* Project::findFolderFor(const QStringList& path)
+ProjectExplorer::FolderNode *Project::findFolderFor(const QStringList &path)
 {
     using namespace ProjectExplorer;
-    FolderNode* folder = m_rootNode;
+    FolderNode *folder = m_rootNode;
 
     foreach (const QString &part, path) {
         bool folderFound = false;
@@ -155,7 +155,7 @@ ProjectExplorer::FolderNode* Project::findFolderFor(const QStringList& path)
             }
         }
         if (!folderFound) {
-            FolderNode* newFolder = new FolderNode(part);
+            FolderNode *newFolder = new FolderNode(part);
             folder->addFolderNodes(QList<FolderNode*>() << newFolder);
             folder = newFolder;
         }

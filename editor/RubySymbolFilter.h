@@ -9,19 +9,19 @@ namespace Core { class IEditor; }
 
 namespace Ruby {
 
-typedef std::function<QList<Symbol>(const QString&)> SymbolProvider;
+typedef std::function<QList<Symbol>(const QString &)> SymbolProvider;
 
 class SymbolFilter : public  Core::ILocatorFilter
 {
     Q_OBJECT
 public:
-    SymbolFilter(SymbolProvider provider, const char* description, QChar shortcut);
+    SymbolFilter(SymbolProvider provider, const char *description, QChar shortcut);
 
-    QList<Core::LocatorFilterEntry> matchesFor(QFutureInterface<Core::LocatorFilterEntry>& future, const QString& entry) override;
+    QList<Core::LocatorFilterEntry> matchesFor(QFutureInterface<Core::LocatorFilterEntry> &future, const QString &entry) override;
     void accept(Core::LocatorFilterEntry selection) const override;
-    void refresh(QFutureInterface<void>& future) override;
+    void refresh(QFutureInterface<void> &future) override;
 private slots:
-    void onCurrentEditorChanged(Core::IEditor* editor);
+    void onCurrentEditorChanged(Core::IEditor *editor);
 
 private:
     QIcon m_icon;

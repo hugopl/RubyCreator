@@ -37,7 +37,7 @@ namespace Ruby {
 class SourceCodeStream
 {
 public:
-    SourceCodeStream(const QString* text)
+    SourceCodeStream(const QString *text)
         : m_text(text)
         , m_textPtr(m_text->data())
         , m_textLength(text->length())
@@ -94,8 +94,8 @@ public:
     }
 
 private:
-    const QString* m_text;
-    const QChar* m_textPtr;
+    const QString *m_text;
+    const QChar *m_textPtr;
     const int m_textLength;
     int m_position;
     int m_markedPosition;

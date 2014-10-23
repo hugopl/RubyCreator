@@ -20,22 +20,22 @@ QString CodeStylePreferencesFactory::displayName()
     return QStringLiteral("Ruby");
 }
 
-TextEditor::ICodeStylePreferences* CodeStylePreferencesFactory::createCodeStyle() const
+TextEditor::ICodeStylePreferences *CodeStylePreferencesFactory::createCodeStyle() const
 {
     return new TextEditor::SimpleCodeStylePreferences();
 }
 
-QWidget* CodeStylePreferencesFactory::createEditor(TextEditor::ICodeStylePreferences*, QWidget* parent) const
+QWidget *CodeStylePreferencesFactory::createEditor(TextEditor::ICodeStylePreferences*, QWidget *parent) const
 {
     return new QLabel(tr("There's no configuration widget yet, sorry."), parent);
 }
 
-TextEditor::Indenter* CodeStylePreferencesFactory::createIndenter() const
+TextEditor::Indenter *CodeStylePreferencesFactory::createIndenter() const
 {
     return new Indenter;
 }
 
-TextEditor::ISnippetProvider* CodeStylePreferencesFactory::snippetProvider() const
+TextEditor::ISnippetProvider *CodeStylePreferencesFactory::snippetProvider() const
 {
     const QList<TextEditor::ISnippetProvider *> &providers =
     ExtensionSystem::PluginManager::getObjects<TextEditor::ISnippetProvider>();

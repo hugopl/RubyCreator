@@ -6,7 +6,7 @@
 
 namespace Ruby {
 
-SymbolFilter::SymbolFilter(SymbolProvider provider, const char* description, QChar shortcut)
+SymbolFilter::SymbolFilter(SymbolProvider provider, const char *description, QChar shortcut)
     : m_icon(QLatin1String(":/codemodel/images/func.png"))
     , m_symbolProvider(provider)
 {
@@ -20,7 +20,7 @@ SymbolFilter::SymbolFilter(SymbolProvider provider, const char* description, QCh
 
 }
 
-QList<Core::LocatorFilterEntry> SymbolFilter::matchesFor(QFutureInterface<Core::LocatorFilterEntry>&, const QString& entry)
+QList<Core::LocatorFilterEntry> SymbolFilter::matchesFor(QFutureInterface<Core::LocatorFilterEntry> &, const QString &entry)
 {
     QList<Core::LocatorFilterEntry> list;
     QStringMatcher matcher(entry, Qt::CaseInsensitive);
@@ -40,11 +40,11 @@ void SymbolFilter::accept(Core::LocatorFilterEntry selection) const
     Core::EditorManager::openEditorAt(*symbol.file, symbol.line, symbol.column);
 }
 
-void SymbolFilter::refresh(QFutureInterface<void>&)
+void SymbolFilter::refresh(QFutureInterface<void> &)
 {
 }
 
-void SymbolFilter::onCurrentEditorChanged(Core::IEditor* editor)
+void SymbolFilter::onCurrentEditorChanged(Core::IEditor *editor)
 {
     if (!editor) {
         setEnabled(false);

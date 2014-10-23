@@ -35,7 +35,7 @@ Plugin::~Plugin()
     TextEditor::TextEditorSettings::unregisterCodeStyleFactory(Constants::SettingsId);
 }
 
-bool Plugin::initialize(const QStringList&, QString* errorString)
+bool Plugin::initialize(const QStringList &, QString *errorString)
 {
     if (!Core::MimeDatabase::addMimeTypes(QLatin1String(":/rubysupport/Ruby.mimetypes.xml"), errorString))
         return false;
@@ -45,10 +45,10 @@ bool Plugin::initialize(const QStringList&, QString* errorString)
     addAutoReleasedObject(new SnippetProvider);
 
     addAutoReleasedObject(new EditorFactory);
-    addAutoReleasedObject(new SymbolFilter([](const QString& file) {
+    addAutoReleasedObject(new SymbolFilter([](const QString &file) {
         return CodeModel::instance()->methodsIn(file);
     }, "Ruby Methods in Current Document", QLatin1Char('.')));
-    addAutoReleasedObject(new SymbolFilter([](const QString&) {
+    addAutoReleasedObject(new SymbolFilter([](const QString &) {
         return CodeModel::instance()->allMethods();
     }, "Ruby methods", QLatin1Char('m')));
     addAutoReleasedObject(new ProjectManager);

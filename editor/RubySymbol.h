@@ -7,8 +7,8 @@ namespace Ruby {
 
 struct Symbol
 {
-    Symbol(const QString* file = 0) : file(file) { }
-    const QString* file;
+    Symbol(const QString *file = 0) : file(file) { }
+    const QString *file;
     QString name;
     QString context;
     int line;

@@ -6,7 +6,7 @@
 
 namespace Ruby {
 
-bool AutoCompleter::contextAllowsAutoParentheses(const QTextCursor& cursor, const QString& textToInsert) const
+bool AutoCompleter::contextAllowsAutoParentheses(const QTextCursor &cursor, const QString &textToInsert) const
 {
     if (isInComment(cursor))
         return false;
@@ -32,7 +32,7 @@ bool AutoCompleter::contextAllowsAutoParentheses(const QTextCursor& cursor, cons
     }
 }
 
-QString AutoCompleter::insertMatchingBrace(const QTextCursor&, const QString& text, QChar la, int* skippedChars) const
+QString AutoCompleter::insertMatchingBrace(const QTextCursor &, const QString &text, QChar la, int *skippedChars) const
 {
     if (text.length() != 1)
         return QString();
@@ -75,7 +75,7 @@ QString AutoCompleter::insertMatchingBrace(const QTextCursor&, const QString& te
     return QString();
 }
 
-bool AutoCompleter::isInComment(const QTextCursor& cursor) const
+bool AutoCompleter::isInComment(const QTextCursor &cursor) const
 {
     QString line = cursor.block().text();
     int hashIndex = line.indexOf(QLatin1Char('#'));
@@ -84,7 +84,7 @@ bool AutoCompleter::isInComment(const QTextCursor& cursor) const
     return true;
 }
 
-int AutoCompleter::paragraphSeparatorAboutToBeInserted(QTextCursor& cursor, const TextEditor::TabSettings& tabSettings)
+int AutoCompleter::paragraphSeparatorAboutToBeInserted(QTextCursor &cursor, const TextEditor::TabSettings &tabSettings)
 {
     QTextBlock block = cursor.block();
     QString text = block.text().trimmed();
@@ -104,7 +104,7 @@ int AutoCompleter::paragraphSeparatorAboutToBeInserted(QTextCursor& cursor, cons
         return 0;
 
     if (Language::symbolDefinition.indexIn(text) == -1
-        && Language::startOfBlock.indexIn(text) == -1) {
+            && Language::startOfBlock.indexIn(text) == -1) {
         return 0;
     }
 

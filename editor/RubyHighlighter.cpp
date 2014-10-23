@@ -9,7 +9,7 @@
 
 namespace Ruby {
 
-Highlighter::Highlighter(QTextDocument* parent)
+Highlighter::Highlighter(QTextDocument *parent)
     : TextEditor::SyntaxHighlighter(parent)
     , m_formats(Token::EndOfBlock)
 {
@@ -49,7 +49,7 @@ Highlighter::Highlighter(QTextDocument* parent)
     m_formats[Token::Parameter].setForeground(QColor(0, 134, 179));
 }
 
-void Highlighter::highlightBlock(const QString& text)
+void Highlighter::highlightBlock(const QString &text)
 {
     int initialState = previousBlockState();
     if (initialState == -1)
@@ -57,7 +57,7 @@ void Highlighter::highlightBlock(const QString& text)
     setCurrentBlockState(highlightLine(text, initialState));
 }
 
-int Highlighter::highlightLine(const QString& text, int state)
+int Highlighter::highlightLine(const QString &text, int state)
 {
     m_currentBlockParentheses.clear();
 
@@ -96,7 +96,7 @@ int Highlighter::highlightLine(const QString& text, int state)
     return (nextIndentLevel << 8) | scanner.state();
 }
 
-QTextCharFormat Highlighter::formatForToken(const Token& token)
+QTextCharFormat Highlighter::formatForToken(const Token &token)
 {
     Q_ASSERT(token.kind < m_formats.size());
     return m_formats[token.kind];

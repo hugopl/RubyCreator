@@ -20,7 +20,7 @@ enum KindOfCompletion {
     MayBeASymbol
 };
 
-static KindOfCompletion kindOfCompletion(QTextDocument* document, int& startPosition)
+static KindOfCompletion kindOfCompletion(QTextDocument *document, int &startPosition)
 {
     QChar ch;
     bool mayBeAConstant = false;
@@ -46,28 +46,28 @@ bool CompletionAssistProvider::supportsEditor(Core::Id editorId) const
     return editorId == Constants::EditorId;
 }
 
-TextEditor::IAssistProcessor* CompletionAssistProvider::createProcessor() const
+TextEditor::IAssistProcessor *CompletionAssistProvider::createProcessor() const
 {
     return new CompletionAssistProcessor;
 }
 
-bool CompletionAssistProvider::isActivationCharSequence(const QString& sequence) const
+bool CompletionAssistProvider::isActivationCharSequence(const QString &sequence) const
 {
     return sequence.at(0) == QLatin1Char('.') || sequence.at(0) == QLatin1Char(':');
 }
 
-static const QString& nameFor(const QString& s)
+static const QString &nameFor(const QString &s)
 {
     return s;
 }
 
-static const QString& nameFor(const Symbol& s)
+static const QString &nameFor(const Symbol &s)
 {
     return s.name;
 }
 
 template<typename T>
-static void addProposalFromSet(QList<TextEditor::BasicProposalItem*>& proposals, const T& container, const QString& myTyping, const QIcon& icon, int order = 0)
+static void addProposalFromSet(QList<TextEditor::AssistProposalItem*> &proposals, const T &container, const QString &myTyping, const QIcon &icon, int order = 0)
 {
     foreach (const typename T::value_type &item, container) {
         const QString &name = nameFor(item);
@@ -91,19 +91,19 @@ CompletionAssistProcessor::CompletionAssistProcessor()
 
 }
 
-TextEditor::IAssistProposal* CompletionAssistProcessor::perform(const TextEditor::IAssistInterface* interface)
+TextEditor::IAssistProposal *CompletionAssistProcessor::perform(const TextEditor::AssistInterface *interface)
 {
     if (interface->reason() == TextEditor::IdleEditor)
         return 0;
 
     int startPosition = interface->position();
     KindOfCompletion kind = kindOfCompletion(interface->textDocument(), startPosition);
-    CodeModel* cm = CodeModel::instance();
+    CodeModel *cm = CodeModel::instance();
 
     QString myTyping = interface->textAt(startPosition, interface->position() - startPosition);
     const QString fileName = interface->fileName();
 
-    QList<TextEditor::BasicProposalItem*> proposals;
+    QList<TextEditor::AssistProposalItem *> proposals;
 
     switch (kind) {
     case MayBeAMethod:
@@ -125,7 +125,7 @@ TextEditor::IAssistProposal* CompletionAssistProcessor::perform(const TextEditor
 
     TextEditor::GenericProposalModel *model = new TextEditor::GenericProposalModel;
     model->loadContent(proposals);
-    TextEditor::IAssistProposal* proposal = new TextEditor::GenericProposal(startPosition, model);
+    TextEditor::IAssistProposal *proposal = new TextEditor::GenericProposal(startPosition, model);
     return proposal;
 }
 

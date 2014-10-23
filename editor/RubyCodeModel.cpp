@@ -41,25 +41,25 @@ CodeModel::~CodeModel()
     qDeleteAll(m_model);
 }
 
-CodeModel* CodeModel::instance()
+CodeModel *CodeModel::instance()
 {
     static CodeModel model;
     return &model;
 }
 
-void CodeModel::removeSymbolsFrom(const QString& file)
+void CodeModel::removeSymbolsFrom(const QString &file)
 {
     delete m_model[file];
     m_model.remove(file);
 }
 
-void CodeModel::addFile(const QString& file)
+void CodeModel::addFile(const QString &file)
 {
     if (!file.endsWith(QLatin1String(".rb")) && !file.endsWith(QLatin1String(".rake")))
         return;
 
     QFileInfo info(file);
-    Data*& data = m_model[file];
+    Data *&data = m_model[file];
     if (!data)
         data = new Data(file);
 
@@ -72,7 +72,7 @@ void CodeModel::addFile(const QString& file)
     updateFile(file, QString::fromUtf8(fp.readAll()));
 }
 
-void CodeModel::addFiles(const QStringList& files)
+void CodeModel::addFiles(const QStringList &files)
 {
     QElapsedTimer timer;
     timer.start();
@@ -83,7 +83,7 @@ void CodeModel::addFiles(const QStringList& files)
     qDebug() << "Code model updated in" << timer.elapsed() << "ms";
 }
 
-static Symbol createSymbol(const QString* fileName, const QString& contents, Scanner& scanner, Token token)
+static Symbol createSymbol(const QString *fileName, const QString &contents, Scanner &scanner, Token token)
 {
     Symbol sym(fileName);
     sym.name = contents.mid(token.position, token.length);
@@ -93,9 +93,9 @@ static Symbol createSymbol(const QString* fileName, const QString& contents, Sca
     return sym;
 }
 
-void CodeModel::updateFile(const QString& fileName, const QString& contents)
+void CodeModel::updateFile(const QString &fileName, const QString &contents)
 {
-    Data*& data = m_model[fileName];
+    Data* &data = m_model[fileName];
     if (!data)
         data = new Data(fileName);
     data->clear();
@@ -103,7 +103,7 @@ void CodeModel::updateFile(const QString& fileName, const QString& contents)
     Scanner scanner(&contents);
     scanner.enableContextRecognition();
 
-    const QString* fileNamePtr = &data->fileName;
+    const QString *fileNamePtr = &data->fileName;
     Token token;
     while ((token = scanner.read()).kind != Token::EndOfBlock) {
         switch (token.kind) {
@@ -127,27 +127,27 @@ void CodeModel::updateFile(const QString& fileName, const QString& contents)
     data->lastUpdate = QDateTime::currentDateTime();
 }
 
-QList<Symbol> CodeModel::methodsIn(const QString& file) const
+QList<Symbol> CodeModel::methodsIn(const QString &file) const
 {
-    Data* data = m_model[file];
+    Data *data = m_model[file];
     return data ? data->methods : QList<Symbol>();
 }
 
-QSet<QString> CodeModel::identifiersIn(const QString& file) const
+QSet<QString> CodeModel::identifiersIn(const QString &file) const
 {
-    Data* data = m_model[file];
+    Data *data = m_model[file];
     return data ? data->identifiers : QSet<QString>();
 }
 
-QSet<QString> CodeModel::constantsIn(const QString& file) const
+QSet<QString> CodeModel::constantsIn(const QString &file) const
 {
-    Data* data = m_model[file];
+    Data *data = m_model[file];
     return data ? data->constants : QSet<QString>();
 }
 
-QSet<QString> CodeModel::symbolsIn(const QString& file) const
+QSet<QString> CodeModel::symbolsIn(const QString &file) const
 {
-    Data* data = m_model[file];
+    Data *data = m_model[file];
     return data ? data->symbols : QSet<QString>();
 }
 
@@ -159,7 +159,7 @@ QList<Symbol> CodeModel::allMethods() const
     return result;
 }
 
-QList<Symbol> CodeModel::allMethodsNamed(const QString& name) const
+QList<Symbol> CodeModel::allMethodsNamed(const QString &name) const
 {
     QList<Symbol> result;
     // FIXME: Replace this linear brute force approach

@@ -15,7 +15,7 @@ public:
     Plugin();
     ~Plugin();
 
-    virtual bool initialize(const QStringList& arguments, QString* errorString) override;
+    virtual bool initialize(const QStringList &arguments, QString *errorString) override;
     virtual void extensionsInitialized() override;
 
 private:

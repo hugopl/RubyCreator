@@ -10,11 +10,11 @@ namespace Ruby {
 class Highlighter :  public TextEditor::SyntaxHighlighter
 {
 public:
-    Highlighter(QTextDocument* parent = 0);
+    Highlighter(QTextDocument *parent = 0);
 protected:
-    virtual void highlightBlock(const QString& text) override;
+    virtual void highlightBlock(const QString &text) override;
 private:
-    int highlightLine(const QString& text, int state);
+    int highlightLine(const QString &text, int state);
     QTextCharFormat formatForToken(const Token &);
 
     QVector<QTextCharFormat> m_formats;

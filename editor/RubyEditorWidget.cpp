@@ -32,7 +32,7 @@ EditorWidget::EditorWidget()
     CodeModel::instance();
 }
 
-TextEditor::TextEditorWidget::Link EditorWidget::findLinkAt(const QTextCursor& cursor, bool, bool)
+TextEditor::TextEditorWidget::Link EditorWidget::findLinkAt(const QTextCursor &cursor, bool, bool)
 {
     QString text = cursor.block().text();
     if (text.isEmpty())

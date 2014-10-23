@@ -102,7 +102,7 @@ public:
         State_MultiLineString
     };
 
-    Scanner(const QString* text);
+    Scanner(const QString *text);
     void enableContextRecognition();
 
     void setState(int state);
@@ -112,7 +112,7 @@ public:
 
     QString contextName() const;
     int currentLine() const { return m_line; }
-    int currentColumn(const Token& token) const { return token.position - m_lineStartOffset; }
+    int currentColumn(const Token &token) const { return token.position - m_lineStartOffset; }
 
     // current line starts a block
     bool didBlockStart();
@@ -131,12 +131,12 @@ private:
     Token readComment();
     Token readDoxygenComment();
     Token readWhiteSpace();
-    Token readOperator(const QChar& first);
+    Token readOperator(const QChar &first);
     Token readPercentageNotation();
 
     void clearState();
     void saveState(State state, QChar savedData);
-    void parseState(State& state, QChar& savedData) const;
+    void parseState(State &state, QChar &savedData) const;
 
     SourceCodeStream m_src;
     int m_state;

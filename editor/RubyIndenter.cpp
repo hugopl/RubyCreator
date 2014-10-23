@@ -8,14 +8,15 @@
 
 namespace Ruby {
 
-static bool didBlockStart(const QTextBlock& block) {
+static bool didBlockStart(const QTextBlock &block)
+{
     QString text = block.text();
     Scanner scanner(&text);
     scanner.readLine();
     return scanner.didBlockStart() || scanner.didBlockInterrupt();
 }
 
-void Indenter::indentBlock(QTextDocument*, const QTextBlock& block, const QChar&, const TextEditor::TabSettings& settings)
+void Indenter::indentBlock(QTextDocument*, const QTextBlock &block, const QChar &, const TextEditor::TabSettings &settings)
 {
     bool isNewBlock = false;
     int state = block.userState();
@@ -34,7 +35,7 @@ void Indenter::indentBlock(QTextDocument*, const QTextBlock& block, const QChar&
     }
 
     if (isNewBlock || !block.text().isEmpty())
-        settings.indentLine(block, indent * settings.m_indentSize);
+        settings.indentLine(block, indent  *settings.m_indentSize);
 }
 
 }

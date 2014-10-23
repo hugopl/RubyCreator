@@ -19,11 +19,11 @@ class Project : public ProjectExplorer::Project
 {
     Q_OBJECT
 public:
-    Project(ProjectManager* projectManager, const QString& fileName);
+    Project(ProjectManager *projectManager, const QString &fileName);
     QString displayName() const override;
-    Core::IDocument* document() const override;
-    ProjectExplorer::IProjectManager* projectManager() const override;
-    ProjectExplorer::ProjectNode* rootProjectNode() const override;
+    Core::IDocument *document() const override;
+    ProjectExplorer::IProjectManager *projectManager() const override;
+    ProjectExplorer::ProjectNode *rootProjectNode() const override;
 
     QStringList files(FilesMode) const override;
 
@@ -42,11 +42,11 @@ private:
     QElapsedTimer m_lastProjectScan;
     QTimer m_projectScanTimer;
 
-    void recursiveScanDirectory(const QDir& dir, QSet<QString>& container);
-    void addNodes(const QSet<QString>& nodes);
-    void removeNodes(const QSet<QString>& nodes);
+    void recursiveScanDirectory(const QDir &dir, QSet<QString> &container);
+    void addNodes(const QSet<QString> &nodes);
+    void removeNodes(const QSet<QString> &nodes);
 
-    ProjectExplorer::FolderNode* findFolderFor(const QStringList& path);
+    ProjectExplorer::FolderNode *findFolderFor(const QStringList &path);
 };
 
 }

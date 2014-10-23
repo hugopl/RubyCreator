@@ -37,7 +37,7 @@
 
 namespace Ruby {
 
-static const char* const RUBY_KEYWORDS[] = {
+static const char *const RUBY_KEYWORDS[] = {
     "BEGIN",
     "END",
     "__ENCODING__",
@@ -79,7 +79,7 @@ static const int N_KEYWORDS = std::extent<decltype(RUBY_KEYWORDS)>::value;
 #define FLOWCTL_SHOULD_INC_INDENT2 "^(2_)?" "|26_(2_)?" "|25_(2_)?"
 #define INDENT_INC "(" CLASS_MODULE_PATTERN "|" METHOD_PATTERN "|" FLOWCTL_SHOULD_INC_INDENT "|22_|23_)"
 
-Scanner::Scanner(const QString* text)
+Scanner::Scanner(const QString *text)
     : m_src(text)
     , m_state(0)
     , m_hasContextRecognition(false)
@@ -473,7 +473,7 @@ Token Scanner::readWhiteSpace()
 /**
   reads punctuation symbols, excluding some special
   */
-Token Scanner::readOperator(const QChar& first)
+Token Scanner::readOperator(const QChar &first)
 {
     static const QString singleCharOperators = QStringLiteral("[]{}()");
     if (singleCharOperators.contains(first))
@@ -491,7 +491,7 @@ Token Scanner::readOperator(const QChar& first)
     return Token(Token::Operator, m_src.anchor(), m_src.length());
 }
 
-static QChar translateDelimiter(const QChar& ch)
+static QChar translateDelimiter(const QChar &ch)
 {
     switch (ch.toLatin1()) {
     case '(': return QLatin1Char(')');

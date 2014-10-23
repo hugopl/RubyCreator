@@ -58,5 +58,3 @@ bool ProjectWizard::postGenerateFiles(const QWizard*, const Core::GeneratedFiles
 }
 
 }
-
-#include "RubyProjectWizard.moc"

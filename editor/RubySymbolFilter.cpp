@@ -57,5 +57,3 @@ void SymbolFilter::onCurrentEditorChanged(Core::IEditor* editor)
 }
 
 }
-
-#include "RubySymbolFilter.moc"

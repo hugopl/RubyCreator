@@ -31,4 +31,3 @@ Core::IEditor* EditorFactory::createEditor()
 
 }
 
-#include "RubyEditorFactory.moc"

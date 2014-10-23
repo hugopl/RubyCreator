@@ -25,5 +25,3 @@ ProjectExplorer::Project* ProjectManager::openProject(const QString& fileName, Q
 }
 
 }
-
-#include "RubyProjectManager.moc"

@@ -172,5 +172,3 @@ QList<Symbol> CodeModel::allMethodsNamed(const QString& name) const
 }
 
 }
-
-#include "RubyCodeModel.moc"

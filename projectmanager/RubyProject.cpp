@@ -163,5 +163,3 @@ ProjectExplorer::FolderNode* Project::findFolderFor(const QStringList& path)
 }
 
 }
-
-#include "RubyProject.moc"

@@ -129,5 +129,3 @@ TextEditor::IAssistProposal* CompletionAssistProcessor::perform(const TextEditor
 }
 
 }
-
-#include "RubyCompletionAssist.moc"

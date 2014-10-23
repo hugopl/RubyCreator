@@ -120,5 +120,3 @@ void Plugin::initializeToolsSettings()
 }
 
 Q_EXPORT_PLUGIN(Ruby::Plugin)
-
-#include "RubyPlugin.moc"

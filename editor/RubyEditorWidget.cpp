@@ -83,4 +83,3 @@ void EditorWidget::unCommentSelection()
 
 }
 
-#include "RubyEditorWidget.moc"

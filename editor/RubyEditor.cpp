@@ -45,5 +45,3 @@ void Editor::updateCodeModel()
 }
 
 }
-
-#include "RubyEditor.moc"

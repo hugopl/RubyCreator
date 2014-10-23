@@ -20,12 +20,12 @@ class Project : public ProjectExplorer::Project
     Q_OBJECT
 public:
     Project(ProjectManager *projectManager, const QString &fileName);
-    QString displayName() const override;
-    Core::IDocument *document() const override;
-    ProjectExplorer::IProjectManager *projectManager() const override;
-    ProjectExplorer::ProjectNode *rootProjectNode() const override;
+    QString displayName() const Q_DECL_OVERRIDE;
+    Core::IDocument *document() const Q_DECL_OVERRIDE;
+    ProjectExplorer::IProjectManager *projectManager() const Q_DECL_OVERRIDE;
+    ProjectExplorer::ProjectNode *rootProjectNode() const Q_DECL_OVERRIDE;
 
-    QStringList files(FilesMode) const override;
+    QStringList files(FilesMode) const Q_DECL_OVERRIDE;
 
 private slots:
     void scheduleProjectScan();

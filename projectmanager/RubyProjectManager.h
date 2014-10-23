@@ -12,8 +12,8 @@ class ProjectManager : public ProjectExplorer::IProjectManager
 public:
     ProjectManager();
 
-    virtual QString mimeType() const override;
-    virtual ProjectExplorer::Project *openProject(const QString &fileName, QString *errorString) override;
+    virtual QString mimeType() const Q_DECL_OVERRIDE;
+    virtual ProjectExplorer::Project *openProject(const QString &fileName, QString *errorString) Q_DECL_OVERRIDE;
 };
 
 }

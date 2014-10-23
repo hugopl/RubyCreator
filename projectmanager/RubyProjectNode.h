@@ -13,18 +13,18 @@ public:
     {
     }
 
-    QList<ProjectExplorer::ProjectAction> supportedActions(Node *) const override { return QList<ProjectExplorer::ProjectAction>(); }
+    QList<ProjectExplorer::ProjectAction> supportedActions(Node *) const Q_DECL_OVERRIDE { return QList<ProjectExplorer::ProjectAction>(); }
 
-    bool canAddSubProject(const QString &) const override { return false; }
+    bool canAddSubProject(const QString &) const Q_DECL_OVERRIDE { return false; }
 
-    bool addSubProjects(const QStringList &) override { return false; }
+    bool addSubProjects(const QStringList &) Q_DECL_OVERRIDE { return false; }
 
-    bool removeSubProjects(const QStringList &) override { return false; }
+    bool removeSubProjects(const QStringList &) Q_DECL_OVERRIDE { return false; }
 
-    bool addFiles(const QStringList &, QStringList*) override { return false; }
-    bool removeFiles(const QStringList &, QStringList*) override { return false; }
-    bool deleteFiles(const QStringList &) override { return false; }
-    bool renameFile(const QString &, const QString &) override { return false; }
+    bool addFiles(const QStringList &, QStringList*) Q_DECL_OVERRIDE { return false; }
+    bool removeFiles(const QStringList &, QStringList*) Q_DECL_OVERRIDE { return false; }
+    bool deleteFiles(const QStringList &) Q_DECL_OVERRIDE { return false; }
+    bool renameFile(const QString &, const QString &) Q_DECL_OVERRIDE { return false; }
 };
 
 }

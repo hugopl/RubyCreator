@@ -1,5 +1,5 @@
 #include "RubyCodeStylePreferencesFactory.h"
-#include "RubyConstants.h"
+#include "../RubyConstants.h"
 #include "RubyIndenter.h"
 
 #include <extensionsystem/pluginmanager.h>

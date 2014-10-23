@@ -1,6 +1,6 @@
 #include "RubyEditorFactory.h"
 
-#include "RubyConstants.h"
+#include "../RubyConstants.h"
 #include "RubyEditorWidget.h"
 
 #include <texteditor/texteditoractionhandler.h>

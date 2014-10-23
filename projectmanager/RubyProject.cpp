@@ -1,7 +1,7 @@
 #include "RubyProject.h"
 
-#include "editor/RubyCodeModel.h"
-#include "RubyConstants.h"
+#include "../editor/RubyCodeModel.h"
+#include "../RubyConstants.h"
 #include "RubyDocument.h"
 #include "RubyProjectManager.h"
 #include "RubyProjectNode.h"

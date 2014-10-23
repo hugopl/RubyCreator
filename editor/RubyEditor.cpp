@@ -2,7 +2,7 @@
 
 #include "RubyCodeModel.h"
 #include "RubyCompletionAssist.h"
-#include "RubyConstants.h"
+#include "../RubyConstants.h"
 #include "RubyEditorWidget.h"
 
 #include <extensionsystem/pluginmanager.h>

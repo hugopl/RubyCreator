@@ -2,7 +2,7 @@
 
 #include "RubyAutoCompleter.h"
 #include "RubyCodeModel.h"
-#include "RubyConstants.h"
+#include "../RubyConstants.h"
 #include "RubyEditor.h"
 #include "RubyHighlighter.h"
 #include "RubyIndenter.h"

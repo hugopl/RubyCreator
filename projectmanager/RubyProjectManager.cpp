@@ -1,6 +1,6 @@
 #include "RubyProjectManager.h"
 
-#include "RubyConstants.h"
+#include "../RubyConstants.h"
 #include "RubyProject.h"
 
 namespace Ruby {

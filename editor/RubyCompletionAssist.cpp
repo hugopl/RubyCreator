@@ -1,5 +1,5 @@
 #include "RubyCompletionAssist.h"
-#include "RubyConstants.h"
+#include "../RubyConstants.h"
 #include "RubyCodeModel.h"
 
 #include <texteditor/codeassist/basicproposalitem.h>

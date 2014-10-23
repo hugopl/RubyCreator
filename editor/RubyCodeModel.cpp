@@ -54,7 +54,7 @@ void CodeModel::removeSymbolsFrom(const QString& file)
 
 void CodeModel::addFile(const QString& file)
 {
-    if (!file.endsWith(".rb") && !file.endsWith(".rake"))
+    if (!file.endsWith(QLatin1String(".rb")) && !file.endsWith(QLatin1String(".rake")))
         return;
 
     QFileInfo info(file);
@@ -68,7 +68,7 @@ void CodeModel::addFile(const QString& file)
     QFile fp(file);
     if (!fp.open(QFile::ReadOnly))
         return;
-    updateFile(file, fp.readAll());
+    updateFile(file, QString::fromUtf8(fp.readAll()));
 }
 
 void CodeModel::addFiles(const QStringList& files)

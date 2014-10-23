@@ -16,12 +16,12 @@ class SnippetProvider : public TextEditor::ISnippetProvider
 public:
     QString groupId() const override
     {
-        return Constants::SnippetGroupId;
+        return QLatin1String(Constants::SnippetGroupId);
     }
 
     QString displayName() const override
     {
-        return "Ruby";
+        return QLatin1String("Ruby");
     }
 
     void decorateEditor(TextEditor::SnippetEditorWidget *editor) const override

@@ -11,7 +11,7 @@ ProjectManager::ProjectManager()
 
 QString ProjectManager::mimeType() const
 {
-    return Constants::ProjectMimeType;
+    return QLatin1String(Constants::ProjectMimeType);
 }
 
 ProjectExplorer::Project* ProjectManager::openProject(const QString& fileName, QString* errorString)

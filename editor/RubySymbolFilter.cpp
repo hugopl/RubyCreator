@@ -7,7 +7,7 @@
 namespace Ruby {
 
 SymbolFilter::SymbolFilter(SymbolProvider provider, const char* description, QChar shortcut)
-    : m_icon(":/codemodel/images/func.png")
+    : m_icon(QLatin1String(":/codemodel/images/func.png"))
     , m_symbolProvider(provider)
 {
     setId(description);
@@ -53,7 +53,7 @@ void SymbolFilter::onCurrentEditorChanged(Core::IEditor* editor)
     }
 
     m_fileName = editor->document()->filePath();
-    setEnabled(m_fileName.endsWith(".rb"));
+    setEnabled(m_fileName.endsWith(QLatin1String(".rb")));
 }
 
 }

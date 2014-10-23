@@ -39,7 +39,7 @@ Plugin::~Plugin()
 
 bool Plugin::initialize(const QStringList&, QString* errorString)
 {
-    if (!Core::MimeDatabase::addMimeTypes(":rubysupport/Ruby.mimetypes.xml", errorString))
+    if (!Core::MimeDatabase::addMimeTypes(QLatin1String(":/rubysupport/Ruby.mimetypes.xml"), errorString))
         return false;
 
     initializeToolsSettings();
@@ -56,10 +56,10 @@ bool Plugin::initialize(const QStringList&, QString* errorString)
     addObject(m_factory);
     addAutoReleasedObject(new SymbolFilter([](const QString& file) {
         return CodeModel::instance()->methodsIn(file);
-    }, "Ruby Methods in Current Document", '.'));
+    }, "Ruby Methods in Current Document", QLatin1Char('.')));
     addAutoReleasedObject(new SymbolFilter([](const QString&) {
         return CodeModel::instance()->allMethods();
-    }, "Ruby methods", 'm'));
+    }, "Ruby methods", QLatin1Char('m')));
     addAutoReleasedObject(new ProjectManager);
 
     addAutoReleasedObject(new ProjectWizard);
@@ -110,8 +110,7 @@ void Plugin::initializeToolsSettings()
     pool->loadCustomCodeStyles();
 
     // load global settings (after built-in settings are added to the pool)
-    QSettings* s = Core::ICore::settings();
-    globalCodeStyle->fromSettings(Constants::SettingsId, s);
+    globalCodeStyle->fromSettings(QLatin1String(Constants::SettingsId), Core::ICore::settings());
 
     // mimetypes to be handled
     TextEditor::TextEditorSettings::registerMimeTypeForLanguageId(Constants::MimeType, Constants::SettingsId);

@@ -27,7 +27,7 @@ TextEditor::ICodeStylePreferences* CodeStylePreferencesFactory::createCodeStyle(
 
 QWidget* CodeStylePreferencesFactory::createEditor(TextEditor::ICodeStylePreferences*, QWidget* parent) const
 {
-    return new QLabel("There's no configuration widget yet, sorry.", parent);
+    return new QLabel(tr("There's no configuration widget yet, sorry."), parent);
 }
 
 TextEditor::Indenter* CodeStylePreferencesFactory::createIndenter() const
@@ -40,14 +40,15 @@ TextEditor::ISnippetProvider* CodeStylePreferencesFactory::snippetProvider() con
     const QList<TextEditor::ISnippetProvider *> &providers =
     ExtensionSystem::PluginManager::getObjects<TextEditor::ISnippetProvider>();
     foreach (TextEditor::ISnippetProvider *provider, providers)
-        if (provider->groupId() == Constants::SnippetGroupId)
+        if (provider->groupId() == QLatin1String(Constants::SnippetGroupId))
             return provider;
     return 0;
 }
 
 QString CodeStylePreferencesFactory::previewText() const
 {
-    return "module Foo\n"
+    return QLatin1String(
+            "module Foo\n"
             "  class Bar\n"
             "    def foo(a, b)\n"
             "      0...b.each do |i|\n"
@@ -59,7 +60,7 @@ QString CodeStylePreferencesFactory::previewText() const
             "      end\n"
             "    end\n"
             "  end\n"
-            "end\n";
+            "end\n");
 }
 
 }

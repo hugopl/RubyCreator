@@ -79,7 +79,7 @@ public:
     {
         int pos = m_position + offset;
         if (pos >= m_textLength)
-            return '\0';
+            return QChar();
         return m_textPtr[pos];
     }
 

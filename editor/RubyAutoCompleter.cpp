@@ -78,7 +78,7 @@ QString AutoCompleter::insertMatchingBrace(const QTextCursor&, const QString& te
 bool AutoCompleter::isInComment(const QTextCursor& cursor) const
 {
     QString line = cursor.block().text();
-    int hashIndex = line.indexOf('#');
+    int hashIndex = line.indexOf(QLatin1Char('#'));
     if (hashIndex == -1 || hashIndex < cursor.columnNumber())
         return false;
     return true;
@@ -88,7 +88,11 @@ int AutoCompleter::paragraphSeparatorAboutToBeInserted(QTextCursor& cursor, cons
 {
     QTextBlock block = cursor.block();
     QString text = block.text().trimmed();
-    if (text == "end" || text == "else" || text.startsWith("elsif") || text.startsWith("rescue") || text == "ensure") {
+    if (text == QLatin1String("end")
+            || text == QLatin1String("else")
+            || text.startsWith(QLatin1String("elsif"))
+            || text.startsWith(QLatin1String("rescue"))
+            || text == QLatin1String("ensure")) {
         Indenter indenter;
         indenter.indentBlock(const_cast<QTextDocument*>(block.document()), block, QChar(), tabSettings);
     }
@@ -128,7 +132,7 @@ int AutoCompleter::paragraphSeparatorAboutToBeInserted(QTextCursor& cursor, cons
 
     int pos = cursor.position();
     cursor.insertBlock();
-    cursor.insertText("end");
+    cursor.insertText(QLatin1String("end"));
     cursor.setPosition(pos);
 
     return 1;

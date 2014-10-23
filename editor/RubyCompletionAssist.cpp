@@ -27,15 +27,15 @@ static KindOfCompletion kindOfCompletion(QTextDocument* document, int& startPosi
     do {
         ch = document->characterAt(--startPosition);
 
-        if (ch == '.') {
+        if (ch == QLatin1Char('.')) {
             startPosition++;
             return MayBeAMethod;
         }
-        if (ch == ':')
+        if (ch == QLatin1Char(':'))
             return MayBeASymbol;
         if (ch.isUpper())
             mayBeAConstant = true;
-    } while (ch.isLetterOrNumber() || ch == '_');
+    } while (ch.isLetterOrNumber() || ch == QLatin1Char('_'));
 
     startPosition++;
     return mayBeAConstant ? MayBeConstant : MayBeAIdentifier;
@@ -53,7 +53,7 @@ TextEditor::IAssistProcessor* CompletionAssistProvider::createProcessor() const
 
 bool CompletionAssistProvider::isActivationCharSequence(const QString& sequence) const
 {
-    return sequence.at(0) == '.' || sequence.at(0) == ':';
+    return sequence.at(0) == QLatin1Char('.') || sequence.at(0) == QLatin1Char(':');
 }
 
 static const QString& nameFor(const QString& s)
@@ -83,9 +83,9 @@ static void addProposalFromSet(QList<TextEditor::BasicProposalItem*>& proposals,
 }
 
 CompletionAssistProcessor::CompletionAssistProcessor()
-    : m_methodIcon(":/codemodel/images/func.png")
-    , m_identifierIcon(":/codemodel/images/var.png")
-    , m_constantIcon(":/codemodel/images/macro.png")
+    : m_methodIcon(QLatin1String(":/codemodel/images/func.png"))
+    , m_identifierIcon(QLatin1String(":/codemodel/images/var.png"))
+    , m_constantIcon(QLatin1String(":/codemodel/images/macro.png"))
     , m_symbolIcon(m_identifierIcon)
 {
 

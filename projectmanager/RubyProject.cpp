@@ -94,7 +94,7 @@ void Project::populateProject()
 
 void Project::recursiveScanDirectory(const QDir& dir, QSet<QString>& container)
 {
-    QRegExp projectFilePattern(".*\\.rubyproject(?:\\.user)?$");
+    QRegExp projectFilePattern(QLatin1String(".*\\.rubyproject(?:\\.user)?$"));
     for (const QFileInfo& info : dir.entryInfoList(QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::CaseSensitive)) {
         if (info.isDir())
             recursiveScanDirectory(QDir(info.filePath()), container);
@@ -108,7 +108,7 @@ void Project::addNodes(const QSet<QString>& nodes)
 {
     using namespace ProjectExplorer;
 
-    const char sep = '/';
+    const QChar sep = QLatin1Char('/');
     QStringList path;
     for (const QString& node : nodes) {
         path = m_projectDir.relativeFilePath(node).split(sep);
@@ -122,7 +122,7 @@ void Project::removeNodes(const QSet<QString>& nodes)
 {
     using namespace ProjectExplorer;
 
-    const char sep = '/';
+    const QChar sep = QLatin1Char('/');
     QStringList path;
 
     for (const QString& node : nodes) {

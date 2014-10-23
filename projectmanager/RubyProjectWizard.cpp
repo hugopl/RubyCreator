@@ -16,10 +16,10 @@ ProjectWizard::ProjectWizard()
     setDisplayName(tr("Import Existing Ruby Project"));
     setId(QStringLiteral("Z.Ruby"));
     setDescription(tr("Imports existing Ruby projects."));
-    setCategory(ProjectExplorer::Constants::IMPORT_WIZARD_CATEGORY);
-    setDisplayCategory(ProjectExplorer::Constants::IMPORT_WIZARD_CATEGORY_DISPLAY);
+    setCategory(QLatin1String(ProjectExplorer::Constants::IMPORT_WIZARD_CATEGORY));
+    setDisplayCategory(QLatin1String(ProjectExplorer::Constants::IMPORT_WIZARD_CATEGORY_DISPLAY));
 
-    setIcon(QIcon(":/rubysupport/Ruby.png"));
+    setIcon(QIcon(QLatin1String(":/rubysupport/Ruby.png")));
 }
 
 Core::BaseFileWizard* ProjectWizard::create(QWidget* parent, const Core::WizardDialogParameters& parameters) const
@@ -45,8 +45,8 @@ Core::GeneratedFiles ProjectWizard::generateFiles(const QWizard* widget, QString
     const QDir dir(projectPath);
     const QString projectName = page->fileName();
 
-    Core::GeneratedFile projectFile(QFileInfo(dir, projectName + ".rubyproject").absoluteFilePath());
-    projectFile.setContents(QStringLiteral("# Ruby project\n"));
+    Core::GeneratedFile projectFile(QFileInfo(dir, projectName + QLatin1String(".rubyproject")).absoluteFilePath());
+    projectFile.setContents(QLatin1String("# Ruby project\n"));
     projectFile.setAttributes(Core::GeneratedFile::OpenProjectAttribute);
 
     return Core::GeneratedFiles() << projectFile;

@@ -16,7 +16,7 @@
 namespace Ruby {
 
 EditorWidget::EditorWidget()
-    : m_wordRegex("\\w+")
+    : m_wordRegex(QLatin1String("\\w+"))
 {
     setParenthesesMatchingEnabled(true);
     setMarksVisible(true);
@@ -29,7 +29,7 @@ EditorWidget::EditorWidget()
 
     m_commentDefinition.multiLineStart.clear();
     m_commentDefinition.multiLineEnd.clear();
-    m_commentDefinition.singleLine = '#';
+    m_commentDefinition.singleLine = QLatin1Char('#');
 
     new Highlighter(document());
 }

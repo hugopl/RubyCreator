@@ -14,7 +14,7 @@ Highlighter::Highlighter(QTextDocument* parent)
     , m_formats(Token::EndOfBlock)
 {
     auto& keywordFormat = m_formats[Token::Keyword];
-    keywordFormat.setFontWeight(100);
+    keywordFormat.setFontWeight(75);
     const Token::Kind keywordTokens[] = {
         Token::KeywordDef,
         Token::KeywordClass,
@@ -30,9 +30,9 @@ Highlighter::Highlighter(QTextDocument* parent)
 
 
     m_formats[Token::KeywordVisibility].setForeground(QColor(0, 0, 255));
-    m_formats[Token::KeywordVisibility].setFontWeight(100);
+    m_formats[Token::KeywordVisibility].setFontWeight(75);
     m_formats[Token::KeywordSelf].setForeground(QColor(68, 85, 136));
-    m_formats[Token::KeywordSelf].setFontWeight(100);
+    m_formats[Token::KeywordSelf].setFontWeight(75);
     m_formats[Token::String].setForeground(QColor(208, 16, 64));
     m_formats[Token::InStringCode].setForeground(QColor(0, 110, 40));
     m_formats[Token::Backtick] = m_formats[Token::String];
@@ -44,7 +44,7 @@ Highlighter::Highlighter(QTextDocument* parent)
     m_formats[Token::Number].setForeground(QColor(0, 153, 153));
     m_formats[Token::Symbol].setForeground(QColor(153, 0, 115));
     m_formats[Token::Method].setForeground(QColor(153, 0, 0));
-    m_formats[Token::Method].setFontWeight(100);
+    m_formats[Token::Method].setFontWeight(75);
     m_formats[Token::Parameter].setFontItalic(true);
     m_formats[Token::Parameter].setForeground(QColor(0, 134, 179));
 }

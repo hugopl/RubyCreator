@@ -1,2 +1,5 @@
-build
-*.user
+/build
+/debug
+/release
+Makefile*
+*.user*

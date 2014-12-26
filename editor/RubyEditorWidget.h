@@ -1,6 +1,8 @@
 #ifndef RubyEditorWidget_h
 #define RubyEditorWidget_h
 
+#include <QTimer>
+
 #include <texteditor/texteditor.h>
 #include <utils/uncommentselection.h>
 

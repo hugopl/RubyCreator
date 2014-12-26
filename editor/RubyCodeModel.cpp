@@ -10,10 +10,10 @@ namespace Ruby {
 
 class CodeModel::Data
 {
-    Q_DISABLE_COPY(CodeModel::Data)
+    Q_DISABLE_COPY(Data)
 
 public:
-    CodeModel::Data(const QString &fileName = QString()) : fileName(fileName) {}
+    Data(const QString &fileName = QString()) : fileName(fileName) {}
 
     void clear()
     {

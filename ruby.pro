@@ -1,11 +1,8 @@
-IDE_SOURCE_TREE = $$(QTC_SOURCE)
-IDE_BUILD_TREE = $$(QTC_BUILD)
-isEmpty(IDE_SOURCE_TREE):IDE_SOURCE_TREE=D:/Projects/qt-creator/qt-creator
-isEmpty(IDE_BUILD_TREE):IDE_BUILD_TREE=D:/Projects/qt-creator/build-qtc
-
+IDE_SOURCE_TREE=$$QTC_SOURCE
+IDE_BUILD_TREE=/usr
 QTC_PLUGIN_NAME = Ruby
 QTC_PLUGIN_DEPENDS = coreplugin texteditor projectexplorer
-include($$IDE_SOURCE_TREE/src/qtcreatorplugin.pri)
+include($$QTC_SOURCE/src/qtcreatorplugin.pri)
 
 SOURCES += RubyPlugin.cpp \
     editor/RubyAutoCompleter.cpp \

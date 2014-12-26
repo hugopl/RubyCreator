@@ -508,7 +508,7 @@ Token Scanner::readPercentageNotation()
     if (ch.isSpace() || ch.isDigit())
         return Token(Token::Operator, m_src.anchor(), m_src.length());
 
-    if (ch.isLetter()) // Don't care if the user wrote the wront % modifier.
+    if (ch.isLetter()) // Don't care if the user wrote the wrong % modifier.
         m_src.move();
     QChar delimiter = translateDelimiter(m_src.peek());
     m_src.move();

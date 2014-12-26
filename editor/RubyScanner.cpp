@@ -448,7 +448,7 @@ Token Scanner::readFloatNumber()
 }
 
 /**
-  reads single-line python comment, started with "#"
+  reads single-line ruby comment, started with "#"
   */
 Token Scanner::readComment()
 {

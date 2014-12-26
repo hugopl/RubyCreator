@@ -15,4 +15,4 @@ public:
 
 }
 
-#endif // PYTHONINDENTER_H
+#endif

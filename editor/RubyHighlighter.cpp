@@ -102,7 +102,4 @@ QTextCharFormat Highlighter::formatForToken(const Token &token)
     return m_formats[token.kind];
 }
 
-
-
-
 }

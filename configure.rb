@@ -23,6 +23,16 @@ def get_qtc_sources version
   end
 end
 
+puts <<eof
+\033[0;32m
+** Warning: This script only works to build RubyCreator using the
+   QtCreator you have installed in your system!
+
+   To compile it using a custom QtCreator build just call qmake
+   passing the right values to QTC_SOURCE and QTC_BUILD variables.
+\033[0m
+eof
+
 qtc_version = read_qtc_version
 qtc_dir = "#{BUILD_DIR}/qt-creator-opensource-src-#{qtc_version}"
 
@@ -34,5 +44,6 @@ else
 end
 
 Dir.chdir(BUILD_DIR) do
-  system("qmake QTC_SOURCE=#{qtc_dir} ..")
+  system("qmake QTC_SOURCE=#{qtc_dir} QTC_BUILD=/usr ..")
+  puts "Project configured under #{BUILD_DIR} directory, go there and call make."
 end

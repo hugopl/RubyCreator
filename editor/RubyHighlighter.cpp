@@ -25,7 +25,7 @@ Highlighter::Highlighter(QTextDocument *parent)
         Token::KeywordEnd,
         Token::KeywordElseElsIfRescueEnsure
     };
-    for (int tk = 0; tk < sizeof(keywordTokens) / sizeof(*keywordTokens); ++tk)
+    for (unsigned tk = 0; tk < sizeof(keywordTokens) / sizeof(*keywordTokens); ++tk)
         m_formats[keywordTokens[tk]] = keywordFormat;
 
 

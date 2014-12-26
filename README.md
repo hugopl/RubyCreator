@@ -1,20 +1,17 @@
-RubyCreator
-===========
+# RubyCreator
 
-Plugins to add Ruby language support to QtCreator IDE.
+Plugin to add Ruby language support to QtCreator IDE.
 
-How to compile
-==============
+More info can be found at: http://hugopl.github.io/RubyCreator/
 
-* Install [meique](http://www.meique.org)
-* Go to RubyCreator source directory
-* mkdir build; cd build
-* meique ..
+## How to compile
 
-qtcreator binary must be on your path, the build system will identify the QtCreator version, download the sources for it then compile RubyCreator.
+If you want to try QtCreator but don't want to have a custom QtCreator compiled just to do that, follow these instructions:
 
-If your QtCreator plugins parent directory isn't "/usr/lib/qtcreator/", instead of "meique .." you should use: "meique --QtCreatorLibDir=YOUR_CUSTOM_DIR .."
+* ./configure.rb
+* cd build && make
 
-To install the plugin in the right place, type:
+At the end of the build you will see an error about lack of permissions to move the plugin library to /usr/..., move it by yourself and it's done.
 
-$ DESTDIR=/usr/lib/qtcreator sudo meique -i
+If you pretend to contribute with RubyCreator or already write plugins for QtCreator you probably already have a custom build of QtCreator installed in
+a sandbox somewhere in your system, so just call cmake passing QTC_SOURCE and QTC_BUILD variables.

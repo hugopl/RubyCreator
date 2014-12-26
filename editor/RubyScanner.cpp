@@ -495,8 +495,9 @@ static QChar translateDelimiter(const QChar &ch)
 {
     switch (ch.toLatin1()) {
     case '(': return QLatin1Char(')');
-    case '[': return QLatin1Char(')');
-    case '{': return QLatin1Char(')');
+    case '[': return QLatin1Char(']');
+    case '{': return QLatin1Char('}');
+    case '<': return QLatin1Char('>');
     default: return ch;
     }
 }

@@ -9,34 +9,46 @@ namespace Ruby {
 Scanner *m_scanner;
 typedef QVector<Token::Kind> Tokens;
 
+#define CASE_STR(x) case Token::x: str = #x; break
 QDebug& operator<<(QDebug& s, Token::Kind t)
 {
     const char* str;
     switch(t) {
-    case Token::Number: str = "Number"; break;
-    case Token::String: str = "String"; break;
-    case Token::InStringCode: str = "InStringCode"; break;
-    case Token::Backtick: str = "Backtick"; break;
-    case Token::Keyword: str = "Keyword"; break;
-    case Token::KeywordDef: str = "Keyword-Def"; break;
-    case Token::KeywordSelf: str = "Keyword-Def"; break;
-    case Token::KeywordClass: str = "Keyword-Class"; break;
-    case Token::KeywordModule: str = "Keyword-Module"; break;
-    case Token::Method: str = "Method"; break;
-    case Token::Parameter: str = "Parameter"; break;
-    case Token::ClassField: str = "ClassField"; break;
-    case Token::Operator: str = "Operator"; break;
-    case Token::OperatorComma: str = "OperatorComma"; break;
-    case Token::OperatorDot: str = "OperatorDot"; break;
-    case Token::Comment: str = "Comment"; break;
-    case Token::Identifier: str = "Identifier"; break;
-    case Token::Whitespace: str = "Whitespace"; break;
-    case Token::Constant: str = "Constant"; break;
-    case Token::Global: str = "Global"; break;
-    case Token::Regexp: str = "Regexp"; break;
-    case Token::Symbol: str = "Symbol"; break;
-    case Token::EndOfBlock: str = "EOB"; break;
-    default: str = "???"; break;
+        CASE_STR(Number);
+        CASE_STR(String);
+        CASE_STR(Whitespace);
+        CASE_STR(Operator);
+        CASE_STR(Comment);
+        CASE_STR(Identifier);
+        CASE_STR(Regexp);
+        CASE_STR(Symbol);
+        CASE_STR(Method);
+        CASE_STR(Parameter);
+        CASE_STR(ClassField);
+        CASE_STR(Constant);
+        CASE_STR(Global);
+        CASE_STR(Keyword);
+        CASE_STR(KeywordDef);
+        CASE_STR(KeywordSelf);
+        CASE_STR(OperatorComma);
+        CASE_STR(OperatorDot);
+        CASE_STR(KeywordClass);
+        CASE_STR(KeywordModule);
+        CASE_STR(KeywordFlowControl);
+        CASE_STR(KeywordLoop);
+        CASE_STR(KeywordBlockStarter);
+        CASE_STR(KeywordEnd);
+        CASE_STR(OperatorAssign);
+        CASE_STR(OperatorSemiColon);
+        CASE_STR(KeywordElseElsIfRescueEnsure);
+        CASE_STR(ParenOpen);
+        CASE_STR(ParenClose);
+
+        CASE_STR(Backtick);
+        CASE_STR(InStringCode);
+        CASE_STR(KeywordVisibility);
+        case Token::EndOfBlock: str = "EOB"; break;
+        // No default. Let the compiler warn when new values are added.
     }
     return s << str;
 }

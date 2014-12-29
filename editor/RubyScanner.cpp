@@ -491,7 +491,7 @@ Token Scanner::readOperator(const QChar &first)
     return Token(Token::Operator, m_src.anchor(), m_src.length());
 }
 
-static QChar translateDelimiter(const QChar &ch)
+static QChar translateDelimiter(QChar ch)
 {
     switch (ch.toLatin1()) {
     case '(': return QLatin1Char(')');

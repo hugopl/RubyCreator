@@ -1,9 +1,13 @@
-#include "ScannerTest.h"
+#include "RubyPlugin.h"
+#include "editor/RubyScanner.h"
 
 #include <QtTest/QtTest>
 #include <vector>
 
-using namespace Ruby;
+namespace Ruby {
+
+Scanner *m_scanner;
+typedef QVector<Token::Kind> Tokens;
 
 QDebug& operator<<(QDebug& s, Token::Kind t)
 {
@@ -37,18 +41,12 @@ QDebug& operator<<(QDebug& s, Token::Kind t)
     return s << str;
 }
 
-TestScanner::TestScanner(QObject* parent)
-    : QObject(parent)
-    , m_scanner(nullptr)
-{
-
-}
-
-TestScanner::Tokens TestScanner::tokenize(const QString& code, bool debug)
+static Tokens tokenize(const QByteArray &code, bool debug = false)
 {
     if (m_scanner)
         delete m_scanner;
-    m_scanner = new Scanner(&code);
+    QString strCode = QLatin1String(code);
+    m_scanner = new Scanner(&strCode);
     m_scanner->enableContextRecognition();
 
     QVector<Token::Kind> tokens;
@@ -61,26 +59,25 @@ TestScanner::Tokens TestScanner::tokenize(const QString& code, bool debug)
     return tokens;
 }
 
-void TestScanner::cleanup()
+void Plugin::cleanupTestCase()
 {
     delete m_scanner;
-    m_scanner = nullptr;
-
+    m_scanner = 0;
 }
 
-void TestScanner::namespaceIsNotASymbol()
+void Plugin::test_namespaceIsNotASymbol()
 {
     Tokens expectedTokens = { Token::Constant, Token::Operator, Token::Constant, Token::Whitespace, Token::Identifier};
     QCOMPARE(tokenize("Foo::Bar oi"), expectedTokens);
 }
 
-void TestScanner::symbolOnArray()
+void Plugin::test_symbolOnArray()
 {
     Tokens expectedTokens = { Token::Identifier, Token::Operator, Token::Symbol, Token::Operator };
     QCOMPARE(tokenize("foo[:bar]"), expectedTokens);
 }
 
-void TestScanner::def()
+void Plugin::test_def()
 {
     Tokens expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::Whitespace,
                               Token::Parameter, Token::OperatorComma, Token::Whitespace, Token::Parameter};
@@ -101,7 +98,7 @@ void TestScanner::def()
     QCOMPARE(tokenize("def foo &bar, tender"), expectedTokens);
 }
 
-void TestScanner::context()
+void Plugin::test_context()
 {
     Tokens expectedTokens = { Token::KeywordClass, Token::Whitespace, Token::Constant };
     QCOMPARE(tokenize("class Foo"), expectedTokens);
@@ -129,7 +126,7 @@ void TestScanner::context()
     QCOMPARE(m_scanner->contextName(), QStringLiteral("Foo"));
 }
 
-void TestScanner::indentIf()
+void Plugin::test_indentIf()
 {
     tokenize("if foo;end");
     QVERIFY(m_scanner->didBlockStart());
@@ -148,13 +145,13 @@ void TestScanner::indentIf()
     // like "if foo; bar; end; if bleh" this will not be folded or indented correctly
 }
 
-void TestScanner::lineCount()
+void Plugin::test_lineCount()
 {
     tokenize("\nif foo\n\nend");
     QCOMPARE(m_scanner->currentLine(), 4);
 }
 
-void TestScanner::ifs()
+void Plugin::test_ifs()
 {
     tokenize("class Foo\n"
              "  def method\n"
@@ -167,7 +164,7 @@ void TestScanner::ifs()
     QCOMPARE(m_scanner->contextName(), QStringLiteral("Foo"));
 }
 
-void TestScanner::strings()
+void Plugin::test_strings()
 {
     Tokens expectedTokens = { Token::Backtick };
     QCOMPARE(tokenize("`Nice \"backtikc\" son`"), expectedTokens);
@@ -177,7 +174,7 @@ void TestScanner::strings()
     QCOMPARE(tokenize("\"Nice \\\"escape!\""), expectedTokens);
 }
 
-void TestScanner::inStringCode()
+void Plugin::test_inStringCode()
 {
     Tokens expectedTokens = { Token::Backtick, Token::InStringCode, Token::Backtick };
     QCOMPARE(tokenize("`Nice #{Hello}`"), expectedTokens);
@@ -188,7 +185,7 @@ void TestScanner::inStringCode()
 
 }
 
-void TestScanner::percentageNotation()
+void Plugin::test_percentageNotation()
 {
     Tokens expectedTokens = { Token::String };
     QCOMPARE(tokenize("%(Hello)"), expectedTokens);
@@ -199,5 +196,4 @@ void TestScanner::percentageNotation()
     QCOMPARE(tokenize("%w(a b).length"), expectedTokens);
 }
 
-QTEST_APPLESS_MAIN(TestScanner)
-#include "TestScanner.moc"
+} // namespace Ruby

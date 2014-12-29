@@ -21,6 +21,10 @@ SOURCES += RubyPlugin.cpp \
     projectmanager/RubyProjectManager.cpp \
     projectmanager/RubyProjectWizard.cpp
 
+equals(TEST, 1) {
+    SOURCES += editor/ScannerTest.cpp
+}
+
 HEADERS += RubyPlugin.h \
     RubyConstants.h \
     editor/RubyAutoCompleter.h \

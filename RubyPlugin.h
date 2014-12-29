@@ -11,7 +11,6 @@ class Plugin : public ExtensionSystem::IPlugin
     Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QtCreatorPlugin" FILE "Ruby.json")
 
 public:
-
     Plugin();
     ~Plugin();
 
@@ -20,9 +19,24 @@ public:
 
 private:
     void initializeToolsSettings();
+
+#ifdef WITH_TESTS
+private slots:
+    void cleanupTestCase();
+
+    void test_namespaceIsNotASymbol();
+    void test_symbolOnArray();
+    void test_def();
+    void test_context();
+    void test_indentIf();
+    void test_lineCount();
+    void test_ifs();
+    void test_strings();
+    void test_inStringCode();
+    void test_percentageNotation();
+#endif
 };
 
 }
 
 #endif
-

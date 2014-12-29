@@ -29,6 +29,7 @@ private slots:
     void test_def();
     void test_context();
     void test_indentIf();
+    void test_indentBlock();
     void test_lineCount();
     void test_ifs();
     void test_strings();

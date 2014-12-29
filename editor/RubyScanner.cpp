@@ -473,7 +473,7 @@ Token Scanner::readWhiteSpace()
 /**
   reads punctuation symbols, excluding some special
   */
-Token Scanner::readOperator(const QChar &first)
+Token Scanner::readOperator(QChar first)
 {
     static const QString singleCharOperators = QStringLiteral("[]{}()");
     if (singleCharOperators.contains(first))

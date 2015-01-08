@@ -12,7 +12,7 @@ typedef QVector<Token::Kind> Tokens;
 #define CASE_STR(x) case Token::x: str = #x; break
 QDebug& operator<<(QDebug& s, Token::Kind t)
 {
-    const char* str;
+    const char* str = "";
     switch(t) {
         CASE_STR(Number);
         CASE_STR(String);
@@ -41,8 +41,6 @@ QDebug& operator<<(QDebug& s, Token::Kind t)
         CASE_STR(OperatorAssign);
         CASE_STR(OperatorSemiColon);
         CASE_STR(KeywordElseElsIfRescueEnsure);
-        CASE_STR(ParenOpen);
-        CASE_STR(ParenClose);
 
         CASE_STR(Backtick);
         CASE_STR(InStringCode);

@@ -41,7 +41,7 @@ TextEditor::TextEditorWidget::Link EditorWidget::findLinkAt(const QTextCursor &c
     QString word;
     int cursorPos = cursor.positionInBlock();
     int pos = 0;
-    while (true) {
+    forever {
         pos = m_wordRegex.indexIn(text, pos + word.length());
         if (pos == -1)
             return Link();

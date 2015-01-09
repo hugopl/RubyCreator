@@ -17,7 +17,7 @@ namespace Ruby {
 const int UpdateDocumentDefaultInterval = 150;
 
 EditorWidget::EditorWidget()
-    : m_wordRegex(QLatin1String("\\w+"))
+    : m_wordRegex(QLatin1String("[\\w!\\?]+"))
 {
     setLanguageSettingsId(Constants::SettingsId);
 

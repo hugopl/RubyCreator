@@ -19,7 +19,7 @@ Project::Project(ProjectManager *projectManager, const QString &fileName)
     : m_projectManager(projectManager)
     , m_document(new TextEditor::TextDocument)
 {
-    m_document->setFilePath(fileName);
+    m_document->setFilePath(Utils::FileName::fromString(fileName));
     m_projectDir = QFileInfo(fileName).dir();
     m_rootNode = new ProjectNode(m_projectDir.dirName());
 

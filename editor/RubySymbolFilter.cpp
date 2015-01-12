@@ -25,7 +25,7 @@ QList<Core::LocatorFilterEntry> SymbolFilter::matchesFor(QFutureInterface<Core::
     QList<Core::LocatorFilterEntry> list;
     QStringMatcher matcher(entry, Qt::CaseInsensitive);
 
-    foreach (const Symbol &symbol, m_symbolProvider(m_fileName)) {
+    foreach (const Symbol &symbol, m_symbolProvider(m_fileName.toString())) {
         if (matcher.indexIn(symbol.name) != -1) {
             list << Core::LocatorFilterEntry(this, symbol.name, qVariantFromValue(symbol), m_icon);
             list.last().extraInfo = symbol.context;

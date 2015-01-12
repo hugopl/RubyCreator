@@ -82,7 +82,7 @@ void EditorWidget::scheduleCodeModelUpdate()
 void EditorWidget::updateCodeModel()
 {
     const QString textData = textDocument()->plainText();
-    CodeModel::instance()->updateFile(textDocument()->filePath(), textData);
+    CodeModel::instance()->updateFile(textDocument()->filePath().toString(), textData);
 }
 
 void EditorWidget::finalizeInitialization()

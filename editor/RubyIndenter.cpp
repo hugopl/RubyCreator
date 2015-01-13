@@ -19,13 +19,12 @@ static bool didBlockStart(const QTextBlock &block)
 void Indenter::indentBlock(QTextDocument*, const QTextBlock &block, const QChar &, const TextEditor::TabSettings &settings)
 {
     bool isNewBlock = false;
-    int state = block.userState();
-    int indent = state >> 8;
+    int indent = block.userState() >> 8;
 
-    if (indent > 0) {
-        if (didBlockStart(block))
-            indent--;
-    } else if (indent < 0) {
+    if (!indent)
+        return;
+
+    if (indent < 0) {
         QTextBlock previous = block.previous();
         while (indent == -1 && previous.isValid()) {
             indent = previous.userState() >> 8;
@@ -33,6 +32,9 @@ void Indenter::indentBlock(QTextDocument*, const QTextBlock &block, const QChar 
         }
         isNewBlock = true;
     }
+
+    if (didBlockStart(block))
+        indent--;
 
     if (isNewBlock || !block.text().isEmpty())
         settings.indentLine(block, indent  *settings.m_indentSize);

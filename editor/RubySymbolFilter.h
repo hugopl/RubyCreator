@@ -1,9 +1,13 @@
 #ifndef RubySymbolFilter_h
 #define RubySymbolFilter_h
 
-#include <coreplugin/locator/ilocatorfilter.h>
-#include <functional>
 #include "RubySymbol.h"
+
+#include <coreplugin/locator/ilocatorfilter.h>
+
+#include <utils/fileutils.h>
+
+#include <functional>
 
 namespace Core { class IEditor; }
 
@@ -25,7 +29,7 @@ private slots:
 
 private:
     QIcon m_icon;
-    QString m_fileName;
+    Utils::FileName m_fileName;
     SymbolProvider m_symbolProvider;
 };
 

@@ -45,6 +45,8 @@ QDebug& operator<<(QDebug& s, Token::Kind t)
         CASE_STR(Backtick);
         CASE_STR(InStringCode);
         CASE_STR(KeywordVisibility);
+        CASE_STR(ParenOpen);
+        CASE_STR(ParenClose);
         case Token::EndOfBlock: str = "EOB"; break;
         // No default. Let the compiler warn when new values are added.
     }
@@ -83,7 +85,7 @@ void Plugin::test_namespaceIsNotASymbol()
 
 void Plugin::test_symbolOnArray()
 {
-    Tokens expectedTokens = { Token::Identifier, Token::Operator, Token::Symbol, Token::Operator };
+    Tokens expectedTokens = { Token::Identifier, Token::ParenOpen, Token::Symbol, Token::ParenClose };
     QCOMPARE(tokenize("foo[:bar]"), expectedTokens);
 }
 
@@ -98,10 +100,10 @@ void Plugin::test_def()
     expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::KeywordSelf, Token::OperatorDot, Token::Method, Token::Whitespace,
                               Token::Parameter};
     QCOMPARE(tokenize("def self.foo bar"), expectedTokens);
-    expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::Operator, Token::Parameter, Token::Operator};
+    expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::ParenOpen, Token::Parameter, Token::ParenClose};
     QCOMPARE(tokenize("def foo(bar)"), expectedTokens);
-    expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::Operator, Token::Parameter,
-                       Token::OperatorComma, Token::Whitespace, Token::Operator, Token::Parameter, Token::Operator};
+    expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::ParenOpen, Token::Parameter,
+                       Token::OperatorComma, Token::Whitespace, Token::Operator, Token::Parameter, Token::ParenClose};
     QCOMPARE(tokenize("def foo(bar, &tender)"), expectedTokens);
     expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::Whitespace, Token::Operator, Token::Parameter,
                        Token::OperatorComma, Token::Whitespace, Token::Parameter};
@@ -153,6 +155,13 @@ void Plugin::test_indentIf()
 
     // Weird code can show folding mark, but I don't care about show weird code
     // like "if foo; bar; end; if bleh" this will not be folded or indented correctly
+}
+
+void Plugin::test_indentBlock()
+{
+    tokenize("a.each { |v| v }");
+    QVERIFY(m_scanner->didBlockStart());
+    QVERIFY(m_scanner->didBlockEnd());
 }
 
 void Plugin::test_lineCount()

@@ -64,18 +64,13 @@ int Highlighter::highlightLine(const QString &text, int state)
     Scanner scanner(&text);
     scanner.setState(state & 0xff);
 
-    static QString openParenthesis = QStringLiteral("([{");
-    static QString closeParenthesis = QStringLiteral(")]}");
-
     Token token;
     while ((token = scanner.read()).kind != Token::EndOfBlock) {
         setFormat(token.position, token.length, formatForToken(token));
-        if (token.kind == Token::Operator) {
-            QChar ch = text[token.position];
-            if (openParenthesis.contains(ch))
-                m_currentBlockParentheses << Parenthesis(Parenthesis::Opened, ch, token.position);
-            else if (closeParenthesis.contains(ch))
-                m_currentBlockParentheses << Parenthesis(Parenthesis::Closed, ch, token.position);
+        const bool isOpenBrace = token.kind == Token::ParenOpen;
+        if (isOpenBrace || token.kind == Token::ParenClose) {
+            m_currentBlockParentheses << Parenthesis(isOpenBrace ? Parenthesis::Opened : Parenthesis::Closed,
+                                                     text[token.position], token.position);
         }
     }
 

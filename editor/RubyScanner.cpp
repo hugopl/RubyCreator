@@ -77,7 +77,7 @@ static const int N_KEYWORDS = std::extent<decltype(RUBY_KEYWORDS)>::value;
 #define FLOWCTL_SHOULD_INC_INDENT  "^(2_)?21_|26_(2_)?21_|25_(2_)?21_"
 // Version without 21_ at end, used on readIdentifier
 #define FLOWCTL_SHOULD_INC_INDENT2 "^(2_)?" "|26_(2_)?" "|25_(2_)?"
-#define INDENT_INC "(" CLASS_MODULE_PATTERN "|" METHOD_PATTERN "|" FLOWCTL_SHOULD_INC_INDENT "|22_|23_)"
+#define INDENT_INC "(" CLASS_MODULE_PATTERN "|" METHOD_PATTERN "|" FLOWCTL_SHOULD_INC_INDENT "|22_|23_|28_)"
 
 Scanner::Scanner(const QString *text)
     : m_src(text)
@@ -140,7 +140,7 @@ bool Scanner::didBlockStart()
 
 bool Scanner::didBlockEnd()
 {
-    static const QRegExp regex(QLatin1String("24_"));
+    static const QRegExp regex(QLatin1String("(24|29)_"));
     return regex.indexIn(m_tokenSequence) != -1;
 }
 
@@ -280,7 +280,7 @@ Token Scanner::readIdentifier()
 {
     static const QRegExp methodPattern(QLatin1String(METHOD_PATTERN "$"));
     //                                              METHOD  (          &        parameter,         &
-    static const QRegExp parameterPattern(QLatin1String(METHOD_PATTERN "8_(2_)?(3_)?((2_)?(3_)?(2_)?9_(2_)?(17_)?(2_)?(3_)?(2_)?)*$"));
+    static const QRegExp parameterPattern(QLatin1String(METHOD_PATTERN "8_(2_)?((3|28)_)?((2_)?(3_)?(2_)?9_(2_)?(17_)?(2_)?((3|29)_)?(2_)?)*$"));
     static const QRegExp contextPattern(QLatin1String(CLASS_MODULE_PATTERN "$"));
 
     static const QRegExp controlFlowShouldIncIndentPattern(QLatin1String("(" FLOWCTL_SHOULD_INC_INDENT2 ")$"));
@@ -475,20 +475,27 @@ Token Scanner::readWhiteSpace()
   */
 Token Scanner::readOperator(QChar first)
 {
-    static const QString singleCharOperators = QStringLiteral("[]{}()");
-    if (singleCharOperators.contains(first))
-        return Token(Token::Operator, m_src.anchor(), m_src.length());
+    static const QString openingBraces = QStringLiteral("[{(");
+    static const QString closingBraces = QStringLiteral("]})");
+    Token::Kind kind = Token::Operator;
+    if (openingBraces.contains(first)) {
+        kind = Token::ParenOpen;
+        ++m_indentDepth;
+    } else if (closingBraces.contains(first)) {
+        kind = Token::ParenClose;
+        --m_indentDepth;
+    } else {
+        static const QString operators = QStringLiteral("<=>+-/*%!");
+        static const QString colon = QStringLiteral(":");
+        const QString &acceptedChars = first == QLatin1Char(':') ? colon : operators;
+        QChar ch = m_src.peek();
 
-    static const QString operators = QStringLiteral("<=>+-/*%!");
-    static const QString colon = QStringLiteral(":");
-    const QString &acceptedChars = first == QLatin1Char(':') ? colon : operators;
-    QChar ch = m_src.peek();
-
-    while (acceptedChars.contains(ch)) {
-        m_src.move();
-        ch = m_src.peek();
+        while (acceptedChars.contains(ch)) {
+            m_src.move();
+            ch = m_src.peek();
+        }
     }
-    return Token(Token::Operator, m_src.anchor(), m_src.length());
+    return Token(kind, m_src.anchor(), m_src.length());
 }
 
 static QChar translateDelimiter(QChar ch)

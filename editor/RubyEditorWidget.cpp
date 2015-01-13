@@ -1,5 +1,6 @@
 #include "RubyEditorWidget.h"
 
+#include "RubyAmbiguousMethodAssistProvider.h"
 #include "RubyAutoCompleter.h"
 #include "RubyCodeModel.h"
 #include "../RubyConstants.h"
@@ -18,6 +19,7 @@ const int UpdateDocumentDefaultInterval = 150;
 
 EditorWidget::EditorWidget()
     : m_wordRegex(QLatin1String("[\\w!\\?]+"))
+    , m_ambigousMethodAssistProvider(new AmbigousMethodAssistProvider)
 {
     setLanguageSettingsId(Constants::SettingsId);
 
@@ -32,7 +34,12 @@ EditorWidget::EditorWidget()
     CodeModel::instance();
 }
 
-TextEditor::TextEditorWidget::Link EditorWidget::findLinkAt(const QTextCursor &cursor, bool, bool)
+EditorWidget::~EditorWidget()
+{
+    delete m_ambigousMethodAssistProvider;
+}
+
+TextEditor::TextEditorWidget::Link EditorWidget::findLinkAt(const QTextCursor &cursor, bool, bool inNextSplit)
 {
     QString text = cursor.block().text();
     if (text.isEmpty())
@@ -55,13 +62,19 @@ TextEditor::TextEditorWidget::Link EditorWidget::findLinkAt(const QTextCursor &c
     if (symbols.empty())
         return Link();
 
-    // TODO: Implement an asssit to let the user choose the implementation to go.
-    if (symbols.count() > 1)
-        return Link();
-
     Link link;
     link.linkTextStart = cursor.position() + (pos - cursorPos);
     link.linkTextEnd = link.linkTextStart + word.length();
+
+    if (symbols.count() > 1) {
+        m_ambigousMethodAssistProvider->setSymbols(symbols);
+        m_ambigousMethodAssistProvider->setCursorPosition(cursor.position());
+        m_ambigousMethodAssistProvider->setInNextSplit(inNextSplit);
+
+        invokeAssist(TextEditor::FollowSymbol, m_ambigousMethodAssistProvider);
+        return link;
+    }
+
     link.targetLine = symbols.last().line;
     link.targetColumn = symbols.last().column;
     link.targetFileName = *symbols.last().file;

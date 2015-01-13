@@ -6,6 +6,7 @@ QTC_PLUGIN_DEPENDS = coreplugin texteditor projectexplorer
 include($$QTC_SOURCE/src/qtcreatorplugin.pri)
 
 SOURCES += RubyPlugin.cpp \
+    editor/RubyAmbiguousMethodAssistProvider.cpp \
     editor/RubyAutoCompleter.cpp \
     editor/RubyCodeModel.cpp \
     editor/RubyCodeStylePreferencesFactory.cpp \
@@ -27,6 +28,7 @@ equals(TEST, 1) {
 
 HEADERS += RubyPlugin.h \
     RubyConstants.h \
+    editor/RubyAmbiguousMethodAssistProvider.h \
     editor/RubyAutoCompleter.h \
     editor/RubyCodeModel.h \
     editor/RubyCodeStylePreferencesFactory.h \

@@ -110,6 +110,7 @@ void CodeModel::updateFile(const QString &fileName, const QString &contents)
         case Token::Method:
             data->methods << createSymbol(fileNamePtr, contents, scanner, token);
             break;
+        case Token::Parameter:
         case Token::Identifier:
             data->identifiers << contents.mid(token.position, token.length);
             break;

@@ -28,14 +28,22 @@ private slots:
     void scheduleCodeModelUpdate();
     void maybeUpdateCodeModel();
 
+    void scheduleRubocopUpdate();
+    void maybeUpdateRubocop();
+
 private:
     QRegExp m_wordRegex;
     Utils::CommentDefinition m_commentDefinition;
     QTimer m_updateCodeModelTimer;
     bool m_codeModelUpdatePending;
+
+    QTimer m_updateRubocopTimer;
+    bool m_rubocopUpdatePending;
+
     AmbigousMethodAssistProvider* m_ambigousMethodAssistProvider;
 
     void updateCodeModel();
+    void updateRubocop();
 };
 
 }

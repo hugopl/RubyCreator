@@ -6,6 +6,7 @@
 #include "../RubyConstants.h"
 #include "RubyHighlighter.h"
 #include "RubyIndenter.h"
+#include "RubyRubocopHighlighter.h"
 
 #include <texteditor/textdocument.h>
 
@@ -15,11 +16,13 @@
 
 namespace Ruby {
 
-const int UpdateDocumentDefaultInterval = 150;
+const int CODEMODEL_UPDATE_INTERVAL = 150;
+const int RUBOCOP_UPDATE_INTERVAL = 500;
 
 EditorWidget::EditorWidget()
     : m_wordRegex(QLatin1String("[\\w!\\?]+"))
     , m_codeModelUpdatePending(false)
+    , m_rubocopUpdatePending(false)
     , m_ambigousMethodAssistProvider(new AmbigousMethodAssistProvider)
 {
     setLanguageSettingsId(Constants::SettingsId);
@@ -29,8 +32,12 @@ EditorWidget::EditorWidget()
     m_commentDefinition.singleLine = QLatin1Char('#');
 
     m_updateCodeModelTimer.setSingleShot(true);
-    m_updateCodeModelTimer.setInterval(UpdateDocumentDefaultInterval);
+    m_updateCodeModelTimer.setInterval(CODEMODEL_UPDATE_INTERVAL);
     connect(&m_updateCodeModelTimer, &QTimer::timeout, this, &EditorWidget::maybeUpdateCodeModel);
+
+    m_updateRubocopTimer.setSingleShot(true);
+    m_updateRubocopTimer.setInterval(RUBOCOP_UPDATE_INTERVAL);
+    connect(&m_updateRubocopTimer, &QTimer::timeout, this, &EditorWidget::maybeUpdateRubocop);
 
     CodeModel::instance();
 }
@@ -94,8 +101,8 @@ void EditorWidget::scheduleCodeModelUpdate()
     if (m_codeModelUpdatePending)
         return;
 
-    updateCodeModel();
     m_codeModelUpdatePending = false;
+    updateCodeModel();
     m_updateCodeModelTimer.start();
 }
 
@@ -111,9 +118,37 @@ void EditorWidget::updateCodeModel()
     CodeModel::instance()->updateFile(textDocument()->filePath(), textData);
 }
 
+void EditorWidget::scheduleRubocopUpdate()
+{
+    qDebug() << __FUNCTION__;
+    m_rubocopUpdatePending = m_updateRubocopTimer.isActive();
+    if (m_rubocopUpdatePending)
+        return;
+
+    m_rubocopUpdatePending = false;
+    updateRubocop();
+    m_updateRubocopTimer.start();
+}
+
+void EditorWidget::maybeUpdateRubocop()
+{
+    qDebug() << __FUNCTION__ << m_rubocopUpdatePending;
+    if (m_rubocopUpdatePending)
+        updateRubocop();
+}
+
+void EditorWidget::updateRubocop()
+{
+    if (!RubocopHighlighter::instance()->run(textDocument())) {
+        m_rubocopUpdatePending = true;
+        m_updateRubocopTimer.start();
+    }
+}
+
 void EditorWidget::finalizeInitialization()
 {
     connect(document(), SIGNAL(contentsChanged()), this, SLOT(scheduleCodeModelUpdate()));
+    connect(document(), SIGNAL(contentsChanged()), this, SLOT(scheduleRubocopUpdate()));
 }
 
 }

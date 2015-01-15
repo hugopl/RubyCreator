@@ -32,6 +32,7 @@ private:
     QRegExp m_wordRegex;
     Utils::CommentDefinition m_commentDefinition;
     QTimer m_updateCodeModelTimer;
+    bool m_codeModelUpdatePending;
     AmbigousMethodAssistProvider* m_ambigousMethodAssistProvider;
 };
 

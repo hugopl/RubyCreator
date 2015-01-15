@@ -19,6 +19,7 @@ const int UpdateDocumentDefaultInterval = 150;
 
 EditorWidget::EditorWidget()
     : m_wordRegex(QLatin1String("[\\w!\\?]+"))
+    , m_codeModelUpdatePending(false)
     , m_ambigousMethodAssistProvider(new AmbigousMethodAssistProvider)
 {
     setLanguageSettingsId(Constants::SettingsId);
@@ -89,11 +90,20 @@ void EditorWidget::unCommentSelection()
 
 void EditorWidget::scheduleCodeModelUpdate()
 {
+    m_codeModelUpdatePending = m_updateCodeModelTimer.isActive();
+    if (m_codeModelUpdatePending)
+        return;
+
+    updateCodeModel();
+    m_codeModelUpdatePending = false;
     m_updateCodeModelTimer.start();
 }
 
 void EditorWidget::updateCodeModel()
 {
+    if (!m_codeModelUpdatePending)
+        return;
+
     const QString textData = textDocument()->plainText();
     CodeModel::instance()->updateFile(textDocument()->filePath(), textData);
 }
@@ -101,7 +111,6 @@ void EditorWidget::updateCodeModel()
 void EditorWidget::finalizeInitialization()
 {
     connect(document(), SIGNAL(contentsChanged()), this, SLOT(scheduleCodeModelUpdate()));
-    updateCodeModel();
 }
 
 }

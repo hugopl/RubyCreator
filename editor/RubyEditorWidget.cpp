@@ -30,7 +30,7 @@ EditorWidget::EditorWidget()
 
     m_updateCodeModelTimer.setSingleShot(true);
     m_updateCodeModelTimer.setInterval(UpdateDocumentDefaultInterval);
-    connect(&m_updateCodeModelTimer, &QTimer::timeout, this, &EditorWidget::updateCodeModel);
+    connect(&m_updateCodeModelTimer, &QTimer::timeout, this, &EditorWidget::maybeUpdateCodeModel);
 
     CodeModel::instance();
 }
@@ -99,11 +99,14 @@ void EditorWidget::scheduleCodeModelUpdate()
     m_updateCodeModelTimer.start();
 }
 
+void EditorWidget::maybeUpdateCodeModel()
+{
+    if (m_codeModelUpdatePending)
+        updateCodeModel();
+}
+
 void EditorWidget::updateCodeModel()
 {
-    if (!m_codeModelUpdatePending)
-        return;
-
     const QString textData = textDocument()->plainText();
     CodeModel::instance()->updateFile(textDocument()->filePath(), textData);
 }

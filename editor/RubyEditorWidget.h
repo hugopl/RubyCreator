@@ -26,7 +26,7 @@ protected:
 
 private slots:
     void scheduleCodeModelUpdate();
-    void updateCodeModel();
+    void maybeUpdateCodeModel();
 
 private:
     QRegExp m_wordRegex;
@@ -34,6 +34,8 @@ private:
     QTimer m_updateCodeModelTimer;
     bool m_codeModelUpdatePending;
     AmbigousMethodAssistProvider* m_ambigousMethodAssistProvider;
+
+    void updateCodeModel();
 };
 
 }

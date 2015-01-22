@@ -2,5 +2,6 @@
     <qresource prefix="/rubysupport">
         <file>Ruby.mimetypes.xml</file>
         <file>Ruby.png</file>
+        <file alias="rubocop.rb">editor/rubocop.rb</file>
     </qresource>
 </RCC>

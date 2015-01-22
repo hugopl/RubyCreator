@@ -17,7 +17,7 @@
 namespace Ruby {
 
 const int CODEMODEL_UPDATE_INTERVAL = 150;
-const int RUBOCOP_UPDATE_INTERVAL = 500;
+const int RUBOCOP_UPDATE_INTERVAL = 150;
 
 EditorWidget::EditorWidget()
     : m_wordRegex(QLatin1String("[\\w!\\?]+"))
@@ -120,7 +120,6 @@ void EditorWidget::updateCodeModel()
 
 void EditorWidget::scheduleRubocopUpdate()
 {
-    qDebug() << __FUNCTION__;
     m_rubocopUpdatePending = m_updateRubocopTimer.isActive();
     if (m_rubocopUpdatePending)
         return;
@@ -132,7 +131,6 @@ void EditorWidget::scheduleRubocopUpdate()
 
 void EditorWidget::maybeUpdateRubocop()
 {
-    qDebug() << __FUNCTION__ << m_rubocopUpdatePending;
     if (m_rubocopUpdatePending)
         updateRubocop();
 }

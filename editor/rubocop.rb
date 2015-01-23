@@ -1,3 +1,4 @@
+# wraper for rubocop
 begin
   require 'rubocop'
 rescue LoadError
@@ -6,9 +7,9 @@ end
 
 module RuboCop
   class Runner
-    def _inspect_code(code)
+    def _inspect_code(code, path)
       @formatter_set ||= Formatter::FormatterSet.new
-      inspect_file(RuboCop::ProcessedSource.new(code, '/'))[0]
+      inspect_file(RuboCop::ProcessedSource.new(code, path))[0]
     end
   end
 end
@@ -16,12 +17,15 @@ end
 class RouboCop
   def initialize
     config = RuboCop::ConfigStore.new
-    options, _ = RuboCop::Options.new.parse(%w(-l))
+    options, _ = RuboCop::Options.new.parse([])
     @runner = RuboCop::Runner.new(options, config)
   end
-  
-  def parse(file)
-    offenses = @runner._inspect_code(file)
+
+  def parse(data)
+    idx = data.index("\n")
+    path = data[0, idx]
+    file = data[(idx + 1)..-1]
+    offenses = @runner._inspect_code(file, path)
 
     offenses.sort! { |a, b| a.location.line <=> b.location.line }
     offenses.each do |offense|
@@ -38,7 +42,7 @@ end
 
 def main
   roubocop = RouboCop.new
-  while !$stdin.eof?
+  until $stdin.eof?
     data = $stdin.gets("\0")
     roubocop.parse(data)
   end

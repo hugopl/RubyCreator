@@ -55,7 +55,7 @@ RubocopHighlighter *RubocopHighlighter::instance()
 }
 
 // return false if we are busy, true if everything is ok (or rubocop wasn't found)
-bool RubocopHighlighter::run(TextEditor::TextDocument* document)
+bool RubocopHighlighter::run(TextEditor::TextDocument* document, const QString& fileNameTip)
 {
     if (m_busy || m_rubocop->state() == QProcess::Starting)
         return false;
@@ -67,7 +67,9 @@ bool RubocopHighlighter::run(TextEditor::TextDocument* document)
 
     m_timer.start();
     m_document = document;
-    m_rubocop->write(document->filePath().toUtf8());
+
+    const QString filePath = document->filePath().isEmpty() ? fileNameTip : document->filePath();
+    m_rubocop->write(filePath.toUtf8());
     m_rubocop->write("\n");
     QByteArray data = document->plainText().toUtf8();
     m_rubocop->write(data.constData(), data.length() + 1);

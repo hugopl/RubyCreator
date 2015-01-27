@@ -21,6 +21,7 @@ public:
     Link findLinkAt(const QTextCursor &cursor, bool, bool inNextSplit) Q_DECL_OVERRIDE;
     void unCommentSelection() Q_DECL_OVERRIDE;
 
+    bool open(QString *errorString, const QString &fileName, const QString &realFileName) Q_DECL_OVERRIDE;
 protected:
     void finalizeInitialization() Q_DECL_OVERRIDE;
 
@@ -39,6 +40,8 @@ private:
 
     QTimer m_updateRubocopTimer;
     bool m_rubocopUpdatePending;
+
+    QString m_filePathDueToMaybeABug;
 
     AmbigousMethodAssistProvider* m_ambigousMethodAssistProvider;
 

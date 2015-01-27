@@ -52,7 +52,7 @@ public:
 
     static RubocopHighlighter *instance();
 
-    bool run(TextEditor::TextDocument* document);
+    bool run(TextEditor::TextDocument* document, const QString& fileNameTip);
     QString diagnosticAt(const QString& file, int pos);
 private:   
     bool m_rubocopFound;

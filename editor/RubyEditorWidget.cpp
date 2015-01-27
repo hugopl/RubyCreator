@@ -95,6 +95,12 @@ void EditorWidget::unCommentSelection()
     Utils::unCommentSelection(this, m_commentDefinition);
 }
 
+bool EditorWidget::open(QString* errorString, const QString& fileName, const QString& realFileName)
+{
+    m_filePathDueToMaybeABug = realFileName;
+    return TextEditor::TextEditorWidget::open(errorString, fileName, realFileName);
+}
+
 void EditorWidget::scheduleCodeModelUpdate()
 {
     m_codeModelUpdatePending = m_updateCodeModelTimer.isActive();
@@ -137,7 +143,7 @@ void EditorWidget::maybeUpdateRubocop()
 
 void EditorWidget::updateRubocop()
 {
-    if (!RubocopHighlighter::instance()->run(textDocument())) {
+    if (!RubocopHighlighter::instance()->run(textDocument(), m_filePathDueToMaybeABug)) {
         m_rubocopUpdatePending = true;
         m_updateRubocopTimer.start();
     }

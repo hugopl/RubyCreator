@@ -102,8 +102,10 @@ void RubocopHighlighter::initRubocopProcess()
 
 void RubocopHighlighter::finishRuboCopHighlight()
 {
-    if (m_startRevision != m_document->document()->revision())
+    if (m_startRevision != m_document->document()->revision()) {
+        m_busy = false;
         return;
+    }
 
     Offenses offenses = processRubocopOutput();
     RubocopFuture rubocopFuture(offenses);

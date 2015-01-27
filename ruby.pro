@@ -17,6 +17,7 @@ SOURCES += RubyPlugin.cpp \
     editor/RubyEditorFactory.cpp \
     editor/RubyEditorWidget.cpp \
     editor/RubyHighlighter.cpp \
+    editor/RubyHoverHandler.cpp \
     editor/RubyIndenter.cpp \
     editor/RubyRubocopHighlighter.cpp \
     editor/RubyScanner.cpp \
@@ -40,6 +41,7 @@ HEADERS += RubyPlugin.h \
     editor/RubyEditorFactory.h \
     editor/RubyEditorWidget.h \
     editor/RubyHighlighter.h \
+    editor/RubyHoverHandler.h \
     editor/RubyIndenter.h \
     editor/RubyRubocopHighlighter.h \
     editor/RubyScanner.h \

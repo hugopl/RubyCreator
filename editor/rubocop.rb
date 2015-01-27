@@ -30,7 +30,7 @@ class RouboCop
     offenses.sort! { |a, b| a.location.line <=> b.location.line }
     offenses.each do |offense|
       location = offense.location
-      puts "#{offense.severity.code}:#{location.line}:#{location.column + 1}:#{location.length}:#{offense.message}"
+      puts "#{offense.severity.code}:#{location.line}:#{location.column + 1}:#{location.length}:#{offense.message} [#{offense.cop_name}]"
     end
   rescue Errno::ENOENT
     $stderr.puts $!.message

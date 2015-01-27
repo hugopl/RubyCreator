@@ -3,6 +3,7 @@
 #include "RubyEditor.h"
 #include "RubyEditorFactory.h"
 #include "RubyHighlighter.h"
+#include "RubyHoverHandler.h"
 #include "RubyIndenter.h"
 
 #include "../RubyConstants.h"
@@ -33,6 +34,7 @@ EditorFactory::EditorFactory()
     setParenthesesMatchingEnabled(true);
     setCodeFoldingSupported(true);
     setMarksVisible(true);
+    addHoverHandler(new HoverHandler);
 
     setEditorActionHandlers(TextEditor::TextEditorActionHandler::Format
                           | TextEditor::TextEditorActionHandler::UnCommentSelection

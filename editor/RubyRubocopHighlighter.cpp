@@ -5,6 +5,7 @@
 #include <QTextDocument>
 #include <QtConcurrent>
 #include <QMessageBox>
+#include <QTextBlock>
 
 #include <texteditor/textdocument.h>
 #include <texteditor/semantichighlighter.h>
@@ -73,6 +74,15 @@ bool RubocopHighlighter::run(TextEditor::TextDocument* document)
     return true;
 }
 
+QString RubocopHighlighter::diagnosticAt(const QString& file, int pos)
+{
+    auto it = m_diagnostics.find(file);
+    if (it == m_diagnostics.end())
+        return QString();
+
+    return it->messages[Range(pos, 0)];
+}
+
 void RubocopHighlighter::initRubocopProcess()
 {
     if (m_rubocopScript.open()) {
@@ -131,6 +141,7 @@ static int kindOfSeverity(const QStringRef& severity)
 Offenses RubocopHighlighter::processRubocopOutput()
 {
     Offenses result;
+    Diagnostics& diag = m_diagnostics[m_document->filePath()] = Diagnostics();
 
     for (const QStringRef& line : m_outputBuffer.splitRef(QLatin1Char('\n'))) {
         if (line == QStringLiteral("--"))
@@ -141,10 +152,19 @@ Offenses RubocopHighlighter::processRubocopOutput()
         int column = fields[2].toInt();
         int length = fields[3].toInt();
         result << TextEditor::HighlightingResult(lineN, column, length, kind);
+        diag.messages[lineColumnLengthToRange(lineN, column, length)] = fields[4].toString();
     }
     m_outputBuffer.clear();
 
     return result;
+}
+
+Ruby::Range RubocopHighlighter::lineColumnLengthToRange(int line, int column, int length)
+{
+    QTextBlock block = m_document->document()->findBlockByLineNumber(line - 1);
+    int pos = block.position() + column;
+
+    return Ruby::Range(pos, length);
 }
 
 }

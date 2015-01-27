@@ -154,7 +154,10 @@ Offenses RubocopHighlighter::processRubocopOutput()
         int column = fields[2].toInt();
         int length = fields[3].toInt();
         result << TextEditor::HighlightingResult(lineN, column, length, kind);
-        diag.messages[lineColumnLengthToRange(lineN, column, length)] = fields[4].toString();
+
+        int messagePos = fields[4].position();
+        QStringRef message(line.string(), messagePos, line.position() + line.length() - messagePos);
+        diag.messages[lineColumnLengthToRange(lineN, column, length)] = message.toString();
     }
     m_outputBuffer.clear();
 

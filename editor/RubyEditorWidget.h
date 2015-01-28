@@ -43,7 +43,7 @@ private:
 
     QString m_filePathDueToMaybeABug;
 
-    AmbigousMethodAssistProvider* m_ambigousMethodAssistProvider;
+    AmbigousMethodAssistProvider *m_ambigousMethodAssistProvider;
 
     void updateCodeModel();
     void updateRubocop();

@@ -33,7 +33,7 @@ public:
 class AmbigousMethodProposalItem : public TextEditor::AssistProposalItem
 {
 public:
-    AmbigousMethodProposalItem(const Symbol& symbol, bool inNextSplit)
+    AmbigousMethodProposalItem(const Symbol &symbol, bool inNextSplit)
         : m_symbol(symbol)
         , m_inNextSplit(inNextSplit)
     {
@@ -63,7 +63,7 @@ private:
 
 class AmbigousMethodAssistProcessor : public TextEditor::IAssistProcessor {
 public:
-    AmbigousMethodAssistProcessor(const QList<Symbol>& symbols, int cursorPosition, int inNextSplit)
+    AmbigousMethodAssistProcessor(const QList<Symbol> &symbols, int cursorPosition, int inNextSplit)
         : m_symbols(symbols)
         , m_cursorPosition(cursorPosition)
         , m_inNextSplit(inNextSplit)
@@ -95,7 +95,7 @@ bool AmbigousMethodAssistProvider::supportsEditor(Core::Id editorId) const
     return editorId == Constants::EditorId;
 }
 
-TextEditor::IAssistProcessor* AmbigousMethodAssistProvider::createProcessor() const
+TextEditor::IAssistProcessor *AmbigousMethodAssistProvider::createProcessor() const
 {
     return new AmbigousMethodAssistProcessor(m_symbols, m_cursorPosition, m_inNexSplit);
 }

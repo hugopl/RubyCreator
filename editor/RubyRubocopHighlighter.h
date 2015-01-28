@@ -26,13 +26,13 @@ public:
     Range() : pos(0), length(0) { }
     Range(int pos, int length) : pos(pos), length(length) { }
 
-    bool operator==(const Range& other) const {
-        const int& value = other.pos;
+    bool operator==(const Range &other) const {
+        const int value = other.pos;
         return value >= pos && value < (pos + length);
     }
 
-    bool operator<(const Range& other) const {
-        const int& value = other.pos;
+    bool operator<(const Range &other) const {
+        const int value = other.pos;
         return pos < value && (pos + length) < value;
     }
 };
@@ -52,17 +52,17 @@ public:
 
     static RubocopHighlighter *instance();
 
-    bool run(TextEditor::TextDocument* document, const QString& fileNameTip);
-    QString diagnosticAt(const QString& file, int pos);
+    bool run(TextEditor::TextDocument *document, const QString &fileNameTip);
+    QString diagnosticAt(const QString &file, int pos);
 private:   
     bool m_rubocopFound;
     bool m_busy;
-    QProcess* m_rubocop;
+    QProcess *m_rubocop;
     QTemporaryFile m_rubocopScript;
     QString m_outputBuffer;
 
     int m_startRevision;
-    TextEditor::TextDocument* m_document;
+    TextEditor::TextDocument *m_document;
     QHash<int, QTextCharFormat> m_extraFormats;
 
 

@@ -16,7 +16,7 @@ namespace Ruby {
 class RubocopFuture : public QFutureInterface<TextEditor::HighlightingResult>, public QObject
 {
 public:
-    RubocopFuture(const Offenses& offenses)
+    RubocopFuture(const Offenses &offenses)
     {
         reportResults(offenses);
     }
@@ -55,7 +55,7 @@ RubocopHighlighter *RubocopHighlighter::instance()
 }
 
 // return false if we are busy, true if everything is ok (or rubocop wasn't found)
-bool RubocopHighlighter::run(TextEditor::TextDocument* document, const QString& fileNameTip)
+bool RubocopHighlighter::run(TextEditor::TextDocument *document, const QString &fileNameTip)
 {
     if (m_busy || m_rubocop->state() == QProcess::Starting)
         return false;
@@ -76,7 +76,7 @@ bool RubocopHighlighter::run(TextEditor::TextDocument* document, const QString& 
     return true;
 }
 
-QString RubocopHighlighter::diagnosticAt(const QString& file, int pos)
+QString RubocopHighlighter::diagnosticAt(const QString &file, int pos)
 {
     auto it = m_diagnostics.find(file);
     if (it == m_diagnostics.end())
@@ -95,7 +95,7 @@ void RubocopHighlighter::initRubocopProcess()
     }
 
     m_rubocop = new QProcess;
-    void (QProcess::* signal)(int) = &QProcess::finished;
+    void (QProcess::*signal)(int) = &QProcess::finished;
     QObject::connect(m_rubocop, signal, [&](int status) {
         if (status) {
             QMessageBox::critical(0, QLatin1String("Rubocop"), QString::fromUtf8(m_rubocop->readAllStandardError().trimmed()));
@@ -131,7 +131,7 @@ void RubocopHighlighter::finishRuboCopHighlight()
     qDebug() << "rubocop in" << m_timer.elapsed() << "ms," << offenses.count() << "offenses found.";
 }
 
-static int kindOfSeverity(const QStringRef& severity)
+static int kindOfSeverity(const QStringRef &severity)
 {
     switch (severity.at(0).toLatin1()) {
     case 'W': return 0; // yellow
@@ -143,7 +143,7 @@ static int kindOfSeverity(const QStringRef& severity)
 Offenses RubocopHighlighter::processRubocopOutput()
 {
     Offenses result;
-    Diagnostics& diag = m_diagnostics[m_document->filePath()] = Diagnostics();
+    Diagnostics &diag = m_diagnostics[m_document->filePath()] = Diagnostics();
 
     foreach (const QStringRef &line, m_outputBuffer.splitRef(QLatin1Char('\n'))) {
         if (line == QStringLiteral("--"))

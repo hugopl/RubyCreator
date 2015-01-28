@@ -10,10 +10,10 @@ Scanner *m_scanner;
 typedef QVector<Token::Kind> Tokens;
 
 #define CASE_STR(x) case Token::x: str = #x; break
-QDebug& operator<<(QDebug& s, Token::Kind t)
+QDebug &operator<<(QDebug &s, Token::Kind t)
 {
-    const char* str = "";
-    switch(t) {
+    const char *str = "";
+    switch (t) {
         CASE_STR(Number);
         CASE_STR(String);
         CASE_STR(Whitespace);

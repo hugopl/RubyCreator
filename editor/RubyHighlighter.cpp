@@ -11,7 +11,7 @@ namespace Ruby {
 
 QVector<QTextCharFormat> Highlighter::m_formats;
 
-static void initFormats(QVector<QTextCharFormat>& formats)
+static void initFormats(QVector<QTextCharFormat> &formats)
 {
     formats.resize(Token::EndOfBlock);
 

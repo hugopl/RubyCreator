@@ -17,7 +17,7 @@ private:
     int highlightLine(const QString &text, int state);
     QTextCharFormat formatForToken(const Token &);
 
-    QVector<QTextCharFormat> m_formats;
+    static QVector<QTextCharFormat> m_formats;
 
     typedef TextEditor::Parenthesis Parenthesis;
     typedef TextEditor::Parentheses Parentheses;

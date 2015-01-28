@@ -73,6 +73,8 @@ public:
         OperatorAssign      = 25,
         OperatorSemiColon   = 26,
         KeywordElseElsIfRescueEnsure = 27,
+        OpenBraces                   = 28,
+        CloseBraces                  = 29,
 
         Backtick,
         InStringCode,

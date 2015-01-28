@@ -77,7 +77,7 @@ static const int N_KEYWORDS = std::extent<decltype(RUBY_KEYWORDS)>::value;
 #define FLOWCTL_SHOULD_INC_INDENT  "^(2_)?21_|26_(2_)?21_|25_(2_)?21_"
 // Version without 21_ at end, used on readIdentifier
 #define FLOWCTL_SHOULD_INC_INDENT2 "^(2_)?" "|26_(2_)?" "|25_(2_)?"
-#define INDENT_INC "(" CLASS_MODULE_PATTERN "|" METHOD_PATTERN "|" FLOWCTL_SHOULD_INC_INDENT "|22_|23_)"
+#define INDENT_INC "(" CLASS_MODULE_PATTERN "|" METHOD_PATTERN "|" FLOWCTL_SHOULD_INC_INDENT "|22_|23_|28_)"
 
 Scanner::Scanner(const QString *text)
     : m_src(text)
@@ -140,7 +140,7 @@ bool Scanner::didBlockStart()
 
 bool Scanner::didBlockEnd()
 {
-    static const QRegExp regex(QLatin1String("24_"));
+    static const QRegExp regex(QLatin1String("24_|29_"));
     return regex.indexIn(m_tokenSequence) != -1;
 }
 
@@ -195,6 +195,10 @@ Token Scanner::onDefaultState()
         token = Token(Token::OperatorSemiColon, m_src.anchor(), m_src.length());
     } else if (first == QLatin1Char('%')) {
         token = readPercentageNotation();
+    } else if (first == QLatin1Char('{')) {
+        token = Token(Token::OpenBraces, m_src.anchor(), m_src.length());
+    } else if (first == QLatin1Char('}')) {
+        token = Token(Token::CloseBraces, m_src.anchor(), m_src.length());
     } else {
         token = readOperator(first);
     }

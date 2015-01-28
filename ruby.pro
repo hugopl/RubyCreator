@@ -5,7 +5,10 @@ QTC_PLUGIN_NAME = Ruby
 QTC_PLUGIN_DEPENDS = coreplugin texteditor projectexplorer
 include($$QTC_SOURCE/src/qtcreatorplugin.pri)
 
+CONFIG += qjson
+
 SOURCES += RubyPlugin.cpp \
+    editor/RubyAmbiguousMethodAssistProvider.cpp \
     editor/RubyAutoCompleter.cpp \
     editor/RubyCodeModel.cpp \
     editor/RubyCodeStylePreferencesFactory.cpp \
@@ -14,7 +17,9 @@ SOURCES += RubyPlugin.cpp \
     editor/RubyEditorFactory.cpp \
     editor/RubyEditorWidget.cpp \
     editor/RubyHighlighter.cpp \
+    editor/RubyHoverHandler.cpp \
     editor/RubyIndenter.cpp \
+    editor/RubyRubocopHighlighter.cpp \
     editor/RubyScanner.cpp \
     editor/RubySymbolFilter.cpp \
     projectmanager/RubyProject.cpp \
@@ -27,6 +32,7 @@ equals(TEST, 1) {
 
 HEADERS += RubyPlugin.h \
     RubyConstants.h \
+    editor/RubyAmbiguousMethodAssistProvider.h \
     editor/RubyAutoCompleter.h \
     editor/RubyCodeModel.h \
     editor/RubyCodeStylePreferencesFactory.h \
@@ -35,7 +41,9 @@ HEADERS += RubyPlugin.h \
     editor/RubyEditorFactory.h \
     editor/RubyEditorWidget.h \
     editor/RubyHighlighter.h \
+    editor/RubyHoverHandler.h \
     editor/RubyIndenter.h \
+    editor/RubyRubocopHighlighter.h \
     editor/RubyScanner.h \
     editor/RubySnippetProvider.h \
     editor/RubySymbol.h \

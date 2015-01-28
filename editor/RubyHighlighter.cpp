@@ -9,11 +9,13 @@
 
 namespace Ruby {
 
-Highlighter::Highlighter(QTextDocument *parent)
-    : TextEditor::SyntaxHighlighter(parent)
-    , m_formats(Token::EndOfBlock)
+QVector<QTextCharFormat> Highlighter::m_formats;
+
+static void initFormats(QVector<QTextCharFormat> &formats)
 {
-    QTextCharFormat &keywordFormat = m_formats[Token::Keyword];
+    formats.resize(Token::EndOfBlock);
+
+    QTextCharFormat &keywordFormat = formats[Token::Keyword];
     keywordFormat.setFontWeight(75);
     const Token::Kind keywordTokens[] = {
         Token::KeywordDef,
@@ -26,27 +28,34 @@ Highlighter::Highlighter(QTextDocument *parent)
         Token::KeywordElseElsIfRescueEnsure
     };
     for (unsigned tk = 0; tk < sizeof(keywordTokens) / sizeof(*keywordTokens); ++tk)
-        m_formats[keywordTokens[tk]] = keywordFormat;
+        formats[keywordTokens[tk]] = keywordFormat;
 
 
-    m_formats[Token::KeywordVisibility].setForeground(QColor(0, 0, 255));
-    m_formats[Token::KeywordVisibility].setFontWeight(75);
-    m_formats[Token::KeywordSelf].setForeground(QColor(68, 85, 136));
-    m_formats[Token::KeywordSelf].setFontWeight(75);
-    m_formats[Token::String].setForeground(QColor(208, 16, 64));
-    m_formats[Token::InStringCode].setForeground(QColor(0, 110, 40));
-    m_formats[Token::Backtick] = m_formats[Token::String];
-    m_formats[Token::Comment].setForeground(QColor(153, 153, 136));
-    m_formats[Token::Constant].setForeground(QColor(0, 128, 128));
-    m_formats[Token::Global].setForeground(QColor(0, 128, 128));
-    m_formats[Token::Regexp].setForeground(QColor(0, 153, 38));
-    m_formats[Token::ClassField].setForeground(QColor(0, 128, 128));
-    m_formats[Token::Number].setForeground(QColor(0, 153, 153));
-    m_formats[Token::Symbol].setForeground(QColor(153, 0, 115));
-    m_formats[Token::Method].setForeground(QColor(153, 0, 0));
-    m_formats[Token::Method].setFontWeight(75);
-    m_formats[Token::Parameter].setFontItalic(true);
-    m_formats[Token::Parameter].setForeground(QColor(0, 134, 179));
+    formats[Token::KeywordVisibility].setForeground(QColor(0, 0, 255));
+    formats[Token::KeywordVisibility].setFontWeight(75);
+    formats[Token::KeywordSelf].setForeground(QColor(68, 85, 136));
+    formats[Token::KeywordSelf].setFontWeight(75);
+    formats[Token::String].setForeground(QColor(208, 16, 64));
+    formats[Token::InStringCode].setForeground(QColor(0, 110, 40));
+    formats[Token::Backtick] = formats[Token::String];
+    formats[Token::Comment].setForeground(QColor(153, 153, 136));
+    formats[Token::Constant].setForeground(QColor(0, 128, 128));
+    formats[Token::Global].setForeground(QColor(0, 128, 128));
+    formats[Token::Regexp].setForeground(QColor(0, 153, 38));
+    formats[Token::ClassField].setForeground(QColor(0, 128, 128));
+    formats[Token::Number].setForeground(QColor(0, 153, 153));
+    formats[Token::Symbol].setForeground(QColor(153, 0, 115));
+    formats[Token::Method].setForeground(QColor(153, 0, 0));
+    formats[Token::Method].setFontWeight(75);
+    formats[Token::Parameter].setFontItalic(true);
+    formats[Token::Parameter].setForeground(QColor(0, 134, 179));
+}
+
+Highlighter::Highlighter(QTextDocument *parent)
+    : TextEditor::SyntaxHighlighter(parent)
+{
+    if (m_formats.empty())
+        initFormats(m_formats);
 }
 
 void Highlighter::highlightBlock(const QString &text)

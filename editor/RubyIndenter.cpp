@@ -21,9 +21,6 @@ void Indenter::indentBlock(QTextDocument*, const QTextBlock &block, const QChar 
     bool isNewBlock = false;
     int indent = block.userState() >> 8;
 
-    if (!indent)
-        return;
-
     if (indent < 0) {
         QTextBlock previous = block.previous();
         while (indent == -1 && previous.isValid()) {
@@ -33,7 +30,7 @@ void Indenter::indentBlock(QTextDocument*, const QTextBlock &block, const QChar 
         isNewBlock = true;
     }
 
-    if (didBlockStart(block))
+    if (didBlockStart(block) && indent > 0)
         indent--;
 
     if (isNewBlock || !block.text().isEmpty())

@@ -1,10 +1,12 @@
 #include "RubyEditorWidget.h"
 
+#include "RubyAmbiguousMethodAssistProvider.h"
 #include "RubyAutoCompleter.h"
 #include "RubyCodeModel.h"
 #include "../RubyConstants.h"
 #include "RubyHighlighter.h"
 #include "RubyIndenter.h"
+#include "RubyRubocopHighlighter.h"
 
 #include <texteditor/textdocument.h>
 
@@ -14,10 +16,14 @@
 
 namespace Ruby {
 
-const int UpdateDocumentDefaultInterval = 150;
+const int CODEMODEL_UPDATE_INTERVAL = 150;
+const int RUBOCOP_UPDATE_INTERVAL = 150;
 
 EditorWidget::EditorWidget()
     : m_wordRegex(QLatin1String("[\\w!\\?]+"))
+    , m_codeModelUpdatePending(false)
+    , m_rubocopUpdatePending(false)
+    , m_ambigousMethodAssistProvider(new AmbigousMethodAssistProvider)
 {
     setLanguageSettingsId(Constants::SettingsId);
 
@@ -26,13 +32,22 @@ EditorWidget::EditorWidget()
     m_commentDefinition.singleLine = QLatin1Char('#');
 
     m_updateCodeModelTimer.setSingleShot(true);
-    m_updateCodeModelTimer.setInterval(UpdateDocumentDefaultInterval);
-    connect(&m_updateCodeModelTimer, &QTimer::timeout, this, &EditorWidget::updateCodeModel);
+    m_updateCodeModelTimer.setInterval(CODEMODEL_UPDATE_INTERVAL);
+    connect(&m_updateCodeModelTimer, &QTimer::timeout, this, &EditorWidget::maybeUpdateCodeModel);
+
+    m_updateRubocopTimer.setSingleShot(true);
+    m_updateRubocopTimer.setInterval(RUBOCOP_UPDATE_INTERVAL);
+    connect(&m_updateRubocopTimer, &QTimer::timeout, this, &EditorWidget::maybeUpdateRubocop);
 
     CodeModel::instance();
 }
 
-TextEditor::TextEditorWidget::Link EditorWidget::findLinkAt(const QTextCursor &cursor, bool, bool)
+EditorWidget::~EditorWidget()
+{
+    delete m_ambigousMethodAssistProvider;
+}
+
+TextEditor::TextEditorWidget::Link EditorWidget::findLinkAt(const QTextCursor &cursor, bool, bool inNextSplit)
 {
     QString text = cursor.block().text();
     if (text.isEmpty())
@@ -55,13 +70,19 @@ TextEditor::TextEditorWidget::Link EditorWidget::findLinkAt(const QTextCursor &c
     if (symbols.empty())
         return Link();
 
-    // TODO: Implement an asssit to let the user choose the implementation to go.
-    if (symbols.count() > 1)
-        return Link();
-
     Link link;
     link.linkTextStart = cursor.position() + (pos - cursorPos);
     link.linkTextEnd = link.linkTextStart + word.length();
+
+    if (symbols.count() > 1) {
+        m_ambigousMethodAssistProvider->setSymbols(symbols);
+        m_ambigousMethodAssistProvider->setCursorPosition(cursor.position());
+        m_ambigousMethodAssistProvider->setInNextSplit(inNextSplit);
+
+        invokeAssist(TextEditor::FollowSymbol, m_ambigousMethodAssistProvider);
+        return link;
+    }
+
     link.targetLine = symbols.last().line;
     link.targetColumn = symbols.last().column;
     link.targetFileName = *symbols.last().file;
@@ -74,9 +95,27 @@ void EditorWidget::unCommentSelection()
     Utils::unCommentSelection(this, m_commentDefinition);
 }
 
+bool EditorWidget::open(QString *errorString, const QString &fileName, const QString &realFileName)
+{
+    m_filePathDueToMaybeABug = realFileName;
+    return TextEditor::TextEditorWidget::open(errorString, fileName, realFileName);
+}
+
 void EditorWidget::scheduleCodeModelUpdate()
 {
+    m_codeModelUpdatePending = m_updateCodeModelTimer.isActive();
+    if (m_codeModelUpdatePending)
+        return;
+
+    m_codeModelUpdatePending = false;
+    updateCodeModel();
     m_updateCodeModelTimer.start();
+}
+
+void EditorWidget::maybeUpdateCodeModel()
+{
+    if (m_codeModelUpdatePending)
+        updateCodeModel();
 }
 
 void EditorWidget::updateCodeModel()
@@ -85,10 +124,35 @@ void EditorWidget::updateCodeModel()
     CodeModel::instance()->updateFile(textDocument()->filePath().toString(), textData);
 }
 
+void EditorWidget::scheduleRubocopUpdate()
+{
+    m_rubocopUpdatePending = m_updateRubocopTimer.isActive();
+    if (m_rubocopUpdatePending)
+        return;
+
+    m_rubocopUpdatePending = false;
+    updateRubocop();
+    m_updateRubocopTimer.start();
+}
+
+void EditorWidget::maybeUpdateRubocop()
+{
+    if (m_rubocopUpdatePending)
+        updateRubocop();
+}
+
+void EditorWidget::updateRubocop()
+{
+    if (!RubocopHighlighter::instance()->run(textDocument(), m_filePathDueToMaybeABug)) {
+        m_rubocopUpdatePending = true;
+        m_updateRubocopTimer.start();
+    }
+}
+
 void EditorWidget::finalizeInitialization()
 {
     connect(document(), SIGNAL(contentsChanged()), this, SLOT(scheduleCodeModelUpdate()));
-    updateCodeModel();
+    connect(document(), SIGNAL(contentsChanged()), this, SLOT(scheduleRubocopUpdate()));
 }
 
 }

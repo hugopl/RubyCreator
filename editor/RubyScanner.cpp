@@ -1,33 +1,3 @@
-/****************************************************************************
-**
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
-** Contact: http://www.qt-project.org/legal
-** Copyright (C) 2014 Hugo Parente Lima <hugo.pl@gmail.com>
-**
-** This file is part of Qt Creator.
-**
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and Digia.  For licensing terms and
-** conditions see http://qt.digia.com/licensing.  For further information
-** use the contact form at http://qt.digia.com/contact-us.
-**
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-**
-** In addition, as a special exception, Digia gives you certain additional
-** rights.  These rights are described in the Digia Qt LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
-**
-****************************************************************************/
-
 #include "RubyScanner.h"
 
 #include <QRegExp>
@@ -77,7 +47,7 @@ static const int N_KEYWORDS = std::extent<decltype(RUBY_KEYWORDS)>::value;
 #define FLOWCTL_SHOULD_INC_INDENT  "^(2_)?21_|26_(2_)?21_|25_(2_)?21_"
 // Version without 21_ at end, used on readIdentifier
 #define FLOWCTL_SHOULD_INC_INDENT2 "^(2_)?" "|26_(2_)?" "|25_(2_)?"
-#define INDENT_INC "(" CLASS_MODULE_PATTERN "|" METHOD_PATTERN "|" FLOWCTL_SHOULD_INC_INDENT "|22_|23_)"
+#define INDENT_INC "(" CLASS_MODULE_PATTERN "|" METHOD_PATTERN "|" FLOWCTL_SHOULD_INC_INDENT "|22_|23_|28_)"
 
 Scanner::Scanner(const QString *text)
     : m_src(text)
@@ -140,7 +110,7 @@ bool Scanner::didBlockStart()
 
 bool Scanner::didBlockEnd()
 {
-    static const QRegExp regex(QLatin1String("24_"));
+    static const QRegExp regex(QLatin1String("24_|29_"));
     return regex.indexIn(m_tokenSequence) != -1;
 }
 
@@ -195,6 +165,10 @@ Token Scanner::onDefaultState()
         token = Token(Token::OperatorSemiColon, m_src.anchor(), m_src.length());
     } else if (first == QLatin1Char('%')) {
         token = readPercentageNotation();
+    } else if (first == QLatin1Char('{')) {
+        token = Token(Token::OpenBraces, m_src.anchor(), m_src.length());
+    } else if (first == QLatin1Char('}')) {
+        token = Token(Token::CloseBraces, m_src.anchor(), m_src.length());
     } else {
         token = readOperator(first);
     }

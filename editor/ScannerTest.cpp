@@ -10,10 +10,10 @@ Scanner *m_scanner;
 typedef QVector<Token::Kind> Tokens;
 
 #define CASE_STR(x) case Token::x: str = #x; break
-QDebug& operator<<(QDebug& s, Token::Kind t)
+QDebug &operator<<(QDebug &s, Token::Kind t)
 {
-    const char* str = "";
-    switch(t) {
+    const char *str = "";
+    switch (t) {
         CASE_STR(Number);
         CASE_STR(String);
         CASE_STR(Whitespace);
@@ -41,6 +41,8 @@ QDebug& operator<<(QDebug& s, Token::Kind t)
         CASE_STR(OperatorAssign);
         CASE_STR(OperatorSemiColon);
         CASE_STR(KeywordElseElsIfRescueEnsure);
+        CASE_STR(OpenBraces);
+        CASE_STR(CloseBraces);
 
         CASE_STR(Backtick);
         CASE_STR(InStringCode);
@@ -153,6 +155,17 @@ void Plugin::test_indentIf()
 
     // Weird code can show folding mark, but I don't care about show weird code
     // like "if foo; bar; end; if bleh" this will not be folded or indented correctly
+}
+
+void Plugin::test_indentBraces()
+{
+    tokenize("foo.bar {|x|");
+    QVERIFY(m_scanner->didBlockStart());
+    QVERIFY(!m_scanner->didBlockEnd());
+
+    tokenize("foo.bar {|x| }");
+    QVERIFY(m_scanner->didBlockStart());
+    QVERIFY(m_scanner->didBlockEnd());
 }
 
 void Plugin::test_lineCount()

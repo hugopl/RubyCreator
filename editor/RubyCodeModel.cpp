@@ -93,6 +93,21 @@ static Symbol createSymbol(const QString *fileName, const QString &contents, Sca
     return sym;
 }
 
+void addMethodParameter(Symbol& method, const QString& parameter)
+{
+    QString& name = method.name;
+    const QChar end = name[name.length() -1];
+
+    if (end == QLatin1Char(')')) {
+        name.chop(1);
+        name.append(QLatin1String(", "));
+    } else {
+        name.append(QLatin1Char('('));
+    }
+    name.append(parameter);
+    name.append(QLatin1Char(')'));
+}
+
 void CodeModel::updateFile(const QString &fileName, const QString &contents)
 {
     if (fileName.isEmpty())
@@ -107,6 +122,8 @@ void CodeModel::updateFile(const QString &fileName, const QString &contents)
     scanner.enableContextRecognition();
 
     const QString *fileNamePtr = &data->fileName;
+    QString symbolName;
+
     Token token;
     while ((token = scanner.read()).kind != Token::EndOfBlock) {
         switch (token.kind) {
@@ -114,8 +131,10 @@ void CodeModel::updateFile(const QString &fileName, const QString &contents)
             data->methods << createSymbol(fileNamePtr, contents, scanner, token);
             break;
         case Token::Parameter:
+            symbolName = contents.mid(token.position, token.length);
+            addMethodParameter(data->methods.last(), symbolName);
         case Token::Identifier:
-            data->identifiers << contents.mid(token.position, token.length);
+            data->identifiers << symbolName;
             break;
         case Token::Constant:
             data->constants << contents.mid(token.position, token.length);

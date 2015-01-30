@@ -141,17 +141,16 @@ void Plugin::test_context()
 void Plugin::test_indentIf()
 {
     tokenize("if foo;end");
-    QVERIFY(m_scanner->didBlockStart());
-    QVERIFY(m_scanner->didBlockEnd());
+    QCOMPARE(m_scanner->indentVariation(), 0);
     tokenize("if foo");
-    QVERIFY(m_scanner->didBlockStart());
+    QCOMPARE(m_scanner->indentVariation(), 1);
     tokenize("a = 2 if foo");
-    QVERIFY(!m_scanner->didBlockStart());
+    QCOMPARE(m_scanner->indentVariation(), 0);
     tokenize("a = 2;if foo");
-    QVERIFY(m_scanner->didBlockStart());
+    QCOMPARE(m_scanner->indentVariation(), 1);
     // ugliest code style ever
     tokenize("a = if foo");
-    QVERIFY(m_scanner->didBlockStart());
+    QCOMPARE(m_scanner->indentVariation(), 1);
 
     // Weird code can show folding mark, but I don't care about show weird code
     // like "if foo; bar; end; if bleh" this will not be folded or indented correctly
@@ -160,12 +159,13 @@ void Plugin::test_indentIf()
 void Plugin::test_indentBraces()
 {
     tokenize("foo.bar {|x|");
-    QVERIFY(m_scanner->didBlockStart());
-    QVERIFY(!m_scanner->didBlockEnd());
+    QCOMPARE(m_scanner->indentVariation(), 1);
 
     tokenize("foo.bar {|x| }");
-    QVERIFY(m_scanner->didBlockStart());
-    QVERIFY(m_scanner->didBlockEnd());
+    QCOMPARE(m_scanner->indentVariation(), 0);
+
+    tokenize("def foo a = {}");
+    QCOMPARE(m_scanner->indentVariation(), 1);
 }
 
 void Plugin::test_lineCount()

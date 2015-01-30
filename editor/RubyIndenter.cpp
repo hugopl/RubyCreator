@@ -13,7 +13,7 @@ static bool didBlockStart(const QTextBlock &block)
     QString text = block.text();
     Scanner scanner(&text);
     scanner.readLine();
-    return scanner.didBlockStart() || scanner.didBlockInterrupt();
+    return scanner.indentVariation() > 0 || scanner.didBlockInterrupt();
 }
 
 void Indenter::indentBlock(QTextDocument*, const QTextBlock &block, const QChar &, const TextEditor::TabSettings &settings)

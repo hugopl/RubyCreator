@@ -95,6 +95,9 @@ static Symbol createSymbol(const QString *fileName, const QString &contents, Sca
 
 void CodeModel::updateFile(const QString &fileName, const QString &contents)
 {
+    if (fileName.isEmpty())
+        return;
+
     Data *&data = m_model[fileName];
     if (!data)
         data = new Data(fileName);

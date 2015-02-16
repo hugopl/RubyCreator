@@ -86,10 +86,7 @@ public:
     int currentLine() const { return m_line; }
     int currentColumn(const Token &token) const { return token.position - m_lineStartOffset; }
 
-    // current line starts a block
-    bool didBlockStart();
-    // current line has a end
-    bool didBlockEnd();
+    int indentVariation() const;
     // current line has a else, elsif, rescue or ensure.
     bool didBlockInterrupt();
 private:

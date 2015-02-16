@@ -75,7 +75,7 @@ public:
         delete interface;
 
         QList<TextEditor::AssistProposalItem*> proposals;
-        for (const Symbol& symbol : m_symbols)
+        foreach (const Symbol &symbol, m_symbols)
             proposals << new AmbigousMethodProposalItem(symbol, m_inNextSplit);
         return new AmbigousMethodProposal(m_cursorPosition, proposals);
     }

@@ -102,16 +102,20 @@ QString Scanner::contextName() const
     return m_context.join(QLatin1String("::"));
 }
 
-bool Scanner::didBlockStart()
+int Scanner::indentVariation() const
 {
-    static const QRegExp regex(QLatin1String(INDENT_INC));
-    return regex.indexIn(m_tokenSequence) != -1;
-}
+    static const QRegExp indent(QLatin1String(INDENT_INC));
+    static const QRegExp unindent(QLatin1String("24_|29_"));
+    int delta = 0;
 
-bool Scanner::didBlockEnd()
-{
-    static const QRegExp regex(QLatin1String("24_|29_"));
-    return regex.indexIn(m_tokenSequence) != -1;
+    int offset = -1;
+    while ((offset = indent.indexIn(m_tokenSequence, offset + 1)) != -1)
+        delta++;
+    offset = -1;
+    while ((offset = unindent.indexIn(m_tokenSequence, offset + 1)) != -1)
+        delta--;
+
+    return delta;
 }
 
 bool Scanner::didBlockInterrupt()

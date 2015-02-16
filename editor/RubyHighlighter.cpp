@@ -89,11 +89,7 @@ int Highlighter::highlightLine(const QString &text, int state)
     }
 
     int indentLevel = state >> 8;
-    int nextIndentLevel = indentLevel;
-    if (scanner.didBlockStart())
-        nextIndentLevel++;
-    if (scanner.didBlockEnd())
-        nextIndentLevel--;
+    int nextIndentLevel = indentLevel + scanner.indentVariation();
     if (scanner.didBlockInterrupt())
         indentLevel--;
 

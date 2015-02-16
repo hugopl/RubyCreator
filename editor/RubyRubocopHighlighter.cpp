@@ -98,14 +98,14 @@ void RubocopHighlighter::initRubocopProcess()
     void (QProcess::*signal)(int) = &QProcess::finished;
     QObject::connect(m_rubocop, signal, [&](int status) {
         if (status) {
-            QMessageBox::critical(0, QStringLiteral("Rubocop"), QString::fromUtf8(m_rubocop->readAllStandardError().trimmed()));
+            QMessageBox::critical(0, QLatin1String("Rubocop"), QString::fromUtf8(m_rubocop->readAllStandardError().trimmed()));
             m_rubocopFound = false;
         }
     });
 
     QObject::connect(m_rubocop, &QProcess::readyReadStandardOutput, [&]() {
         m_outputBuffer.append(QString::fromUtf8(m_rubocop->readAllStandardOutput()));
-        if (m_outputBuffer.endsWith(QStringLiteral("--\n")))
+        if (m_outputBuffer.endsWith(QLatin1String("--\n")))
             finishRuboCopHighlight();
     });
 
@@ -145,7 +145,7 @@ Offenses RubocopHighlighter::processRubocopOutput()
     Offenses result;
     Diagnostics &diag = m_diagnostics[m_document->filePath()] = Diagnostics();
 
-    for (const QStringRef& line : m_outputBuffer.splitRef(QLatin1Char('\n'))) {
+    foreach (const QStringRef &line, m_outputBuffer.splitRef(QLatin1Char('\n'))) {
         if (line == QStringLiteral("--"))
             break;
         QVector<QStringRef> fields = line.split(QLatin1Char(':'));

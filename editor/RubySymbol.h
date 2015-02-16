@@ -2,6 +2,7 @@
 #define Ruby_Symbol_h
 
 #include <QDateTime>
+#include <QMetaType>
 
 namespace Ruby {
 

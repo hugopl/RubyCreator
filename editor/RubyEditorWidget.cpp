@@ -17,7 +17,7 @@
 namespace Ruby {
 
 const int CODEMODEL_UPDATE_INTERVAL = 150;
-const int RUBOCOP_UPDATE_INTERVAL = 150;
+const int RUBOCOP_UPDATE_INTERVAL = 300;
 
 EditorWidget::EditorWidget()
     : m_wordRegex(QLatin1String("[\\w!\\?]+"))

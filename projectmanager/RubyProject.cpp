@@ -21,7 +21,7 @@ Project::Project(ProjectManager *projectManager, const QString &fileName)
 {
     m_document->setFilePath(Utils::FileName::fromString(fileName));
     m_projectDir = QFileInfo(fileName).dir();
-    m_rootNode = new ProjectNode(m_projectDir.dirName());
+    m_rootNode = new ProjectNode(Utils::FileName::fromString(m_projectDir.dirName()));
 
     m_projectScanTimer.setSingleShot(true);
     connect(&m_projectScanTimer, &QTimer::timeout, this, &Project::populateProject);
@@ -115,7 +115,8 @@ void Project::addNodes(const QSet<QString> &nodes)
         path = m_projectDir.relativeFilePath(node).split(sep);
         path.pop_back();
         FolderNode *folder = findFolderFor(path);
-        folder->addFileNodes(QList<FileNode*>() << new FileNode(node, SourceType, false));
+        folder->addFileNodes(QList<FileNode*>() << new FileNode(Utils::FileName::fromString(node),
+                                                                SourceType, false));
     }
 }
 
@@ -132,7 +133,7 @@ void Project::removeNodes(const QSet<QString> &nodes)
         FolderNode *folder = findFolderFor(path);
 
         foreach (FileNode *file, folder->fileNodes()) {
-            if (file->path() == node) {
+            if (file->path().toString() == node) {
                 folder->removeFileNodes(QList<FileNode*>() << file);
                 break;
             }
@@ -155,7 +156,7 @@ ProjectExplorer::FolderNode *Project::findFolderFor(const QStringList &path)
             }
         }
         if (!folderFound) {
-            FolderNode *newFolder = new FolderNode(part);
+            FolderNode *newFolder = new FolderNode(Utils::FileName::fromString(part));
             folder->addFolderNodes(QList<FolderNode*>() << newFolder);
             folder = newFolder;
         }

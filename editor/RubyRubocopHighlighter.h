@@ -1,6 +1,10 @@
 #ifndef Ruby_RubocopHighlighter_h
 #define Ruby_RubocopHighlighter_h
 
+#include <texteditor/semantichighlighter.h>
+
+#include <utils/fileutils.h>
+
 #include <QObject>
 #include <QFuture>
 #include <QFutureWatcher>
@@ -9,12 +13,9 @@
 
 #include <functional>
 
-#include <texteditor/semantichighlighter.h>
+QT_FORWARD_DECLARE_CLASS(QProcess)
 
-class QProcess;
-namespace TextEditor {
-class TextDocument;
-}
+namespace TextEditor { class TextDocument; }
 
 namespace Ruby {
 
@@ -53,8 +54,8 @@ public:
     static RubocopHighlighter *instance();
 
     bool run(TextEditor::TextDocument *document, const QString &fileNameTip);
-    QString diagnosticAt(const QString &file, int pos);
-private:   
+    QString diagnosticAt(const Utils::FileName &file, int pos);
+private:
     bool m_rubocopFound;
     bool m_busy;
     QProcess *m_rubocop;
@@ -66,7 +67,7 @@ private:
     QHash<int, QTextCharFormat> m_extraFormats;
 
 
-    QHash<QString, Diagnostics> m_diagnostics;
+    QHash<Utils::FileName, Diagnostics> m_diagnostics;
 
     QElapsedTimer m_timer;
 

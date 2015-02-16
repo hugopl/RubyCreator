@@ -68,7 +68,8 @@ bool RubocopHighlighter::run(TextEditor::TextDocument *document, const QString &
     m_timer.start();
     m_document = document;
 
-    const QString filePath = document->filePath().isEmpty() ? fileNameTip : document->filePath();
+    const QString filePath = document->filePath().isEmpty() ? fileNameTip
+                                                            : document->filePath().toString();
     m_rubocop->write(filePath.toUtf8());
     m_rubocop->write("\n");
     QByteArray data = document->plainText().toUtf8();
@@ -76,7 +77,7 @@ bool RubocopHighlighter::run(TextEditor::TextDocument *document, const QString &
     return true;
 }
 
-QString RubocopHighlighter::diagnosticAt(const QString &file, int pos)
+QString RubocopHighlighter::diagnosticAt(const Utils::FileName &file, int pos)
 {
     auto it = m_diagnostics.find(file);
     if (it == m_diagnostics.end())

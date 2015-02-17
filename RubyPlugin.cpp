@@ -13,14 +13,13 @@
 #include "projectmanager/RubyProjectWizard.h"
 
 #include <coreplugin/icore.h>
-#include <coreplugin/mimedatabase.h>
-#include <QtPlugin>
-
 #include <texteditor/codestylepool.h>
 #include <texteditor/simplecodestylepreferences.h>
 #include <texteditor/tabsettings.h>
 #include <texteditor/texteditor.h>
 #include <texteditor/texteditorsettings.h>
+
+#include <utils/mimetypes/mimedatabase.h>
 
 namespace Ruby {
 
@@ -37,8 +36,9 @@ Plugin::~Plugin()
 
 bool Plugin::initialize(const QStringList &, QString *errorString)
 {
-    if (!Core::MimeDatabase::addMimeTypes(QLatin1String(":/rubysupport/Ruby.mimetypes.xml"), errorString))
-        return false;
+    Q_UNUSED(errorString);
+
+    Utils::MimeDatabase::addMimeTypes(QLatin1String(":/rubysupport/Ruby.mimetypes.xml"));
 
     initializeToolsSettings();
 

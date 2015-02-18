@@ -13,8 +13,8 @@ const char SnippetGroupId[] = "Ruby.Snippets";
 const char EditorDisplayName[] = "Ruby Editor";
 const char LangRuby[] = "RUBY";
 
-const char MimeType[] = "text/x-ruby";
-const char ProjectMimeType[] = "text/x-rubycreator-project";
+const char MimeType[] = "application/x-ruby";
+const char ProjectMimeType[] = "application/x-rubycreator-project";
 
 }
 }

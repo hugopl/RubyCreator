@@ -185,11 +185,16 @@ QList<Symbol> CodeModel::allMethods() const
 QList<Symbol> CodeModel::allMethodsNamed(const QString &name) const
 {
     QList<Symbol> result;
+    const int nameLength = name.length();
     // FIXME: Replace this linear brute force approach
     foreach (const Data *data, m_model) {
         foreach (const Symbol &symbol, data->methods) {
-            if (symbol.name == name)
+            const QString& symbolName = symbol.name;
+            if (symbolName.startsWith(name)) {
+                if (symbolName.length() > nameLength && symbolName[nameLength] != QLatin1Char('('))
+                    continue;
                 result << symbol;
+            }
         }
     }
     return result;

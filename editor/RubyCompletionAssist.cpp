@@ -75,7 +75,15 @@ static void addProposalFromSet(QList<TextEditor::AssistProposalItem*> &proposals
             continue;
 
         auto proposal = new TextEditor::AssistProposalItem;
-        proposal->setText(name);
+
+        int indexOfParenthesis = name.indexOf(QLatin1Char('('));
+        if (indexOfParenthesis != -1) {
+            proposal->setText(name.mid(0, indexOfParenthesis));
+            proposal->setDetail(name);
+        } else {
+            proposal->setText(name);
+        }
+
         proposal->setIcon(icon);
         proposal->setOrder(order);
         proposals << proposal;

@@ -2,9 +2,11 @@
 #include "../RubyConstants.h"
 #include "RubyIndenter.h"
 
-#include <extensionsystem/pluginmanager.h>
+#include <coreplugin/id.h>
 #include <texteditor/snippets/isnippetprovider.h>
 #include <texteditor/simplecodestylepreferences.h>
+
+#include <extensionsystem/pluginmanager.h>
 
 #include <QLabel>
 

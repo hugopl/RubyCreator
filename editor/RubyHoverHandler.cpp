@@ -4,6 +4,7 @@
 
 #include <QDebug>
 
+#include <texteditor/textdocument.h>
 #include <texteditor/texteditor.h>
 
 namespace Ruby {

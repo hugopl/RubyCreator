@@ -2,6 +2,7 @@
 #include "../RubyConstants.h"
 #include "RubyCodeModel.h"
 
+#include <coreplugin/id.h>
 #include <texteditor/codeassist/assistproposalitem.h>
 #include <texteditor/codeassist/genericproposal.h>
 #include <texteditor/codeassist/genericproposalmodel.h>

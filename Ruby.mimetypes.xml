@@ -6,7 +6,7 @@
     <glob pattern="*.rubyproject"/>
   </mime-type>
 
-  <mime-type type="text/x-ruby">
+  <mime-type type="application/x-ruby">
     <sub-class-of type="text/plain"/>
     <comment>Ruby source file</comment>
     <glob pattern="*.rb"/>

@@ -133,7 +133,9 @@ void CodeModel::updateFile(const QString &fileName, const QString &contents)
         case Token::Parameter:
             symbolName = contents.mid(token.position, token.length);
             addMethodParameter(data->methods.last(), symbolName);
+            break;
         case Token::Identifier:
+            symbolName = contents.mid(token.position, token.length);
             data->identifiers << symbolName;
             break;
         case Token::Constant:

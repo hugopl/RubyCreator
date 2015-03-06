@@ -122,7 +122,6 @@ void CodeModel::updateFile(const QString &fileName, const QString &contents)
     scanner.enableContextRecognition();
 
     const QString *fileNamePtr = &data->fileName;
-    QString symbolName;
 
     Token token;
     while ((token = scanner.read()).kind != Token::EndOfBlock) {
@@ -131,12 +130,10 @@ void CodeModel::updateFile(const QString &fileName, const QString &contents)
             data->methods << createSymbol(fileNamePtr, contents, scanner, token);
             break;
         case Token::Parameter:
-            symbolName = contents.mid(token.position, token.length);
-            addMethodParameter(data->methods.last(), symbolName);
+            addMethodParameter(data->methods.last(), contents.mid(token.position, token.length));
             break;
         case Token::Identifier:
-            symbolName = contents.mid(token.position, token.length);
-            data->identifiers << symbolName;
+            data->identifiers << contents.mid(token.position, token.length);
             break;
         case Token::Constant:
             data->constants << contents.mid(token.position, token.length);

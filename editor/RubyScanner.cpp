@@ -97,6 +97,17 @@ void Scanner::readLine()
     while ((token = read()).kind != Token::EndOfBlock);
 }
 
+Token Scanner::tokenAt(const QString* line, int position)
+{
+    Scanner scanner(line);
+    Token token;
+    while ((token = scanner.read()).kind != Token::EndOfBlock) {
+        if (position > token.position && (token.position + token.length) >= position)
+            break;
+    }
+    return token;
+}
+
 QString Scanner::contextName() const
 {
     return m_context.join(QLatin1String("::"));

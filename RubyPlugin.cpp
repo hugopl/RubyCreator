@@ -16,10 +16,10 @@
 #include <texteditor/codestylepool.h>
 #include <texteditor/simplecodestylepreferences.h>
 #include <texteditor/tabsettings.h>
-#include <texteditor/texteditor.h>
+#include <texteditor/texteditorplugin.h>
 #include <texteditor/texteditorsettings.h>
 
-#include <utils/mimetypes/mimedatabase.h>
+#include <coreplugin/mimedatabase.h>
 
 namespace Ruby {
 

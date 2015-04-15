@@ -1,7 +1,7 @@
 #ifndef RubyEditorFactory_h
 #define RubyEditorFactory_h
 
-#include <texteditor/texteditor.h>
+#include <texteditor/texteditorplugin.h>
 
 namespace Ruby {
 

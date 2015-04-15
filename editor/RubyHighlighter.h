@@ -1,7 +1,7 @@
 #ifndef RubyHighliter_h
 #define RubyHighliter_h
 
-#include <texteditor/textdocumentlayout.h>
+//#include <texteditor/textdocumentlayout.h>
 #include <texteditor/syntaxhighlighter.h>
 #include "RubyScanner.h"
 

@@ -1,7 +1,7 @@
 #ifndef Ruby_ProjectWizard_h
 #define Ruby_ProjectWizard_h
 
-#include <coreplugin/basefilewizardfactory.h>
+#include <coreplugin/basefilewizard.h>
 
 namespace Ruby {
 

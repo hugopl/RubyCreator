@@ -3,7 +3,7 @@
 
 #include <QTimer>
 
-#include <texteditor/texteditor.h>
+#include <texteditor/texteditorplugin.h>
 #include <utils/uncommentselection.h>
 
 namespace Ruby {

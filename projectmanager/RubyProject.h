@@ -3,6 +3,7 @@
 
 #include <projectexplorer/project.h>
 #include <projectexplorer/projectnodes.h>
+#include <texteditor/basetextdocument.h>
 
 #include <QFileSystemWatcher>
 #include <QElapsedTimer>
@@ -32,7 +33,7 @@ private slots:
     void populateProject();
 private:
     ProjectManager *m_projectManager;
-    TextEditor::TextDocument *m_document;
+    TextEditor::BaseTextDocument *m_document;
     ProjectNode *m_rootNode;
 
     QDir m_projectDir;

@@ -15,15 +15,15 @@ public:
     TextEditor::IAssistProcessor *createProcessor() const Q_DECL_OVERRIDE;
 
     int activationCharSequenceLength() const Q_DECL_OVERRIDE { return 1; }
-    bool isActivationCharSequence(const QString &sequence) const Q_DECL_OVERRIDE;
-    bool supportsEditor(Core::Id editorId) const Q_DECL_OVERRIDE;
+    bool isActivationCharSequence(const QString &sequence) const;
+    bool supportsEditor(const Core::Id &editorId) const Q_DECL_OVERRIDE;
 };
 
 class CompletionAssistProcessor : public TextEditor::IAssistProcessor
 {
 public:
     CompletionAssistProcessor();
-    TextEditor::IAssistProposal *perform(const TextEditor::AssistInterface *interface) Q_DECL_OVERRIDE;
+    TextEditor::IAssistProposal *perform(const TextEditor::IAssistInterface *interface) Q_DECL_OVERRIDE;
 private:
     // TODO: Share this icons with all instances
     QIcon m_methodIcon;

@@ -1,16 +1,20 @@
 #ifndef RubyEditorFactory_h
 #define RubyEditorFactory_h
 
-#include <texteditor/texteditorplugin.h>
+#include <coreplugin/editormanager/ieditorfactory.h>
+#include <coreplugin/idocument.h>
+#include <coreplugin/editormanager/ieditor.h>
 
 namespace Ruby {
 
-class EditorFactory : public TextEditor::TextEditorFactory
+class EditorFactory : public Core::IEditorFactory
 {
     Q_OBJECT
 
 public:
     EditorFactory();
+    Core::IEditor *createEditor() {}
+    Core::IDocument *open(const QString &) { return NULL; }
 };
 
 }

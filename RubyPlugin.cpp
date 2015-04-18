@@ -16,7 +16,7 @@
 #include <texteditor/codestylepool.h>
 #include <texteditor/simplecodestylepreferences.h>
 #include <texteditor/tabsettings.h>
-#include <texteditor/texteditorplugin.h>
+#include <texteditor/plaintexteditor.h>
 #include <texteditor/texteditorsettings.h>
 
 #include <coreplugin/mimedatabase.h>
@@ -36,9 +36,8 @@ Plugin::~Plugin()
 
 bool Plugin::initialize(const QStringList &, QString *errorString)
 {
-    Q_UNUSED(errorString);
-
-    Utils::MimeDatabase::addMimeTypes(QLatin1String(":/rubysupport/Ruby.mimetypes.xml"));
+    if(!Core::MimeDatabase::addMimeTypes(QLatin1String(":/rubysupport/Ruby.mimetypes.xml"), errorString))
+        return false;
 
     initializeToolsSettings();
 

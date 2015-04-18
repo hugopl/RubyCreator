@@ -10,7 +10,7 @@ namespace Ruby {
 class ProjectNode : public ProjectExplorer::ProjectNode
 {
 public:
-    ProjectNode(const Utils::FileName &projectFilePath)
+    ProjectNode(const QString &projectFilePath)
         : ProjectExplorer::ProjectNode(projectFilePath)
     {
     }
@@ -27,6 +27,7 @@ public:
     bool removeFiles(const QStringList &, QStringList*) Q_DECL_OVERRIDE { return false; }
     bool deleteFiles(const QStringList &) Q_DECL_OVERRIDE { return false; }
     bool renameFile(const QString &, const QString &) Q_DECL_OVERRIDE { return false; }
+    QList<ProjectExplorer::RunConfiguration*> runConfigurationsFor(Node *)  Q_DECL_OVERRIDE { return QList<ProjectExplorer::RunConfiguration*>(); }
 };
 
 }

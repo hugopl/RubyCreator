@@ -10,9 +10,9 @@
 
 namespace Ruby {
 
-Editor::Editor()
+Editor::Editor(TextEditor::BaseTextEditorWidget* editorWidget) : BaseTextEditor(editorWidget)
 {
-    addContext(Constants::LangRuby);
+    //addContext(Constants::LangRuby);
 }
 
 }

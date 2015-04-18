@@ -13,7 +13,7 @@ class AmbigousMethodAssistProvider : public TextEditor::IAssistProvider
 {
 public:
     bool isAsynchronous() const Q_DECL_OVERRIDE;
-    bool supportsEditor(Core::Id editorId) const Q_DECL_OVERRIDE;
+    bool supportsEditor(const Core::Id &editorId) const Q_DECL_OVERRIDE;
     TextEditor::IAssistProcessor *createProcessor() const Q_DECL_OVERRIDE;
 
     void setSymbols(const QList<Symbol> &symbols) { m_symbols = symbols; }

@@ -23,23 +23,24 @@ EditorFactory::EditorFactory()
     addMimeType(Constants::MimeType);
     addMimeType(Constants::ProjectMimeType);
 
-    setDocumentCreator([]() { return new TextEditor::TextDocument(Constants::EditorId); });
-    setIndenterCreator([]() { return new Indenter; });
-    setEditorWidgetCreator([]() { return new EditorWidget; });
-    setEditorCreator([]() { return new Editor; });
-    setAutoCompleterCreator([]() { return new AutoCompleter; });
-    setCompletionAssistProvider(new CompletionAssistProvider);
-    setSyntaxHighlighterCreator([]() { return new Highlighter; });
-    setCommentStyle(Utils::CommentDefinition::HashStyle);
-    setParenthesesMatchingEnabled(true);
-    setCodeFoldingSupported(true);
-    setMarksVisible(true);
-    addHoverHandler(new HoverHandler);
+    //setDocumentCreator([]() { return new TextEditor::TextDocument(Constants::EditorId); });
+    //setIndenterCreator([]() { return new Indenter; });
+    //setEditorWidgetCreator([]() { return new EditorWidget; });
+    //setEditorCreator([]() { return new Editor; });
+    //setAutoCompleterCreator([]() { return new AutoCompleter; });
+    //setCompletionAssistProvider(new CompletionAssistProvider);
+    //setSyntaxHighlighterCreator([]() { return new Highlighter; });
+    //setCommentStyle(Utils::CommentDefinition::HashStyle);
+    //setParenthesesMatchingEnabled(true);
+    //setCodeFoldingSupported(true);
+    //setMarksVisible(true);
+    //addHoverHandler(new HoverHandler);
 
-    setEditorActionHandlers(TextEditor::TextEditorActionHandler::Format
+    /*setEditorActionHandlers(TextEditor::TextEditorActionHandler::Format
                           | TextEditor::TextEditorActionHandler::UnCommentSelection
                           | TextEditor::TextEditorActionHandler::UnCollapseAll
                           | TextEditor::TextEditorActionHandler::FollowSymbolUnderCursor);
+                          */
 }
 
 }

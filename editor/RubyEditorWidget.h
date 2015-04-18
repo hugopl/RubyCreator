@@ -3,14 +3,14 @@
 
 #include <QTimer>
 
-#include <texteditor/texteditorplugin.h>
+#include <texteditor/plaintexteditor.h>
 #include <utils/uncommentselection.h>
 
 namespace Ruby {
 
 class AmbigousMethodAssistProvider;
 
-class EditorWidget : public TextEditor::TextEditorWidget
+class EditorWidget : public TextEditor::PlainTextEditorWidget
 {
     Q_OBJECT
 
@@ -22,8 +22,8 @@ public:
     void unCommentSelection() Q_DECL_OVERRIDE;
 
     bool open(QString *errorString, const QString &fileName, const QString &realFileName) Q_DECL_OVERRIDE;
-protected:
-    void finalizeInitialization() Q_DECL_OVERRIDE;
+//protected:
+    //void finalizeInitialization() Q_DECL_OVERRIDE;
 
 private slots:
     void scheduleCodeModelUpdate();

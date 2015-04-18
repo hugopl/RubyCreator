@@ -5,13 +5,13 @@
 
 namespace Ruby {
 
-class ProjectWizard : public Core::BaseFileWizardFactory
+class ProjectWizard : public Core::BaseFileWizard
 {
     Q_OBJECT
 public:
     ProjectWizard();
 protected:
-    Core::BaseFileWizard *create(QWidget *parent, const Core::WizardDialogParameters &wizardDialogParameters) const Q_DECL_OVERRIDE;
+    QWizard *createWizardDialog(QWidget *parent, const Core::WizardDialogParameters &wizardDialogParameters) const Q_DECL_OVERRIDE;
     Core::GeneratedFiles generateFiles(const QWizard *widget, QString *) const Q_DECL_OVERRIDE;
     bool postGenerateFiles(const QWizard *, const Core::GeneratedFiles &files, QString *errorMessage);
 };

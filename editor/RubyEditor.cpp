@@ -16,6 +16,9 @@ Editor::Editor(TextEditor::BaseTextEditorWidget* editorWidget) : BaseTextEditor(
     Core::Context c = context();
     c.add(Constants::LangRuby);
     setContext(c);
+
+    // There's no contentsChanged signal on Core::IDocument interface.
+    connect(document(), SIGNAL(contentsChanged()), widget(), SLOT(scheduleCodeModelUpdate()));
 }
 
 TextEditor::CompletionAssistProvider*Editor::completionAssistProvider()

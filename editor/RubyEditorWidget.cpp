@@ -26,7 +26,11 @@ EditorWidget::EditorWidget()
     , m_rubocopUpdatePending(false)
     , m_ambigousMethodAssistProvider(new AmbigousMethodAssistProvider)
 {
+    setAutoCompleter(new AutoCompleter);
     setLanguageSettingsId(Constants::SettingsId);
+
+    TextEditor::BaseTextDocument* baseDoc = baseTextDocument();
+    baseDoc->setIndenter(new Indenter());
 
     m_commentDefinition.multiLineStart.clear();
     m_commentDefinition.multiLineEnd.clear();

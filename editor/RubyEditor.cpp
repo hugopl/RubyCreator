@@ -2,6 +2,7 @@
 
 #include "../RubyConstants.h"
 #include "RubyEditorWidget.h"
+#include "RubyCompletionAssist.h"
 
 #include <extensionsystem/pluginmanager.h>
 #include <texteditor/texteditorconstants.h>
@@ -15,6 +16,11 @@ Editor::Editor(TextEditor::BaseTextEditorWidget* editorWidget) : BaseTextEditor(
     Core::Context c = context();
     c.add(Constants::LangRuby);
     setContext(c);
+}
+
+TextEditor::CompletionAssistProvider*Editor::completionAssistProvider()
+{
+    return ExtensionSystem::PluginManager::getObject<CompletionAssistProvider>();
 }
 
 }

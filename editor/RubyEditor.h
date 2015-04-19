@@ -14,6 +14,7 @@ class Editor : public TextEditor::BaseTextEditor
 
 public:
     Editor(TextEditor::BaseTextEditorWidget *editorWidget);
+    TextEditor::CompletionAssistProvider* completionAssistProvider() Q_DECL_OVERRIDE;
 };
 
 }

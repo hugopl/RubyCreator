@@ -13,7 +13,7 @@ class EditorFactory : public Core::IEditorFactory
 
 public:
     EditorFactory();
-    Core::IEditor *createEditor() {}
+    Core::IEditor *createEditor() { return NULL; }
     Core::IDocument *open(const QString &) { return NULL; }
 };
 

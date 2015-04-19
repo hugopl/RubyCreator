@@ -7,6 +7,7 @@
 
 #include <texteditor/codeassist/iassistinterface.h>
 #include <texteditor/codeassist/basicproposalitem.h>
+#include <texteditor/codeassist/basicproposalitemlistmodel.h>
 #include <texteditor/codeassist/genericproposal.h>
 #include <texteditor/codeassist/igenericproposalmodel.h>
 #include <texteditor/codeassist/genericproposalwidget.h>
@@ -74,11 +75,13 @@ public:
     {
         delete interface;
 
-        /*QList<TextEditor::IAssistProposalItem*> proposals;
+        QList<TextEditor::BasicProposalItem*> proposals;
         foreach (const Symbol &symbol, m_symbols)
             proposals << new AmbigousMethodProposalItem(symbol, m_inNextSplit);
-            */
-        return new AmbigousMethodProposal(m_cursorPosition, NULL);
+
+        TextEditor::BasicProposalItemListModel* model= new TextEditor::BasicProposalItemListModel(proposals);
+
+        return new AmbigousMethodProposal(m_cursorPosition, model);
     }
 
     const QList<Symbol> m_symbols;

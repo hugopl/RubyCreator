@@ -70,7 +70,7 @@ static const QString &nameFor(const Symbol &s)
 }
 
 template<typename T>
-static void addProposalFromSet(QList<TextEditor::IAssistProposalItem*> &proposals, const T &container, const QString &myTyping, const QIcon &icon, int order = 0)
+static void addProposalFromSet(QList<TextEditor::BasicProposalItem*> &proposals, const T &container, const QString &myTyping, const QIcon &icon, int order = 0)
 {
     foreach (const typename T::value_type &item, container) {
         const QString &name = nameFor(item);
@@ -111,14 +111,14 @@ TextEditor::IAssistProposal *CompletionAssistProcessor::perform(const TextEditor
     switch (kind) {
     case MayBeAMethod:
     case MayBeAIdentifier:
-        //addProposalFromSet(proposals, cm->methodsIn(fileName), myTyping, m_methodIcon, 1);
-        //addProposalFromSet(proposals, cm->identifiersIn(fileName), myTyping, m_identifierIcon);
+        addProposalFromSet(proposals, cm->methodsIn(fileName), myTyping, m_methodIcon, 1);
+        addProposalFromSet(proposals, cm->identifiersIn(fileName), myTyping, m_identifierIcon);
         break;
     case MayBeConstant:
-        //addProposalFromSet(proposals, cm->constantsIn(fileName), myTyping, m_constantIcon);
+        addProposalFromSet(proposals, cm->constantsIn(fileName), myTyping, m_constantIcon);
         break;
     case MayBeASymbol:
-        //addProposalFromSet(proposals, cm->symbolsIn(fileName), myTyping, m_symbolIcon);
+        addProposalFromSet(proposals, cm->symbolsIn(fileName), myTyping, m_symbolIcon);
         break;
     }
 

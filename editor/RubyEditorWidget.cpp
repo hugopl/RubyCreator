@@ -4,6 +4,7 @@
 #include "RubyAutoCompleter.h"
 #include "RubyCodeModel.h"
 #include "../RubyConstants.h"
+#include "RubyEditor.h"
 #include "RubyHighlighter.h"
 #include "RubyIndenter.h"
 #include "RubyRubocopHighlighter.h"
@@ -47,7 +48,7 @@ EditorWidget::~EditorWidget()
     delete m_ambigousMethodAssistProvider;
 }
 
-TextEditor::PlainTextEditorWidget::Link EditorWidget::findLinkAt(const QTextCursor &cursor, bool, bool inNextSplit)
+TextEditor::BaseTextEditorWidget::Link EditorWidget::findLinkAt(const QTextCursor &cursor, bool, bool inNextSplit)
 {
     QString text = cursor.block().text();
     if (text.isEmpty())
@@ -148,12 +149,11 @@ void EditorWidget::updateRubocop()
         m_updateRubocopTimer.start();
     }
 }
-/*
-void EditorWidget::finalizeInitialization()
+
+TextEditor::BaseTextEditor* EditorWidget::createEditor()
 {
-    connect(document(), SIGNAL(contentsChanged()), this, SLOT(scheduleCodeModelUpdate()));
-    connect(document(), SIGNAL(contentsChanged()), this, SLOT(scheduleRubocopUpdate()));
+    return new Editor(this);
 }
-*/
+
 
 }

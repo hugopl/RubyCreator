@@ -43,7 +43,7 @@ bool Plugin::initialize(const QStringList &, QString *errorString)
 
     addAutoReleasedObject(new SnippetProvider);
 
-    addAutoReleasedObject(new EditorFactory);
+    addAutoReleasedObject(new EditorFactory(this));
     addAutoReleasedObject(new SymbolFilter([](const QString &file) {
         return CodeModel::instance()->methodsIn(file);
     }, "Ruby Methods in Current Document", QLatin1Char('.')));

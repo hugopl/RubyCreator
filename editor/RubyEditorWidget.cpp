@@ -40,6 +40,8 @@ EditorWidget::EditorWidget()
     m_updateRubocopTimer.setInterval(RUBOCOP_UPDATE_INTERVAL);
     connect(&m_updateRubocopTimer, &QTimer::timeout, this, &EditorWidget::maybeUpdateRubocop);
 
+    new Highlighter(document());
+
     CodeModel::instance();
 }
 

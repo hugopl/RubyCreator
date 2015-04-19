@@ -2,8 +2,24 @@
 #define Ruby_ProjectWizard_h
 
 #include <coreplugin/basefilewizard.h>
+#include <utils/wizard.h>
+
+namespace Utils {
+class FileWizardPage;
+}
 
 namespace Ruby {
+
+class ProjectWizardDialog : public Utils::Wizard
+{
+    Q_OBJECT
+public:
+    ProjectWizardDialog(QWidget* parent, const QString& path);
+    QString path() const;
+    QString projecyName() const;
+private:
+    Utils::FileWizardPage* m_page;
+};
 
 class ProjectWizard : public Core::BaseFileWizard
 {

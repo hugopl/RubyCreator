@@ -26,6 +26,9 @@ EditorWidget::EditorWidget()
     , m_rubocopUpdatePending(false)
     , m_ambigousMethodAssistProvider(new AmbigousMethodAssistProvider)
 {
+    setParenthesesMatchingEnabled(true);
+    setMarksVisible(true);
+    setCodeFoldingSupported(true);
     setAutoCompleter(new AutoCompleter);
     setLanguageSettingsId(Constants::SettingsId);
 

@@ -1,16 +1,16 @@
 #ifndef RubyEditorFactory_h
 #define RubyEditorFactory_h
 
-#include <texteditor/texteditor.h>
+#include <coreplugin/editormanager/ieditorfactory.h>
 
 namespace Ruby {
 
-class EditorFactory : public TextEditor::TextEditorFactory
+class EditorFactory : public Core::IEditorFactory
 {
     Q_OBJECT
-
 public:
-    EditorFactory();
+    EditorFactory(QObject* parent);
+    Core::IEditor* createEditor() Q_DECL_OVERRIDE;
 };
 
 }

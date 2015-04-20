@@ -1,3 +1,6 @@
+QTC_SOURCE=/usr/src/qtcreator
+QTC_BUILD=/usr
+
 isEmpty(QTC_SOURCE):error(QTC_SOURCE must be set)
 isEmpty(QTC_BUILD):error(QTC_BUILD must be set)
 IDE_BUILD_TREE=$$QTC_BUILD
@@ -5,7 +8,8 @@ QTC_PLUGIN_NAME = Ruby
 QTC_PLUGIN_DEPENDS = coreplugin texteditor projectexplorer
 include($$QTC_SOURCE/src/qtcreatorplugin.pri)
 
-CONFIG += qjson
+LIBS += -L/usr/lib/x86_64-linux-gnu/qtcreator/plugins/QtProject/
+LIBS += -L/usr/lib/x86_64-linux-gnu/qtcreator/
 
 SOURCES += RubyPlugin.cpp \
     editor/RubyAmbiguousMethodAssistProvider.cpp \

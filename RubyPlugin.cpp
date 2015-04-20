@@ -16,10 +16,10 @@
 #include <texteditor/codestylepool.h>
 #include <texteditor/simplecodestylepreferences.h>
 #include <texteditor/tabsettings.h>
-#include <texteditor/texteditor.h>
+#include <texteditor/plaintexteditor.h>
 #include <texteditor/texteditorsettings.h>
 
-#include <utils/mimetypes/mimedatabase.h>
+#include <coreplugin/mimedatabase.h>
 
 namespace Ruby {
 
@@ -36,15 +36,14 @@ Plugin::~Plugin()
 
 bool Plugin::initialize(const QStringList &, QString *errorString)
 {
-    Q_UNUSED(errorString);
-
-    Utils::MimeDatabase::addMimeTypes(QLatin1String(":/rubysupport/Ruby.mimetypes.xml"));
+    if(!Core::MimeDatabase::addMimeTypes(QLatin1String(":/rubysupport/Ruby.mimetypes.xml"), errorString))
+        return false;
 
     initializeToolsSettings();
 
     addAutoReleasedObject(new SnippetProvider);
 
-    addAutoReleasedObject(new EditorFactory);
+    addAutoReleasedObject(new EditorFactory(this));
     addAutoReleasedObject(new SymbolFilter([](const QString &file) {
         return CodeModel::instance()->methodsIn(file);
     }, "Ruby Methods in Current Document", QLatin1Char('.')));

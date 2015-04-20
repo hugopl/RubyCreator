@@ -4,11 +4,12 @@
 #include "RubyAutoCompleter.h"
 #include "RubyCodeModel.h"
 #include "../RubyConstants.h"
+#include "RubyEditor.h"
 #include "RubyHighlighter.h"
 #include "RubyIndenter.h"
 #include "RubyRubocopHighlighter.h"
 
-#include <texteditor/textdocument.h>
+#include <texteditor/basetextdocument.h>
 
 #include <QDebug>
 #include <QTextBlock>
@@ -25,7 +26,14 @@ EditorWidget::EditorWidget()
     , m_rubocopUpdatePending(false)
     , m_ambigousMethodAssistProvider(new AmbigousMethodAssistProvider)
 {
+    setParenthesesMatchingEnabled(true);
+    setMarksVisible(true);
+    setCodeFoldingSupported(true);
+    setAutoCompleter(new AutoCompleter);
     setLanguageSettingsId(Constants::SettingsId);
+
+    TextEditor::BaseTextDocument* baseDoc = baseTextDocument();
+    baseDoc->setIndenter(new Indenter());
 
     m_commentDefinition.multiLineStart.clear();
     m_commentDefinition.multiLineEnd.clear();
@@ -39,6 +47,8 @@ EditorWidget::EditorWidget()
     m_updateRubocopTimer.setInterval(RUBOCOP_UPDATE_INTERVAL);
     connect(&m_updateRubocopTimer, &QTimer::timeout, this, &EditorWidget::maybeUpdateRubocop);
 
+    new Highlighter(document());
+
     CodeModel::instance();
 }
 
@@ -47,7 +57,7 @@ EditorWidget::~EditorWidget()
     delete m_ambigousMethodAssistProvider;
 }
 
-TextEditor::TextEditorWidget::Link EditorWidget::findLinkAt(const QTextCursor &cursor, bool, bool inNextSplit)
+TextEditor::BaseTextEditorWidget::Link EditorWidget::findLinkAt(const QTextCursor &cursor, bool, bool inNextSplit)
 {
     QString text = cursor.block().text();
     if (text.isEmpty())
@@ -98,7 +108,7 @@ void EditorWidget::unCommentSelection()
 bool EditorWidget::open(QString *errorString, const QString &fileName, const QString &realFileName)
 {
     m_filePathDueToMaybeABug = realFileName;
-    return TextEditor::TextEditorWidget::open(errorString, fileName, realFileName);
+    return TextEditor::BaseTextEditorWidget::open(errorString, fileName, realFileName);
 }
 
 void EditorWidget::scheduleCodeModelUpdate()
@@ -120,8 +130,8 @@ void EditorWidget::maybeUpdateCodeModel()
 
 void EditorWidget::updateCodeModel()
 {
-    const QString textData = textDocument()->plainText();
-    CodeModel::instance()->updateFile(textDocument()->filePath().toString(), textData);
+    const QString textData = baseTextDocument()->plainText();
+    CodeModel::instance()->updateFile(baseTextDocument()->filePath(), textData);
 }
 
 void EditorWidget::scheduleRubocopUpdate()
@@ -143,16 +153,16 @@ void EditorWidget::maybeUpdateRubocop()
 
 void EditorWidget::updateRubocop()
 {
-    if (!RubocopHighlighter::instance()->run(textDocument(), m_filePathDueToMaybeABug)) {
+    if (!RubocopHighlighter::instance()->run(baseTextDocument(), m_filePathDueToMaybeABug)) {
         m_rubocopUpdatePending = true;
         m_updateRubocopTimer.start();
     }
 }
 
-void EditorWidget::finalizeInitialization()
+TextEditor::BaseTextEditor* EditorWidget::createEditor()
 {
-    connect(document(), SIGNAL(contentsChanged()), this, SLOT(scheduleCodeModelUpdate()));
-    connect(document(), SIGNAL(contentsChanged()), this, SLOT(scheduleRubocopUpdate()));
+    return new Editor(this);
 }
+
 
 }

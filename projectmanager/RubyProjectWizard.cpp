@@ -9,9 +9,35 @@
 
 namespace Ruby {
 
+ProjectWizardDialog::ProjectWizardDialog(QWidget* parent, const QString& path)
+    : Utils::Wizard(parent)
+{
+    setWindowTitle(tr("Import Existing Ruby Project"));
+
+    // first page
+    m_page = new Utils::FileWizardPage;
+    m_page->setTitle(tr("Project Name and Location"));
+    m_page->setFileNameLabel(tr("Project name:"));
+    m_page->setPathLabel(tr("Location:"));
+    m_page->setPath(path);
+
+    const int firstPageId = addPage(m_page);
+    wizardProgress()->item(firstPageId)->setTitle(tr("Location"));
+}
+
+QString ProjectWizardDialog::path() const
+{
+    return m_page->path();
+}
+
+QString ProjectWizardDialog::projecyName() const
+{
+    return m_page->fileName();
+}
+
 ProjectWizard::ProjectWizard()
 {
-    setWizardKind(Core::IWizardFactory::ProjectWizard);
+    setWizardKind(Core::IWizard::ProjectWizard);
 
     setDisplayName(tr("Import Existing Ruby Project"));
     setId(QStringLiteral("Z.Ruby"));
@@ -22,28 +48,22 @@ ProjectWizard::ProjectWizard()
     setIcon(QIcon(QLatin1String(":/rubysupport/Ruby.png")));
 }
 
-Core::BaseFileWizard *ProjectWizard::create(QWidget *parent, const Core::WizardDialogParameters &parameters) const
+QWizard* ProjectWizard::createWizardDialog(QWidget* parent, const Core::WizardDialogParameters& wizardDialogParameters) const
 {
-    Core::BaseFileWizard *wizard = new Core::BaseFileWizard(parent);
-    wizard->setWindowTitle(displayName());
+    ProjectWizardDialog* wizard = new ProjectWizardDialog(parent, wizardDialogParameters.defaultPath());
 
-    Utils::FileWizardPage *page = new Utils::FileWizardPage;
-    page->setPath(parameters.defaultPath());
-    wizard->addPage(page);
-
-    foreach (QWizardPage *p, parameters.extensionPages())
-        wizard->addPage(p);
+    foreach (QWizardPage* p, wizardDialogParameters.extensionPages())
+        BaseFileWizard::applyExtensionPageShortTitle(wizard, wizard->addPage(p));
 
     return wizard;
 }
 
-Core::GeneratedFiles ProjectWizard::generateFiles(const QWizard *widget, QString *) const
+Core::GeneratedFiles ProjectWizard::generateFiles(const QWizard* widget, QString*) const
 {
-    const Core::BaseFileWizard *wizard = qobject_cast<const Core::BaseFileWizard *>(widget);
-    Utils::FileWizardPage *page = wizard->find<Utils::FileWizardPage>();
-    const QString projectPath = page->path();
+    const ProjectWizardDialog* wizard = qobject_cast<const ProjectWizardDialog*>(widget);
+    const QString projectPath = wizard->path();
     const QDir dir(projectPath);
-    const QString projectName = page->fileName();
+    const QString projectName = wizard->projecyName();
 
     Core::GeneratedFile projectFile(QFileInfo(dir, projectName + QLatin1String(".rubyproject")).absoluteFilePath());
     projectFile.setContents(QLatin1String("# Ruby project\n"));
@@ -52,7 +72,7 @@ Core::GeneratedFiles ProjectWizard::generateFiles(const QWizard *widget, QString
     return Core::GeneratedFiles() << projectFile;
 }
 
-bool ProjectWizard::postGenerateFiles(const QWizard*, const Core::GeneratedFiles &files, QString *errorMessage)
+bool ProjectWizard::postGenerateFiles(const QWizard*, const Core::GeneratedFiles& files, QString* errorMessage)
 {
     return ProjectExplorer::CustomProjectWizard::postGenerateOpen(files, errorMessage);
 }

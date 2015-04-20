@@ -2,6 +2,7 @@
 #define Ruby_RubocopHighlighter_h
 
 #include <texteditor/semantichighlighter.h>
+#include <texteditor/basetextdocument.h>
 
 #include <utils/fileutils.h>
 
@@ -53,7 +54,7 @@ public:
 
     static RubocopHighlighter *instance();
 
-    bool run(TextEditor::TextDocument *document, const QString &fileNameTip);
+    bool run(TextEditor::BaseTextDocument *document, const QString &fileNameTip);
     QString diagnosticAt(const Utils::FileName &file, int pos);
 private:
     bool m_rubocopFound;
@@ -63,7 +64,7 @@ private:
     QString m_outputBuffer;
 
     int m_startRevision;
-    TextEditor::TextDocument *m_document;
+    TextEditor::BaseTextDocument *m_document;
     QHash<int, QTextCharFormat> m_extraFormats;
 
 

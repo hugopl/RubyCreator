@@ -52,7 +52,7 @@ void SymbolFilter::onCurrentEditorChanged(Core::IEditor *editor)
         return;
     }
 
-    m_fileName = editor->document()->filePath();
+    m_fileName = Utils::FileName::fromString(editor->document()->filePath());
     setEnabled(m_fileName.endsWith(QLatin1String(".rb")));
 }
 

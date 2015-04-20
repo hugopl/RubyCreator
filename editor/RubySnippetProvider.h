@@ -26,7 +26,7 @@ public:
 
     void decorateEditor(TextEditor::SnippetEditorWidget *editor) const Q_DECL_OVERRIDE
     {
-        if (TextEditor::TextDocument *document = editor->textDocument()) {
+        if (TextEditor::BaseTextDocument *document = editor->baseTextDocument()) {
             document->setSyntaxHighlighter(new Highlighter);
             document->setIndenter(new Indenter);
         }

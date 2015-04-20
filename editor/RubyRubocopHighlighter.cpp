@@ -7,7 +7,7 @@
 #include <QMessageBox>
 #include <QTextBlock>
 
-#include <texteditor/textdocument.h>
+#include <texteditor/basetextdocument.h>
 #include <texteditor/semantichighlighter.h>
 
 #define RUBOCOP QStringLiteral("rubocop")
@@ -55,7 +55,7 @@ RubocopHighlighter *RubocopHighlighter::instance()
 }
 
 // return false if we are busy, true if everything is ok (or rubocop wasn't found)
-bool RubocopHighlighter::run(TextEditor::TextDocument *document, const QString &fileNameTip)
+bool RubocopHighlighter::run(TextEditor::BaseTextDocument *document, const QString &fileNameTip)
 {
     if (m_busy || m_rubocop->state() == QProcess::Starting)
         return false;
@@ -69,7 +69,7 @@ bool RubocopHighlighter::run(TextEditor::TextDocument *document, const QString &
     m_document = document;
 
     const QString filePath = document->filePath().isEmpty() ? fileNameTip
-                                                            : document->filePath().toString();
+                                                            : document->filePath();
     m_rubocop->write(filePath.toUtf8());
     m_rubocop->write("\n");
     QByteArray data = document->plainText().toUtf8();
@@ -132,7 +132,7 @@ void RubocopHighlighter::finishRuboCopHighlight()
     qDebug() << "rubocop in" << m_timer.elapsed() << "ms," << offenses.count() << "offenses found.";
 }
 
-static int kindOfSeverity(const QStringRef &severity)
+static int kindOfSeverity(const QString &severity)
 {
     switch (severity.at(0).toLatin1()) {
     case 'W': return 0; // yellow
@@ -144,21 +144,22 @@ static int kindOfSeverity(const QStringRef &severity)
 Offenses RubocopHighlighter::processRubocopOutput()
 {
     Offenses result;
-    Diagnostics &diag = m_diagnostics[m_document->filePath()] = Diagnostics();
+    Utils::FileName file=Utils::FileName::fromString(m_document->filePath());
+    Diagnostics &diag = m_diagnostics[file] = Diagnostics();
 
-    foreach (const QStringRef &line, m_outputBuffer.splitRef(QLatin1Char('\n'))) {
+    foreach (const QString &line, m_outputBuffer.split(QLatin1Char('\n'))) {
         if (line == QStringLiteral("--"))
             break;
-        QVector<QStringRef> fields = line.split(QLatin1Char(':'));
+        QStringList fields = line.split(QLatin1Char(':'));
         int kind = kindOfSeverity(fields[0]);
         int lineN = fields[1].toInt();
         int column = fields[2].toInt();
         int length = fields[3].toInt();
         result << TextEditor::HighlightingResult(lineN, column, length, kind);
 
-        int messagePos = fields[4].position();
-        QStringRef message(line.string(), messagePos, line.position() + line.length() - messagePos);
-        diag.messages[lineColumnLengthToRange(lineN, column, length)] = message.toString();
+        //int messagePos = fields[4].position();
+        //QString message(line, 0, line.length());
+        diag.messages[lineColumnLengthToRange(lineN, column, length)] = line;
     }
     m_outputBuffer.clear();
 

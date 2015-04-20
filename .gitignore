@@ -4,3 +4,4 @@
 Makefile*
 Ruby.json
 *.user*
+Ruby.pluginspec

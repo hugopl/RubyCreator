@@ -1,7 +1,7 @@
 #ifndef Ruby_Editor_h
 #define Ruby_Editor_h
 
-#include <texteditor/texteditor.h>
+#include <texteditor/plaintexteditor.h>
 #include <QTimer>
 
 namespace Ruby {
@@ -13,7 +13,8 @@ class Editor : public TextEditor::BaseTextEditor
     Q_OBJECT
 
 public:
-    Editor();
+    Editor(TextEditor::BaseTextEditorWidget *editorWidget);
+    TextEditor::CompletionAssistProvider* completionAssistProvider() Q_DECL_OVERRIDE;
 };
 
 }

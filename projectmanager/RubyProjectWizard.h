@@ -1,17 +1,33 @@
 #ifndef Ruby_ProjectWizard_h
 #define Ruby_ProjectWizard_h
 
-#include <coreplugin/basefilewizardfactory.h>
+#include <coreplugin/basefilewizard.h>
+#include <utils/wizard.h>
+
+namespace Utils {
+class FileWizardPage;
+}
 
 namespace Ruby {
 
-class ProjectWizard : public Core::BaseFileWizardFactory
+class ProjectWizardDialog : public Utils::Wizard
+{
+    Q_OBJECT
+public:
+    ProjectWizardDialog(QWidget* parent, const QString& path);
+    QString path() const;
+    QString projecyName() const;
+private:
+    Utils::FileWizardPage* m_page;
+};
+
+class ProjectWizard : public Core::BaseFileWizard
 {
     Q_OBJECT
 public:
     ProjectWizard();
 protected:
-    Core::BaseFileWizard *create(QWidget *parent, const Core::WizardDialogParameters &wizardDialogParameters) const Q_DECL_OVERRIDE;
+    QWizard *createWizardDialog(QWidget *parent, const Core::WizardDialogParameters &wizardDialogParameters) const Q_DECL_OVERRIDE;
     Core::GeneratedFiles generateFiles(const QWizard *widget, QString *) const Q_DECL_OVERRIDE;
     bool postGenerateFiles(const QWizard *, const Core::GeneratedFiles &files, QString *errorMessage);
 };

@@ -3,10 +3,12 @@
 #include "RubyCodeModel.h"
 
 #include <coreplugin/id.h>
-#include <texteditor/codeassist/assistproposalitem.h>
+#include <texteditor/codeassist/iassistproposalitem.h>
 #include <texteditor/codeassist/genericproposal.h>
-#include <texteditor/codeassist/genericproposalmodel.h>
-#include <texteditor/codeassist/assistinterface.h>
+#include <texteditor/codeassist/igenericproposalmodel.h>
+#include <texteditor/codeassist/iassistinterface.h>
+#include <texteditor/codeassist/basicproposalitem.h>
+#include <texteditor/codeassist/basicproposalitemlistmodel.h>
 
 #include <QTextDocument>
 #include <QTextBlock>
@@ -42,7 +44,7 @@ static KindOfCompletion kindOfCompletion(QTextDocument *document, int &startPosi
     return mayBeAConstant ? MayBeConstant : MayBeAIdentifier;
 }
 
-bool CompletionAssistProvider::supportsEditor(Core::Id editorId) const
+bool CompletionAssistProvider::supportsEditor(const Core::Id &editorId) const
 {
     return editorId == Constants::EditorId;
 }
@@ -68,14 +70,14 @@ static const QString &nameFor(const Symbol &s)
 }
 
 template<typename T>
-static void addProposalFromSet(QList<TextEditor::AssistProposalItem*> &proposals, const T &container, const QString &myTyping, const QIcon &icon, int order = 0)
+static void addProposalFromSet(QList<TextEditor::BasicProposalItem*> &proposals, const T &container, const QString &myTyping, const QIcon &icon, int order = 0)
 {
     foreach (const typename T::value_type &item, container) {
         const QString &name = nameFor(item);
         if (myTyping == name)
             continue;
 
-        auto proposal = new TextEditor::AssistProposalItem;
+        auto proposal = new TextEditor::BasicProposalItem();
         proposal->setText(name);
         proposal->setIcon(icon);
         proposal->setOrder(order);
@@ -92,7 +94,7 @@ CompletionAssistProcessor::CompletionAssistProcessor()
 
 }
 
-TextEditor::IAssistProposal *CompletionAssistProcessor::perform(const TextEditor::AssistInterface *interface)
+TextEditor::IAssistProposal *CompletionAssistProcessor::perform(const TextEditor::IAssistInterface *interface)
 {
     if (interface->reason() == TextEditor::IdleEditor)
         return 0;
@@ -104,7 +106,7 @@ TextEditor::IAssistProposal *CompletionAssistProcessor::perform(const TextEditor
     QString myTyping = interface->textAt(startPosition, interface->position() - startPosition);
     const QString fileName = interface->fileName();
 
-    QList<TextEditor::AssistProposalItem *> proposals;
+    QList<TextEditor::BasicProposalItem *> proposals;
 
     switch (kind) {
     case MayBeAMethod:
@@ -124,7 +126,7 @@ TextEditor::IAssistProposal *CompletionAssistProcessor::perform(const TextEditor
         return 0;
     }
 
-    TextEditor::GenericProposalModel *model = new TextEditor::GenericProposalModel;
+    TextEditor::BasicProposalItemListModel *model = new TextEditor::BasicProposalItemListModel();
     model->loadContent(proposals);
     TextEditor::IAssistProposal *proposal = new TextEditor::GenericProposal(startPosition, model);
     return proposal;

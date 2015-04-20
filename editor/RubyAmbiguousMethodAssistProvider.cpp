@@ -5,10 +5,11 @@
 #include <QEvent>
 #include <QKeyEvent>
 
-#include <texteditor/codeassist/assistinterface.h>
-#include <texteditor/codeassist/assistproposalitem.h>
+#include <texteditor/codeassist/iassistinterface.h>
+#include <texteditor/codeassist/basicproposalitem.h>
+#include <texteditor/codeassist/basicproposalitemlistmodel.h>
 #include <texteditor/codeassist/genericproposal.h>
-#include <texteditor/codeassist/genericproposalmodel.h>
+#include <texteditor/codeassist/igenericproposalmodel.h>
 #include <texteditor/codeassist/genericproposalwidget.h>
 #include <texteditor/codeassist/iassistprocessor.h>
 #include <texteditor/codeassist/iassistproposal.h>
@@ -23,14 +24,14 @@ namespace Ruby {
 class AmbigousMethodProposal : public TextEditor::GenericProposal
 {
 public:
-    AmbigousMethodProposal(int cursorPos, const QList<TextEditor::AssistProposalItem *> &items)
-        : GenericProposal(cursorPos, items)
+    AmbigousMethodProposal(int cursorPos, TextEditor::IGenericProposalModel *model)
+        : GenericProposal(cursorPos, model)
     {}
 
     bool isFragile() const Q_DECL_OVERRIDE { return true; }
 };
 
-class AmbigousMethodProposalItem : public TextEditor::AssistProposalItem
+class AmbigousMethodProposalItem : public TextEditor::BasicProposalItem
 {
 public:
     AmbigousMethodProposalItem(const Symbol &symbol, bool inNextSplit)
@@ -45,7 +46,7 @@ public:
         setDetail(*symbol.file);
     }
 
-    void apply(TextEditor::TextEditorWidget*, int) const Q_DECL_OVERRIDE
+    void apply(TextEditor::BaseTextEditor*, int) const Q_DECL_OVERRIDE
     {
         Core::EditorManager::OpenEditorFlags flags = Core::EditorManager::NoFlags;
         if (m_inNextSplit)
@@ -70,14 +71,17 @@ public:
     {
     }
 
-    TextEditor::IAssistProposal *perform(const TextEditor::AssistInterface *interface) Q_DECL_OVERRIDE
+    TextEditor::IAssistProposal *perform(const TextEditor::IAssistInterface *interface) Q_DECL_OVERRIDE
     {
         delete interface;
 
-        QList<TextEditor::AssistProposalItem*> proposals;
+        QList<TextEditor::BasicProposalItem*> proposals;
         foreach (const Symbol &symbol, m_symbols)
             proposals << new AmbigousMethodProposalItem(symbol, m_inNextSplit);
-        return new AmbigousMethodProposal(m_cursorPosition, proposals);
+
+        TextEditor::BasicProposalItemListModel* model= new TextEditor::BasicProposalItemListModel(proposals);
+
+        return new AmbigousMethodProposal(m_cursorPosition, model);
     }
 
     const QList<Symbol> m_symbols;
@@ -90,7 +94,7 @@ bool AmbigousMethodAssistProvider::isAsynchronous() const
     return true;
 }
 
-bool AmbigousMethodAssistProvider::supportsEditor(Core::Id editorId) const
+bool AmbigousMethodAssistProvider::supportsEditor(const Core::Id &editorId) const
 {
     return editorId == Constants::EditorId;
 }

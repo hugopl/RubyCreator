@@ -1,7 +1,8 @@
 #include "RubyHighlighter.h"
 #include "RubyScanner.h"
 
-#include <texteditor/textdocument.h>
+#include <texteditor/basetextdocument.h>
+#include <texteditor/basetextdocumentlayout.h>
 #include <texteditor/texteditorconstants.h>
 #include <texteditor/texteditorsettings.h>
 #include <texteditor/fontsettings.h>
@@ -96,8 +97,8 @@ int Highlighter::highlightLine(const QString &text, int state)
     if (nextIndentLevel < 0)
         nextIndentLevel = 0;
 
-    TextEditor::TextDocumentLayout::setFoldingIndent(currentBlock(), indentLevel);
-    TextEditor::TextDocumentLayout::setParentheses(currentBlock(), m_currentBlockParentheses);
+    TextEditor::BaseTextDocumentLayout::setFoldingIndent(currentBlock(), indentLevel);
+    TextEditor::BaseTextDocumentLayout::setParentheses(currentBlock(), m_currentBlockParentheses);
     return (nextIndentLevel << 8) | scanner.state();
 }
 

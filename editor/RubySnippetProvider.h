@@ -4,7 +4,7 @@
 #include <texteditor/snippets/isnippetprovider.h>
 #include <texteditor/snippets/snippeteditor.h>
 
-#include "RubyConstants.h"
+#include "../RubyConstants.h"
 #include "RubyHighlighter.h"
 #include "RubyIndenter.h"
 #include "RubyAutoCompleter.h"

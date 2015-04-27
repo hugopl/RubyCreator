@@ -82,6 +82,8 @@ public:
     Token read();
     void readLine();
 
+    static Token tokenAt(const QString* line, int position);
+
     QString contextName() const;
     int currentLine() const { return m_line; }
     int currentColumn(const Token &token) const { return token.position - m_lineStartOffset; }

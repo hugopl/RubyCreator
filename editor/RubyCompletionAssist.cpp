@@ -1,6 +1,7 @@
 #include "RubyCompletionAssist.h"
 #include "../RubyConstants.h"
 #include "RubyCodeModel.h"
+#include "RubyScanner.h"
 
 #include <coreplugin/id.h>
 #include <texteditor/codeassist/assistproposalitem.h>
@@ -76,7 +77,15 @@ static void addProposalFromSet(QList<TextEditor::AssistProposalItem*> &proposals
             continue;
 
         auto proposal = new TextEditor::AssistProposalItem;
-        proposal->setText(name);
+
+        int indexOfParenthesis = name.indexOf(QLatin1Char('('));
+        if (indexOfParenthesis != -1) {
+            proposal->setText(name.mid(0, indexOfParenthesis));
+            proposal->setDetail(name);
+        } else {
+            proposal->setText(name);
+        }
+
         proposal->setIcon(icon);
         proposal->setOrder(order);
         proposals << proposal;
@@ -98,6 +107,22 @@ TextEditor::IAssistProposal *CompletionAssistProcessor::perform(const TextEditor
         return 0;
 
     int startPosition = interface->position();
+
+    // FIXME: We should check the block status in case of multi-line tokens
+    QTextBlock block = interface->textDocument()->findBlock(startPosition);
+    int linePosition = startPosition - block.position();
+    const QString line = interface->textDocument()->findBlock(startPosition).text();
+
+    switch(Scanner::tokenAt(&line, linePosition).kind) {
+    case Token::Comment:
+    case Token::String:
+    case Token::Backtick:
+    case Token::Regexp:
+        return 0;
+    default:
+        break;
+    }
+
     KindOfCompletion kind = kindOfCompletion(interface->textDocument(), startPosition);
     CodeModel *cm = CodeModel::instance();
 

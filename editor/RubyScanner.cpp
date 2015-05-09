@@ -49,6 +49,11 @@ static const int N_KEYWORDS = std::extent<decltype(RUBY_KEYWORDS)>::value;
 #define FLOWCTL_SHOULD_INC_INDENT2 "^(2_)?" "|26_(2_)?" "|25_(2_)?"
 #define INDENT_INC "(" CLASS_MODULE_PATTERN "|" METHOD_PATTERN "|" FLOWCTL_SHOULD_INC_INDENT "|22_|23_|28_)"
 
+static bool isLineFeed(QChar ch)
+{
+    return ch == QLatin1Char('\n');
+}
+
 Scanner::Scanner(const QString *text)
     : m_src(text)
     , m_state(0)
@@ -142,7 +147,7 @@ Token Scanner::onDefaultState()
 
     // Ignore new lines
     bool hasNewLine = false;
-    while (first == QLatin1Char('\n')) {
+    while (isLineFeed(first)) {
         hasNewLine = true;
         m_line++;
         m_lineStartOffset = m_src.position();
@@ -222,17 +227,27 @@ Token Scanner::readStringLiteral(QChar quoteChar, bool stateRestored)
         return Token(Token::InStringCode, m_src.anchor(), m_src.length());
     }
 
+    if (isLineFeed(ch)) {
+        m_src.move();
+        ch = m_src.peek();
+        m_src.setAnchor();
+        m_line++;
+    }
+
     while (ch != quoteChar && !ch.isNull()) {
         if (ch == QLatin1Char('\\')) {
             m_src.move();
             ch = m_src.peek();
             m_src.move();
-            if (ch == QLatin1Char('\n') || ch.isNull()) {
+            if (isLineFeed(ch) || ch.isNull()) {
                 saveState(State_String, quoteChar);
                 break;
             }
             ch = m_src.peek();
         } else if (quoteChar != QLatin1Char('\'') && ch == QLatin1Char('#') && m_src.peek(1) == QLatin1Char('{')) {
+            saveState(State_String, quoteChar);
+            break;
+        } else if (isLineFeed(ch)) {
             saveState(State_String, quoteChar);
             break;
         } else {
@@ -442,7 +457,7 @@ Token Scanner::readFloatNumber()
 Token Scanner::readComment()
 {
     QChar ch = m_src.peek();
-    while (ch != QLatin1Char('\n') && !ch.isNull()) {
+    while (!isLineFeed(ch) && !ch.isNull()) {
         m_src.move();
         ch = m_src.peek();
     }
@@ -454,8 +469,11 @@ Token Scanner::readComment()
   */
 Token Scanner::readWhiteSpace()
 {
-    while (m_src.peek().isSpace())
+    QChar chr = m_src.peek();
+    while (chr.isSpace() && !isLineFeed(chr)) {
         m_src.move();
+        chr = m_src.peek();
+    }
     return Token(Token::Whitespace, m_src.anchor(), m_src.length());
 }
 

@@ -20,6 +20,7 @@ public:
         methods.clear();
         identifiers.clear();
         constants.clear();
+        classes.clear();
         symbols.clear();
     }
 
@@ -29,6 +30,7 @@ public:
     QList<Symbol> methods;
     QSet<QString> identifiers;
     QSet<QString> constants;
+    QList<Symbol> classes;
     QSet<QString> symbols;
 };
 
@@ -124,6 +126,7 @@ void CodeModel::updateFile(const QString &fileName, const QString &contents)
     const QString *fileNamePtr = &data->fileName;
 
     Token token;
+    Token previousToken;
     while ((token = scanner.read()).kind != Token::EndOfBlock) {
         switch (token.kind) {
         case Token::Method:
@@ -136,6 +139,8 @@ void CodeModel::updateFile(const QString &fileName, const QString &contents)
             data->identifiers << contents.mid(token.position, token.length);
             break;
         case Token::Constant:
+            if (previousToken.kind == Token::KeywordClass)
+                data->classes << createSymbol(fileNamePtr, contents, scanner, token);
             data->constants << contents.mid(token.position, token.length);
             break;
         case Token::Symbol:
@@ -144,6 +149,8 @@ void CodeModel::updateFile(const QString &fileName, const QString &contents)
         default:
             break;
         }
+        if (token.kind != Token::Whitespace)
+            previousToken = token;
     }
 
     data->lastUpdate = QDateTime::currentDateTime();
@@ -178,6 +185,14 @@ QList<Symbol> CodeModel::allMethods() const
     QList<Symbol> result;
     foreach (const Data *data, m_model)
         result << data->methods;
+    return result;
+}
+
+QList<Symbol> CodeModel::allClasses() const
+{
+    QList<Symbol> result;
+    foreach (const Data *data, m_model)
+        result << data->classes;
     return result;
 }
 

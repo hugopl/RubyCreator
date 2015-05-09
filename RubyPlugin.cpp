@@ -51,6 +51,9 @@ bool Plugin::initialize(const QStringList &, QString *errorString)
     addAutoReleasedObject(new SymbolFilter([](const QString &) {
         return CodeModel::instance()->allMethods();
     }, "Ruby methods", QLatin1Char('m')));
+    addAutoReleasedObject(new SymbolFilter([](const QString &) {
+        return CodeModel::instance()->allClasses();
+    }, "Ruby classes", QLatin1Char('c')));
     addAutoReleasedObject(new ProjectManager);
 
     addAutoReleasedObject(new ProjectWizard);

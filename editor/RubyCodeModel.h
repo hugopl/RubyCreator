@@ -33,6 +33,7 @@ public:
     QSet<QString> constantsIn(const QString &file) const;
     QSet<QString> symbolsIn(const QString &file) const;
     QList<Symbol> allMethods() const;
+    QList<Symbol> allClasses() const;
     QList<Symbol> allMethodsNamed(const QString &name) const;
 
 private:

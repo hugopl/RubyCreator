@@ -28,9 +28,10 @@ public:
     QString fileName;
 
     QList<Symbol> methods;
+    QList<Symbol> classes;
+    QList<Symbol> constantsDelc;
     QSet<QString> identifiers;
     QSet<QString> constants;
-    QList<Symbol> classes;
     QSet<QString> symbols;
 };
 
@@ -146,6 +147,10 @@ void CodeModel::updateFile(const QString &fileName, const QString &contents)
         case Token::Symbol:
             data->symbols << contents.mid(token.position, token.length);
             break;
+        case Token::OperatorAssign:
+            if (previousToken.kind == Token::Constant)
+                data->constantsDelc << createSymbol(fileNamePtr, contents, scanner, previousToken);
+            break;
         default:
             break;
         }
@@ -214,7 +219,7 @@ QList<Symbol> CodeModel::allMethodsNamed(const QString &name) const
     return result;
 }
 
-QList<Symbol> CodeModel::allClassesNamed(const QString &name) const
+QList<Symbol> CodeModel::allClassesAndConstantsNamed(const QString &name) const
 {
     QList<Symbol> result;
     // FIXME: Replace this linear brute force approach
@@ -224,6 +229,15 @@ QList<Symbol> CodeModel::allClassesNamed(const QString &name) const
                 result << symbol;
         }
     }
+
+    // constants are less important, keep them at the bottom.
+    foreach (const Data *data, m_model) {
+        foreach (const Symbol &symbol, data->constantsDelc) {
+            if (symbol.name == name)
+                result << symbol;
+        }
+    }
+
     return result;
 }
 

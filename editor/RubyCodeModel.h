@@ -35,7 +35,7 @@ public:
     QList<Symbol> allMethods() const;
     QList<Symbol> allClasses() const;
     QList<Symbol> allMethodsNamed(const QString &name) const;
-    QList<Symbol> allClassesNamed(const QString &name) const;
+    QList<Symbol> allClassesAndConstantsNamed(const QString &name) const;
 
 private:
 

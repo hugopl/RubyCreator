@@ -71,7 +71,7 @@ TextEditor::TextEditorWidget::Link EditorWidget::findLinkAt(const QTextCursor &c
 
     CodeModel* codeModel = CodeModel::instance();
 
-    const QList<Symbol> symbols = word[0].isUpper() ? codeModel->allClassesNamed(word) : codeModel->allMethodsNamed(word);
+    const QList<Symbol> symbols = word[0].isUpper() ? codeModel->allClassesAndConstantsNamed(word) : codeModel->allMethodsNamed(word);
     if (symbols.empty())
         return Link();
 

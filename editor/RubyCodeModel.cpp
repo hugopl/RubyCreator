@@ -214,4 +214,17 @@ QList<Symbol> CodeModel::allMethodsNamed(const QString &name) const
     return result;
 }
 
+QList<Symbol> CodeModel::allClassesNamed(const QString &name) const
+{
+    QList<Symbol> result;
+    // FIXME: Replace this linear brute force approach
+    foreach (const Data *data, m_model) {
+        foreach (const Symbol &symbol, data->classes) {
+            if (symbol.name == name)
+                result << symbol;
+        }
+    }
+    return result;
+}
+
 }

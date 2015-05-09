@@ -234,7 +234,7 @@ Token Scanner::readStringLiteral(QChar quoteChar, bool stateRestored)
         m_line++;
     }
 
-    while (ch != quoteChar && !ch.isNull()) {
+    while (ch != quoteChar) {
         if (ch == QLatin1Char('\\')) {
             m_src.move();
             ch = m_src.peek();
@@ -247,7 +247,7 @@ Token Scanner::readStringLiteral(QChar quoteChar, bool stateRestored)
         } else if (quoteChar != QLatin1Char('\'') && ch == QLatin1Char('#') && m_src.peek(1) == QLatin1Char('{')) {
             saveState(State_String, quoteChar);
             break;
-        } else if (isLineFeed(ch)) {
+        } else if (isLineFeed(ch) || ch.isNull()) {
             saveState(State_String, quoteChar);
             break;
         } else {
@@ -534,8 +534,8 @@ void Scanner::saveState(State state, QChar savedData)
 
 void Scanner::parseState(State &state, QChar &savedData) const
 {
-    state = static_cast<State>(m_state >> 16);
-    savedData = static_cast<ushort>(m_state);
+    state = static_cast<State>((m_state >> 16) & 0xf);
+    savedData = m_state & 0xffff;
 }
 
 }

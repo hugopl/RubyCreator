@@ -19,12 +19,12 @@ static bool didBlockStart(const QTextBlock &block)
 void Indenter::indentBlock(QTextDocument*, const QTextBlock &block, const QChar &, const TextEditor::TabSettings &settings)
 {
     bool isNewBlock = false;
-    int indent = block.userState() >> 8;
+    int indent = block.userState() >> 20;
 
     if (indent < 0) {
         QTextBlock previous = block.previous();
         while (indent == -1 && previous.isValid()) {
-            indent = previous.userState() >> 8;
+            indent = previous.userState() >> 20;
             previous = block.previous();
         }
         isNewBlock = true;

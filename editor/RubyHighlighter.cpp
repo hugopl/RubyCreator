@@ -71,7 +71,7 @@ int Highlighter::highlightLine(const QString &text, int state)
     m_currentBlockParentheses.clear();
 
     Scanner scanner(&text);
-    scanner.setState(state & 0xff);
+    scanner.setState(state & 0xfffff);
 
     static QString openParenthesis = QStringLiteral("([{");
     static QString closeParenthesis = QStringLiteral(")]}");
@@ -88,7 +88,7 @@ int Highlighter::highlightLine(const QString &text, int state)
         }
     }
 
-    int indentLevel = state >> 8;
+    int indentLevel = state >> 20;
     int nextIndentLevel = indentLevel + scanner.indentVariation();
     if (scanner.didBlockInterrupt())
         indentLevel--;
@@ -98,7 +98,7 @@ int Highlighter::highlightLine(const QString &text, int state)
 
     TextEditor::TextDocumentLayout::setFoldingIndent(currentBlock(), indentLevel);
     TextEditor::TextDocumentLayout::setParentheses(currentBlock(), m_currentBlockParentheses);
-    return (nextIndentLevel << 8) | scanner.state();
+    return (nextIndentLevel << 20) | scanner.state();
 }
 
 QTextCharFormat Highlighter::formatForToken(const Token &token)

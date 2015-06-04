@@ -150,6 +150,8 @@ Offenses RubocopHighlighter::processRubocopOutput()
         if (line == QStringLiteral("--"))
             break;
         QVector<QStringRef> fields = line.split(QLatin1Char(':'));
+        if (fields.size() < 5)
+            continue;
         int kind = kindOfSeverity(fields[0]);
         int lineN = fields[1].toInt();
         int column = fields[2].toInt();

@@ -1,5 +1,5 @@
-#include "RubyPlugin.h"
-#include "editor/RubyScanner.h"
+#include "../RubyPlugin.h"
+#include "../editor/RubyScanner.h"
 
 #include <QtTest/QtTest>
 #include <vector>

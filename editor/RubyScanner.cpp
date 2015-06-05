@@ -47,7 +47,7 @@ static const int N_KEYWORDS = std::extent<decltype(RUBY_KEYWORDS)>::value;
 #define FLOWCTL_SHOULD_INC_INDENT  "^(2_)?21_|26_(2_)?21_|25_(2_)?21_"
 // Version without 21_ at end, used on readIdentifier
 #define FLOWCTL_SHOULD_INC_INDENT2 "^(2_)?" "|26_(2_)?" "|25_(2_)?"
-#define INDENT_INC "(" CLASS_MODULE_PATTERN "|" METHOD_PATTERN "|" FLOWCTL_SHOULD_INC_INDENT "|22_|23_|28_)"
+#define INDENT_INC "(" CLASS_MODULE_PATTERN "|" METHOD_PATTERN "|" FLOWCTL_SHOULD_INC_INDENT "|22_|23_|28_|30_)"
 
 static bool isLineFeed(QChar ch)
 {
@@ -121,7 +121,7 @@ QString Scanner::contextName() const
 int Scanner::indentVariation() const
 {
     static const QRegExp indent(QLatin1String(INDENT_INC));
-    static const QRegExp unindent(QLatin1String("24_|29_"));
+    static const QRegExp unindent(QLatin1String("24_|29_|31_"));
     int delta = 0;
 
     int offset = -1;
@@ -189,6 +189,10 @@ Token Scanner::onDefaultState()
         token = Token(Token::OpenBraces, m_src.anchor(), m_src.length());
     } else if (first == QLatin1Char('}')) {
         token = Token(Token::CloseBraces, m_src.anchor(), m_src.length());
+    } else if (first == QLatin1Char('[')) {
+        token = Token(Token::OpenBrackets, m_src.anchor(), m_src.length());
+    } else if (first == QLatin1Char(']')) {
+        token = Token(Token::CloseBrackets, m_src.anchor(), m_src.length());
     } else {
         token = readOperator(first);
     }

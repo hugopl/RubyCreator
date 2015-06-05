@@ -45,6 +45,8 @@ public:
         KeywordElseElsIfRescueEnsure = 27,
         OpenBraces                   = 28,
         CloseBraces                  = 29,
+        OpenBrackets  = 30,
+        CloseBrackets = 31,
 
         Backtick,
         InStringCode,

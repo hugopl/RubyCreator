@@ -14,7 +14,7 @@ ProjectWizard::ProjectWizard()
     setWizardKind(Core::IWizardFactory::ProjectWizard);
 
     setDisplayName(tr("Import Existing Ruby Project"));
-    setId(QStringLiteral("Z.Ruby"));
+    setId("Z.Ruby");
     setDescription(tr("Imports existing Ruby projects."));
     setCategory(QLatin1String(ProjectExplorer::Constants::IMPORT_WIZARD_CATEGORY));
     setDisplayCategory(QLatin1String(ProjectExplorer::Constants::IMPORT_WIZARD_CATEGORY_DISPLAY));
@@ -24,14 +24,14 @@ ProjectWizard::ProjectWizard()
 
 Core::BaseFileWizard *ProjectWizard::create(QWidget *parent, const Core::WizardDialogParameters &parameters) const
 {
-    Core::BaseFileWizard *wizard = new Core::BaseFileWizard(parent);
+    Core::BaseFileWizard *wizard = new Core::BaseFileWizard(this, parameters.extraValues(), parent);
     wizard->setWindowTitle(displayName());
 
     Utils::FileWizardPage *page = new Utils::FileWizardPage;
     page->setPath(parameters.defaultPath());
     wizard->addPage(page);
 
-    foreach (QWizardPage *p, parameters.extensionPages())
+    foreach (QWizardPage *p, wizard->extensionPages())
         wizard->addPage(p);
 
     return wizard;

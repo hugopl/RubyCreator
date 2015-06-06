@@ -100,10 +100,10 @@ void EditorWidget::unCommentSelection()
     Utils::unCommentSelection(this, m_commentDefinition);
 }
 
-bool EditorWidget::open(QString *errorString, const QString &fileName, const QString &realFileName)
+void EditorWidget::aboutToOpen(const QString &fileName, const QString &realFileName)
 {
+    Q_UNUSED(fileName);
     m_filePathDueToMaybeABug = realFileName;
-    return TextEditor::TextEditorWidget::open(errorString, fileName, realFileName);
 }
 
 void EditorWidget::scheduleCodeModelUpdate()

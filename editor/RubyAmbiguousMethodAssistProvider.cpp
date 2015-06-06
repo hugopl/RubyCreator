@@ -85,9 +85,9 @@ public:
     bool m_inNextSplit;
 };
 
-bool AmbigousMethodAssistProvider::isAsynchronous() const
+TextEditor::IAssistProvider::RunType AmbigousMethodAssistProvider::runType() const
 {
-    return true;
+    return TextEditor::IAssistProvider::AsynchronousWithThread;
 }
 
 bool AmbigousMethodAssistProvider::supportsEditor(Core::Id editorId) const

@@ -12,7 +12,7 @@ namespace Ruby {
 class AmbigousMethodAssistProvider : public TextEditor::IAssistProvider
 {
 public:
-    bool isAsynchronous() const Q_DECL_OVERRIDE;
+    RunType runType() const Q_DECL_OVERRIDE;
     bool supportsEditor(Core::Id editorId) const Q_DECL_OVERRIDE;
     TextEditor::IAssistProcessor *createProcessor() const Q_DECL_OVERRIDE;
 

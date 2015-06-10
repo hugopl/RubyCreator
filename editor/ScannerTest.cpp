@@ -43,6 +43,8 @@ QDebug &operator<<(QDebug &s, Token::Kind t)
         CASE_STR(KeywordElseElsIfRescueEnsure);
         CASE_STR(OpenBraces);
         CASE_STR(CloseBraces);
+        CASE_STR(OpenBrackets);
+        CASE_STR(CloseBrackets);
 
         CASE_STR(Backtick);
         CASE_STR(InStringCode);

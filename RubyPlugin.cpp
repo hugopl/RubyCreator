@@ -6,6 +6,8 @@
 #include "editor/RubyCodeStylePreferencesFactory.h"
 #include "editor/RubyEditorFactory.h"
 #include "editor/RubyHighlighter.h"
+#include "editor/RubyQuickFixAssistProvider.h"
+#include "editor/RubyQuickFixes.h"
 #include "editor/RubySnippetProvider.h"
 #include "editor/RubySymbolFilter.h"
 #include "editor/RubyCompletionAssist.h"
@@ -59,6 +61,10 @@ bool Plugin::initialize(const QStringList &, QString *errorString)
     addAutoReleasedObject(new ProjectWizard);
 
     addAutoReleasedObject(new CompletionAssistProvider);
+
+    addAutoReleasedObject(new QuickFixAssistProvider);
+    registerQuickFixes(this);
+
     return true;
 }
 

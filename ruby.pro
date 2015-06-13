@@ -19,6 +19,8 @@ SOURCES += RubyPlugin.cpp \
     editor/RubyHighlighter.cpp \
     editor/RubyHoverHandler.cpp \
     editor/RubyIndenter.cpp \
+    editor/RubyQuickFixAssistProvider.cpp \
+    editor/RubyQuickFixes.cpp \
     editor/RubyRubocopHighlighter.cpp \
     editor/RubyScanner.cpp \
     editor/RubySymbolFilter.cpp \
@@ -43,6 +45,8 @@ HEADERS += RubyPlugin.h \
     editor/RubyHighlighter.h \
     editor/RubyHoverHandler.h \
     editor/RubyIndenter.h \
+    editor/RubyQuickFixAssistProvider.h \
+    editor/RubyQuickFixes.h \
     editor/RubyRubocopHighlighter.h \
     editor/RubyScanner.h \
     editor/RubySnippetProvider.h \

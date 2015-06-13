@@ -107,7 +107,7 @@ Token Scanner::tokenAt(const QString* line, int position)
     Scanner scanner(line);
     Token token;
     while ((token = scanner.read()).kind != Token::EndOfBlock) {
-        if (position > token.position && (token.position + token.length) >= position)
+        if (position > token.position && (token.position + token.length) > position)
             break;
     }
     return token;

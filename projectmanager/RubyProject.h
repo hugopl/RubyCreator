@@ -47,6 +47,7 @@ private:
     void removeNodes(const QSet<QString> &nodes);
 
     ProjectExplorer::FolderNode *findFolderFor(const QStringList &path);
+    void tryRemoveEmptyFolder(ProjectExplorer::FolderNode* folder);
 };
 
 }

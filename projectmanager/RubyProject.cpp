@@ -120,6 +120,20 @@ void Project::addNodes(const QSet<QString> &nodes)
     }
 }
 
+void Project::tryRemoveEmptyFolder(ProjectExplorer::FolderNode *folder)
+{
+    using namespace ProjectExplorer;
+
+    if (folder == m_rootNode)
+        return;
+
+    FolderNode *parent = folder->parentFolderNode();
+    if (parent && folder->fileNodes().empty() && folder->subFolderNodes().empty()) {
+        parent->removeFolderNodes(QList<FolderNode *>() << folder);
+        tryRemoveEmptyFolder(parent);
+    }
+}
+
 void Project::removeNodes(const QSet<QString> &nodes)
 {
     using namespace ProjectExplorer;
@@ -135,6 +149,7 @@ void Project::removeNodes(const QSet<QString> &nodes)
         foreach (FileNode *file, folder->fileNodes()) {
             if (file->path().toString() == node) {
                 folder->removeFileNodes(QList<FileNode*>() << file);
+                tryRemoveEmptyFolder(folder);
                 break;
             }
         }

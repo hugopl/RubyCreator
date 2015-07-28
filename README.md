@@ -4,6 +4,10 @@ Plugin to add Ruby language support to QtCreator IDE.
 
 More info can be found at: http://hugopl.github.io/RubyCreator/
 
+## How to install
+
+Packages are available only for Arch Linux in AUR, for anything different you will need to clone the repository and compile it yourself.
+
 # Note About branches
 
 `master` branch should work with the `master` branch of QtCreator, it may not compile because QtCreator may have changed some API and we had no time to adapt to the changes.

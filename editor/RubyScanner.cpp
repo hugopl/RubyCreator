@@ -271,13 +271,25 @@ Token Scanner::readStringLiteral(QChar quoteChar, bool stateRestored)
 Token Scanner::readRegexp()
 {
     const QChar slash = QLatin1Char('/');
+    const QChar backSlash = QLatin1Char('\\');
     QChar ch = m_src.peek();
-
     while (ch != slash && !ch.isNull()) {
         m_src.move();
         ch = m_src.peek();
+        if (ch == backSlash) {
+            m_src.move();
+            m_src.move();
+            ch = m_src.peek();
+        }
     }
     m_src.move();
+
+    // Read modifiers
+    ch = m_src.peek();
+    while (ch.isLetter() && ch.isLower()) {
+        m_src.move();
+        ch = m_src.peek();
+    }
     return Token(Token::Regexp, m_src.anchor(), m_src.length());
 }
 

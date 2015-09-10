@@ -2,8 +2,8 @@
     \"Name\" : \"Ruby\",
     \"Version\" : \"$$QTCREATOR_VERSION\",
     \"CompatVersion\" : \"$$QTCREATOR_COMPAT_VERSION\",
-    \"Vendor\" : \"Meique.org\",
-    \"Copyright\" : \"(C) 2014 Hugo Parente Lima\",
+    \"Vendor\" : \"hugopl\",
+    \"Copyright\" : \"(C) 2014-2015 Hugo Parente Lima\",
     \"License\" : [ \"Commercial Usage\",
                   \"\",
                   \"Licensees holding valid Qt Commercial licenses may use this plugin in accordance with the Qt Commercial License Agreement provided with the Software or, alternatively, in accordance with the terms contained in a written agreement between you and Digia.\",
@@ -14,6 +14,6 @@
     ],
     \"Category\" : \"Other Languages\",
     \"Description\" : \"Ruby language support.\",
-    \"Url\" : \"http://www.meique.org\",
+    \"Url\" : \"http://hugopl.github.io/RubyCreator/\",
     $$dependencyList
 }

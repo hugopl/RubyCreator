@@ -91,7 +91,7 @@ void Plugin::test_symbolOnArray()
     QCOMPARE(tokenize("foo[:bar]"), expectedTokens);
 }
 
-void Plugin::test_def()
+void Plugin::test_methodDefinition()
 {
     Tokens expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::Whitespace,
                               Token::Parameter, Token::OperatorComma, Token::Whitespace, Token::Parameter};
@@ -110,6 +110,24 @@ void Plugin::test_def()
     expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::Whitespace, Token::Operator, Token::Parameter,
                        Token::OperatorComma, Token::Whitespace, Token::Parameter};
     QCOMPARE(tokenize("def foo &bar, tender"), expectedTokens);
+
+    expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method };
+    QCOMPARE(tokenize("def foo!"), expectedTokens);
+    QCOMPARE(tokenize("def foo?"), expectedTokens);
+    QCOMPARE(tokenize("def foo="), expectedTokens);
+    QCOMPARE(tokenize("def <=>"), expectedTokens);
+    QCOMPARE(tokenize("def +="), expectedTokens);
+
+    expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::Comment };
+    QCOMPARE(tokenize("def foo# comment"), expectedTokens);
+    expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::Whitespace, Token::Parameter };
+    QCOMPARE(tokenize("def foo oi"), expectedTokens);
+    expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::Operator, Token::Parameter,
+                       Token::Operator };
+    QCOMPARE(tokenize("def foo(oi)"), expectedTokens);
+    expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::Parameter };
+    QCOMPARE(tokenize("def foo!bar"), expectedTokens);
+
 }
 
 void Plugin::test_context()
@@ -219,26 +237,6 @@ void Plugin::test_percentageNotation()
     QCOMPARE(tokenize("%2"), expectedTokens);
     expectedTokens = { Token::String, Token::OperatorDot, Token::Identifier };
     QCOMPARE(tokenize("%w(a b).length"), expectedTokens);
-}
-
-void Plugin::test_methodDefinition()
-{
-    Tokens expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method };
-    QCOMPARE(tokenize("def foo!"), expectedTokens);
-    QCOMPARE(tokenize("def foo?"), expectedTokens);
-    QCOMPARE(tokenize("def foo="), expectedTokens);
-    QCOMPARE(tokenize("def <=>"), expectedTokens);
-    QCOMPARE(tokenize("def +="), expectedTokens);
-
-    expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::Comment };
-    QCOMPARE(tokenize("def foo# comment"), expectedTokens);
-    expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::Whitespace, Token::Parameter };
-    QCOMPARE(tokenize("def foo oi"), expectedTokens);
-    expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::Operator, Token::Parameter,
-                       Token::Operator };
-    QCOMPARE(tokenize("def foo(oi)"), expectedTokens);
-    expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::Parameter };
-    QCOMPARE(tokenize("def foo!bar"), expectedTokens);
 }
 
 } // namespace Ruby

@@ -548,7 +548,13 @@ Token Scanner::readPercentageNotation()
 
 Token Scanner::readMethodDefinition()
 {
-    consumeUntil("(#", "!?");
+    consumeUntil(".(#", "!?");
+    QStringRef value = m_src.value();
+    if (value == QLatin1String("self"))
+        return Token(Token::KeywordSelf, m_src.anchor(), m_src.length());
+
+    if (!std::strchr("!?", m_src.peek(-1).toLatin1()))
+        consumeUntil("(#", "!?");
     return Token(Token::Method, m_src.anchor(), m_src.length());
 }
 
@@ -558,7 +564,7 @@ void Scanner::consumeUntil(const char* stopAt, const char* stopAfter)
     while (!ch.isNull() && !ch.isSpace() && !std::strchr(stopAt, ch.toLatin1())) {
         m_src.move();
         ch = m_src.peek();
-        if (!ch.isNull() && std::strchr(stopAfter, ch.toLatin1())) {
+        if (stopAfter && !ch.isNull() && std::strchr(stopAfter, ch.toLatin1())) {
             m_src.move();
             break;
         }

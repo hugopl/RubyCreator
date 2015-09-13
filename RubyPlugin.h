@@ -26,7 +26,7 @@ private slots:
 
     void test_namespaceIsNotASymbol();
     void test_symbolOnArray();
-    void test_def();
+    void test_methodDefinition();
     void test_context();
     void test_indentIf();
     void test_indentBraces();
@@ -35,7 +35,6 @@ private slots:
     void test_strings();
     void test_inStringCode();
     void test_percentageNotation();
-    void test_methodDefinition();
 #endif
 };
 

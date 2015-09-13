@@ -108,7 +108,7 @@ private:
     Token readPercentageNotation();
     Token readMethodDefinition();
 
-    void consumeUntil(const char* stopAt, const char* stopAfter);
+    void consumeUntil(const char* stopAt, const char* stopAfter = 0);
 
     void clearState();
     void saveState(State state, QChar savedData);

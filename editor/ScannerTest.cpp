@@ -87,7 +87,7 @@ void Plugin::test_namespaceIsNotASymbol()
 
 void Plugin::test_symbolOnArray()
 {
-    Tokens expectedTokens = { Token::Identifier, Token::Operator, Token::Symbol, Token::Operator };
+    Tokens expectedTokens = { Token::Identifier, Token::OpenBrackets, Token::Symbol, Token::CloseBrackets };
     QCOMPARE(tokenize("foo[:bar]"), expectedTokens);
 }
 

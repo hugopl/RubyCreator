@@ -35,6 +35,7 @@ private slots:
     void test_strings();
     void test_inStringCode();
     void test_percentageNotation();
+    void test_methodDefinition();
 #endif
 };
 

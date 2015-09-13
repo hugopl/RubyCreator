@@ -5,6 +5,8 @@
 #include <QSet>
 #include <QDebug>
 
+#include <cstring>
+
 namespace Ruby {
 
 static const char *const RUBY_KEYWORDS[] = {
@@ -48,6 +50,12 @@ static const int N_KEYWORDS = std::extent<decltype(RUBY_KEYWORDS)>::value;
 // Version without 21_ at end, used on readIdentifier
 #define FLOWCTL_SHOULD_INC_INDENT2 "^(2_)?" "|26_(2_)?" "|25_(2_)?"
 #define INDENT_INC "(" CLASS_MODULE_PATTERN "|" METHOD_PATTERN "|" FLOWCTL_SHOULD_INC_INDENT "|22_|23_|28_|30_)"
+
+QRegExp Scanner::m_methodPattern(QLatin1String(METHOD_PATTERN "$"));
+//                                            METHOD  (          &        parameter,         &
+QRegExp Scanner::m_parameterPattern(QLatin1String(METHOD_PATTERN "8_(2_)?(3_)?((2_)?(3_)?(2_)?9_(2_)?(17_)?(2_)?(3_)?(2_)?)*$"));
+QRegExp Scanner::m_contextPattern(QLatin1String(CLASS_MODULE_PATTERN "$"));
+QRegExp Scanner::m_controlFlowShouldIncIndentPattern(QLatin1String("(" FLOWCTL_SHOULD_INC_INDENT2 ")$"));
 
 static bool isLineFeed(QChar ch)
 {
@@ -164,6 +172,8 @@ Token Scanner::onDefaultState()
         token = readFloatNumber();
     } else if (first == QLatin1Char('\'') || first == QLatin1Char('\"') || first == QLatin1Char('`')) {
         token = readStringLiteral(first);
+    } else if (m_methodPattern.indexIn(m_tokenSequence) != -1) {
+        token = readMethodDefinition();
     } else if (first.isLetter() || first == QLatin1Char('_') || first == QLatin1Char('@')
                || first == QLatin1Char('$') || (first == QLatin1Char(':') && m_src.peek() != QLatin1Char(':'))) {
         token = readIdentifier();
@@ -298,13 +308,6 @@ Token Scanner::readRegexp()
   */
 Token Scanner::readIdentifier()
 {
-    static const QRegExp methodPattern(QLatin1String(METHOD_PATTERN "$"));
-    //                                              METHOD  (          &        parameter,         &
-    static const QRegExp parameterPattern(QLatin1String(METHOD_PATTERN "8_(2_)?(3_)?((2_)?(3_)?(2_)?9_(2_)?(17_)?(2_)?(3_)?(2_)?)*$"));
-    static const QRegExp contextPattern(QLatin1String(CLASS_MODULE_PATTERN "$"));
-
-    static const QRegExp controlFlowShouldIncIndentPattern(QLatin1String("(" FLOWCTL_SHOULD_INC_INDENT2 ")$"));
-
     QChar ch = m_src.peek();
     while (ch.isLetterOrNumber() || ch == QLatin1Char('_') || ch == QLatin1Char('?') || ch == QLatin1Char('!')) {
         m_src.move();
@@ -321,7 +324,7 @@ Token Scanner::readIdentifier()
         kind = Token::Global;
     } else if (value.at(0).isUpper()) {
         kind = Token::Constant;
-        if (m_hasContextRecognition && contextPattern.indexIn(m_tokenSequence) != -1) {
+        if (m_hasContextRecognition && m_contextPattern.indexIn(m_tokenSequence) != -1) {
             m_context << value.toString();
             m_contextDepths << m_indentDepth;
         }
@@ -346,7 +349,7 @@ Token Scanner::readIdentifier()
         m_indentDepth++;
     } else if (value == QLatin1String("if") || value == QLatin1String("unless")) {
         kind = Token::KeywordFlowControl;
-        if (controlFlowShouldIncIndentPattern.indexIn(m_tokenSequence) != -1)
+        if (m_controlFlowShouldIncIndentPattern.indexIn(m_tokenSequence) != -1)
             m_indentDepth++;
     } else if (value == QLatin1String("while") || value == QLatin1String("until")) {
         kind = Token::KeywordLoop;
@@ -363,9 +366,14 @@ Token Scanner::readIdentifier()
         kind = Token::KeywordVisibility;
     } else if (std::find(&RUBY_KEYWORDS[0], &RUBY_KEYWORDS[N_KEYWORDS], value.toUtf8()) != &RUBY_KEYWORDS[N_KEYWORDS]) {
         kind = Token::Keyword;
-    } else if (methodPattern.indexIn(m_tokenSequence) != -1) {
+    } else if (m_methodPattern.indexIn(m_tokenSequence) != -1) {
+        QChar ch = m_src.peek();
+        while (!ch.isNull() && !ch.isSpace() && ch != QLatin1Char('(') &&  ch != QLatin1Char('#')) {
+            m_src.move();
+            ch = m_src.peek();
+        }
         kind = Token::Method;
-    } else if (parameterPattern.indexIn(m_tokenSequence) != -1) {
+    } else if (m_parameterPattern.indexIn(m_tokenSequence) != -1) {
         kind = Token::Parameter;
     }
 
@@ -538,6 +546,25 @@ Token Scanner::readPercentageNotation()
     return readStringLiteral(delimiter, false);
 }
 
+Token Scanner::readMethodDefinition()
+{
+    consumeUntil("(#", "!?");
+    return Token(Token::Method, m_src.anchor(), m_src.length());
+}
+
+void Scanner::consumeUntil(const char* stopAt, const char* stopAfter)
+{
+    QChar ch = m_src.peek();
+    while (!ch.isNull() && !ch.isSpace() && !std::strchr(stopAt, ch.toLatin1())) {
+        m_src.move();
+        ch = m_src.peek();
+        if (!ch.isNull() && std::strchr(stopAfter, ch.toLatin1())) {
+            m_src.move();
+            break;
+        }
+    }
+}
+
 void Scanner::clearState()
 {
     m_state = 0;
@@ -553,5 +580,4 @@ void Scanner::parseState(State &state, QChar &savedData) const
     state = static_cast<State>((m_state >> 16) & 0xf);
     savedData = m_state & 0xffff;
 }
-
 }

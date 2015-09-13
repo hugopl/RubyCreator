@@ -106,6 +106,9 @@ private:
     Token readWhiteSpace();
     Token readOperator(QChar first);
     Token readPercentageNotation();
+    Token readMethodDefinition();
+
+    void consumeUntil(const char* stopAt, const char* stopAfter);
 
     void clearState();
     void saveState(State state, QChar savedData);
@@ -123,6 +126,11 @@ private:
 
     QList<int> m_contextDepths;
     int m_indentDepth;
+
+    static QRegExp m_methodPattern;
+    static QRegExp m_parameterPattern;
+    static QRegExp m_contextPattern;
+    static QRegExp m_controlFlowShouldIncIndentPattern;
 };
 
 }

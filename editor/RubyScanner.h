@@ -73,7 +73,7 @@ public:
     enum State {
         State_Default,
         State_String,
-        State_MultiLineString
+        State_Regexp
     };
 
     Scanner(const QString *text);
@@ -96,7 +96,8 @@ public:
 private:
     Token onDefaultState();
 
-    Token readStringLiteral(QChar quoteChar, bool stateRestored = false);
+    Token readStringLiteral(QChar quoteChar, State stateRestored);
+    Token readInStringToken();
     Token readRegexp();
     Token readIdentifier();
     Token readNumber();
@@ -109,6 +110,7 @@ private:
     Token readMethodDefinition();
 
     void consumeUntil(const char* stopAt, const char* stopAfter = 0);
+    void consumeRegexpModifiers();
 
     void clearState();
     void saveState(State state, QChar savedData);

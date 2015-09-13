@@ -224,7 +224,7 @@ void Plugin::test_inStringCode()
     expectedTokens = { Token::String };
     QCOMPARE(tokenize("'Nice #{Hello}'"), expectedTokens);
     expectedTokens = { Token::String, Token::InStringCode, Token::String };
-    QCOMPARE(tokenize("\"#{foo}bar"), expectedTokens);
+    QCOMPARE(tokenize("\"#{foo}bar\""), expectedTokens);
 
 }
 
@@ -237,6 +237,14 @@ void Plugin::test_percentageNotation()
     QCOMPARE(tokenize("%2"), expectedTokens);
     expectedTokens = { Token::String, Token::OperatorDot, Token::Identifier };
     QCOMPARE(tokenize("%w(a b).length"), expectedTokens);
+}
+
+void Plugin::test_regexpLiteral()
+{
+    Tokens expectedTokens = { Token::Regexp };
+    QCOMPARE(tokenize("%r{foo/bar}"), expectedTokens);
+    expectedTokens = { Token::Regexp, Token::Regexp };
+    QCOMPARE(tokenize("%r{foo\n/bar}x"), expectedTokens);
 }
 
 } // namespace Ruby

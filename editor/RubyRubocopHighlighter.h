@@ -27,6 +27,7 @@ public:
     Range() : pos(0), length(0) { }
     Range(int pos, int length) : pos(pos), length(length) { }
 
+    // Not really equal, since the length attribute is ignored.
     bool operator==(const Range &other) const {
         const int value = other.pos;
         return value >= pos && value < (pos + length);

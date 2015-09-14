@@ -83,7 +83,7 @@ QString RubocopHighlighter::diagnosticAt(const Utils::FileName &file, int pos)
     if (it == m_diagnostics.end())
         return QString();
 
-    return it->messages[Range(pos, 0)];
+    return it->messages[Range(pos + 1, 0)];
 }
 
 void RubocopHighlighter::initRubocopProcess()

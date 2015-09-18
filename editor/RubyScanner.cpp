@@ -42,6 +42,38 @@ static const char *const RUBY_KEYWORDS[] = {
 
 static const int N_KEYWORDS = std::extent<decltype(RUBY_KEYWORDS)>::value;
 
+static QChar translateDelimiter(QChar ch)
+{
+    switch (ch.toLatin1()) {
+    case '(': return QLatin1Char(')');
+    case '[': return QLatin1Char(']');
+    case '{': return QLatin1Char('}');
+    case '<': return QLatin1Char('>');
+    case ')': return QLatin1Char('(');
+    case ']': return QLatin1Char('[');
+    case '}': return QLatin1Char('{');
+    case '>': return QLatin1Char('<');
+    default: return ch;
+    }
+}
+
+static bool delimiterHasPair(QChar ch)
+{
+    switch (ch.toLatin1()) {
+    case '(':
+    case '[':
+    case '{':
+    case '<':
+    case ')':
+    case ']':
+    case '}':
+    case '>':
+        return true;
+    default:
+        return false;
+    }
+}
+
 #define SELF_DOT_PATTERN "(16_(2_)?18_(2_)?)?"
 #define METHOD_PATTERN "15_2_" SELF_DOT_PATTERN
 #define CLASS_MODULE_PATTERN "(19|20)_2_" SELF_DOT_PATTERN
@@ -248,7 +280,31 @@ Token Scanner::readStringLiteral(QChar quoteChar, Scanner::State state)
         m_line++;
     }
 
-    while (ch != quoteChar) {
+    QChar startQuoteChar = translateDelimiter(quoteChar);
+    bool quoteCharHasPair = delimiterHasPair(quoteChar);
+    int bracketCount = 0;
+
+    forever {
+        ch = m_src.peek();
+        if (ch.isNull())
+            break;
+
+        if (ch == quoteChar && bracketCount == 0)
+            break;
+
+        // handles %r{{}}
+        if (quoteCharHasPair) {
+            if (ch == startQuoteChar) {
+                bracketCount++;
+                m_src.move();
+                continue;
+            } else if (ch == quoteChar) {
+                bracketCount--;
+                m_src.move();
+                continue;
+            }
+        }
+
         if (ch == QLatin1Char('\\')) {
             m_src.move();
             ch = m_src.peek();
@@ -257,7 +313,6 @@ Token Scanner::readStringLiteral(QChar quoteChar, Scanner::State state)
                 saveState(state, quoteChar);
                 break;
             }
-            ch = m_src.peek();
         } else if (quoteChar != QLatin1Char('\'') && ch == QLatin1Char('#') && m_src.peek(1) == QLatin1Char('{')) {
             saveState(state, quoteChar);
             break;
@@ -266,7 +321,6 @@ Token Scanner::readStringLiteral(QChar quoteChar, Scanner::State state)
             break;
         } else {
             m_src.move();
-            ch = m_src.peek();
         }
     }
 
@@ -539,17 +593,6 @@ Token Scanner::readOperator(QChar first)
         ch = m_src.peek();
     }
     return Token(Token::Operator, m_src.anchor(), m_src.length());
-}
-
-static QChar translateDelimiter(QChar ch)
-{
-    switch (ch.toLatin1()) {
-    case '(': return QLatin1Char(')');
-    case '[': return QLatin1Char(']');
-    case '{': return QLatin1Char('}');
-    case '<': return QLatin1Char('>');
-    default: return ch;
-    }
 }
 
 Token Scanner::readPercentageNotation()

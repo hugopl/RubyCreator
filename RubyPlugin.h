@@ -36,6 +36,7 @@ private slots:
     void test_inStringCode();
     void test_percentageNotation();
     void test_regexpLiteral();
+    void test_brackets();
 #endif
 };
 

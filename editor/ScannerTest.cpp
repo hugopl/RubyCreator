@@ -247,4 +247,15 @@ void Plugin::test_regexpLiteral()
     QCOMPARE(tokenize("%r{foo\n/bar}x"), expectedTokens);
 }
 
+void Plugin::test_brackets()
+{
+    Tokens expectedTokens = { Token::Regexp };
+    QCOMPARE(tokenize("%r{{}}"), expectedTokens);
+    QCOMPARE(tokenize("%r<<>>"), expectedTokens);
+    expectedTokens = { Token::String };
+    QCOMPARE(tokenize("%q[[]]"), expectedTokens);
+    QCOMPARE(tokenize("%w(())"), expectedTokens);
+    QCOMPARE(tokenize("%q!\\!!"), expectedTokens);
+}
+
 } // namespace Ruby

@@ -58,6 +58,10 @@ bool Plugin::initialize(const QStringList &, QString *errorString)
     }, "Ruby classes", QLatin1Char('c')));
     addAutoReleasedObject(new ProjectManager);
 
+    Core::IWizardFactory::registerFactoryCreator([]() {
+        return QList<Core::IWizardFactory *>() << new ProjectWizard;
+    });
+
     addAutoReleasedObject(new ProjectWizard);
 
     addAutoReleasedObject(new CompletionAssistProvider);

@@ -1,6 +1,9 @@
 /build
 /debug
 /release
+/.moc/
+/.obj/
+/.rcc/
 Makefile*
 Ruby.json
 *.user*

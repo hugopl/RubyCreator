@@ -147,7 +147,7 @@ void Project::removeNodes(const QSet<QString> &nodes)
         FolderNode *folder = findFolderFor(path);
 
         foreach (FileNode *file, folder->fileNodes()) {
-            if (file->path().toString() == node) {
+            if (file->filePath().toString() == node) {
                 folder->removeFileNodes(QList<FileNode*>() << file);
                 tryRemoveEmptyFolder(folder);
                 break;

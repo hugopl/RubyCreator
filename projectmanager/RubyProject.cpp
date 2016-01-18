@@ -17,9 +17,7 @@ const int MIN_TIME_BETWEEN_PROJECT_SCANS = 4500;
 
 Project::Project(ProjectManager *projectManager, const QString &fileName)
     : m_projectManager(projectManager)
-    , m_document(new TextEditor::TextDocument)
 {
-    m_document->setFilePath(Utils::FileName::fromString(fileName));
     m_projectDir = QFileInfo(fileName).dir();
     m_rootNode = new ProjectNode(Utils::FileName::fromString(m_projectDir.dirName()));
 
@@ -36,11 +34,6 @@ Project::Project(ProjectManager *projectManager, const QString &fileName)
 QString Project::displayName() const
 {
     return m_projectDir.dirName();
-}
-
-Core::IDocument *Project::document() const
-{
-    return m_document;
 }
 
 ProjectExplorer::IProjectManager *Project::projectManager() const

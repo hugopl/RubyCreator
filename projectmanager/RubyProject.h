@@ -21,7 +21,6 @@ class Project : public ProjectExplorer::Project
 public:
     Project(ProjectManager *projectManager, const QString &fileName);
     QString displayName() const Q_DECL_OVERRIDE;
-    Core::IDocument *document() const Q_DECL_OVERRIDE;
     ProjectExplorer::IProjectManager *projectManager() const Q_DECL_OVERRIDE;
     ProjectExplorer::ProjectNode *rootProjectNode() const Q_DECL_OVERRIDE;
 
@@ -32,7 +31,6 @@ private slots:
     void populateProject();
 private:
     ProjectManager *m_projectManager;
-    TextEditor::TextDocument *m_document;
     ProjectNode *m_rootNode;
 
     QDir m_projectDir;

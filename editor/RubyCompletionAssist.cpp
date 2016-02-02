@@ -69,7 +69,9 @@ static const QString &nameFor(const Symbol &s)
 }
 
 template<typename T>
-static void addProposalFromSet(QList<TextEditor::AssistProposalItem*> &proposals, const T &container, const QString &myTyping, const QIcon &icon, int order = 0)
+static void addProposalFromSet(QList<TextEditor::AssistProposalItemInterface*> &proposals,
+                               const T &container, const QString &myTyping,
+                               const QIcon &icon, int order = 0)
 {
     foreach (const typename T::value_type &item, container) {
         const QString &name = nameFor(item);
@@ -129,7 +131,7 @@ TextEditor::IAssistProposal *CompletionAssistProcessor::perform(const TextEditor
     QString myTyping = interface->textAt(startPosition, interface->position() - startPosition);
     const QString fileName = interface->fileName();
 
-    QList<TextEditor::AssistProposalItem *> proposals;
+    QList<TextEditor::AssistProposalItemInterface *> proposals;
 
     switch (kind) {
     case MayBeAMethod:

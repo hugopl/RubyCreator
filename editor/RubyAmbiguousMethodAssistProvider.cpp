@@ -23,7 +23,7 @@ namespace Ruby {
 class AmbigousMethodProposal : public TextEditor::GenericProposal
 {
 public:
-    AmbigousMethodProposal(int cursorPos, const QList<TextEditor::AssistProposalItem *> &items)
+    AmbigousMethodProposal(int cursorPos, const QList<TextEditor::AssistProposalItemInterface *> &items)
         : GenericProposal(cursorPos, items)
     {}
 
@@ -45,7 +45,7 @@ public:
         setDetail(*symbol.file);
     }
 
-    void apply(TextEditor::TextEditorWidget*, int) const Q_DECL_OVERRIDE
+    void apply(TextEditor::TextDocumentManipulatorInterface&, int) const Q_DECL_OVERRIDE
     {
         Core::EditorManager::OpenEditorFlags flags = Core::EditorManager::NoFlags;
         if (m_inNextSplit)
@@ -74,7 +74,7 @@ public:
     {
         delete interface;
 
-        QList<TextEditor::AssistProposalItem*> proposals;
+        QList<TextEditor::AssistProposalItemInterface *> proposals;
         foreach (const Symbol &symbol, m_symbols)
             proposals << new AmbigousMethodProposalItem(symbol, m_inNextSplit);
         return new AmbigousMethodProposal(m_cursorPosition, proposals);

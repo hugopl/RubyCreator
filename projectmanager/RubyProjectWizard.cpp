@@ -1,6 +1,8 @@
 #include "RubyProjectWizard.h"
+#include "../RubyConstants.h"
 
 #include <coreplugin/basefilewizard.h>
+#include <coreplugin/id.h>
 #include <projectexplorer/customwizard/customwizard.h>
 #include <projectexplorer/projectexplorerconstants.h>
 #include <utils/filewizardpage.h>
@@ -11,7 +13,7 @@ namespace Ruby {
 
 ProjectWizard::ProjectWizard()
 {
-    setWizardKind(Core::IWizardFactory::ProjectWizard);
+    setSupportedProjectTypes({ Constants::ProjectId });
 
     setDisplayName(tr("Import Existing Ruby Project"));
     setId("Z.Ruby");

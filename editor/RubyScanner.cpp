@@ -131,6 +131,7 @@ Token Scanner::read()
     switch (state) {
     case State_String:
     case State_Regexp:
+    case State_Symbols:
         return readStringLiteral(saved, state);
     default:
         return onDefaultState();
@@ -292,8 +293,10 @@ Token Scanner::readStringLiteral(QChar quoteChar, Scanner::State state)
 
     forever {
         ch = m_src.peek();
-        if (ch.isNull())
+        if (isLineFeed(ch) || ch.isNull()) {
+            saveState(state, quoteChar);
             break;
+        }
 
         if (ch == quoteChar && bracketCount == 0)
             break;

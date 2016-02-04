@@ -236,6 +236,10 @@ Token Scanner::onDefaultState()
         token = Token(Token::OpenBrackets, m_src.anchor(), m_src.length());
     } else if (first == QLatin1Char(']')) {
         token = Token(Token::CloseBrackets, m_src.anchor(), m_src.length());
+        // For historic reasons, ( and ) are the Operator token, this will
+        // be changed soon.
+    } else if (first == QLatin1Char('(') || first == QLatin1Char(')')) {
+        token = Token(Token::Operator, m_src.anchor(), m_src.length());
     } else {
         token = readOperator(first);
     }
@@ -579,10 +583,6 @@ Token Scanner::readWhiteSpace()
   */
 Token Scanner::readOperator(QChar first)
 {
-    static const QString singleCharOperators = QStringLiteral("[]{}()");
-    if (singleCharOperators.contains(first))
-        return Token(Token::Operator, m_src.anchor(), m_src.length());
-
     static const QString operators = QStringLiteral("<=>+-/*%!");
     static const QString colon = QStringLiteral(":");
     const QString &acceptedChars = first == QLatin1Char(':') ? colon : operators;

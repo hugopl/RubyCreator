@@ -79,7 +79,7 @@ int Highlighter::highlightLine(const QString &text, int state)
     Token token;
     while ((token = scanner.read()).kind != Token::EndOfBlock) {
         setFormat(token.position, token.length, formatForToken(token));
-        if (token.kind == Token::Operator) {
+        if (token.isParenthesisLike()) {
             QChar ch = text[token.position];
             if (openParenthesis.contains(ch))
                 m_currentBlockParentheses << Parenthesis(Parenthesis::Opened, ch, token.position);

@@ -79,7 +79,8 @@ public:
     enum State {
         State_Default,
         State_String,
-        State_Regexp
+        State_Regexp,
+        State_Symbols
     };
 
     Scanner(const QString *text);

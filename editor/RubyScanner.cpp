@@ -254,6 +254,8 @@ static Token::Kind tokenKindFor(QChar ch, Scanner::State state)
 {
     if (state == Scanner::State_Regexp)
         return Token::Regexp;
+    else if (state == Scanner::State_Symbols)
+        return Token::Symbol;
 
     switch(ch.toLatin1()) {
     case '`':
@@ -605,6 +607,8 @@ Token Scanner::readPercentageNotation()
     if (ch.isLetter()) {
         if (ch == QLatin1Char('r'))
             state = State_Regexp;
+        if (ch == QLatin1Char('i'))
+            state = State_Symbols;
         m_src.move();
     }
     QChar delimiter = translateDelimiter(m_src.peek());

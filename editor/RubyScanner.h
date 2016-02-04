@@ -9,6 +9,8 @@
 
 namespace Ruby {
 
+QChar translateDelimiter(QChar ch);
+
 class Token
 {
 public:

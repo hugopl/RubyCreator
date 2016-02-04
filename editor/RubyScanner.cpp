@@ -42,7 +42,7 @@ static const char *const RUBY_KEYWORDS[] = {
 
 static const int N_KEYWORDS = std::extent<decltype(RUBY_KEYWORDS)>::value;
 
-static QChar translateDelimiter(QChar ch)
+QChar translateDelimiter(QChar ch)
 {
     switch (ch.toLatin1()) {
     case '(': return QLatin1Char(')');

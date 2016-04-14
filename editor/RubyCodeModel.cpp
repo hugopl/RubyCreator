@@ -176,6 +176,7 @@ void CodeModel::updateFile(const QString &fileName, const QString &contents)
             data->constants << contents.mid(token.position, token.length);
             break;
         case Token::Symbol:
+        case Token::SymbolHashKey:
             parseRubySymbol(contents, token, data->symbols);
             break;
         case Token::OperatorAssign:

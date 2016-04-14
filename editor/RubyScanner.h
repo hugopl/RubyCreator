@@ -54,6 +54,7 @@ public:
         Backtick,
         InStringCode,
         KeywordVisibility,
+        SymbolHashKey,
         EndOfBlock
     };
 

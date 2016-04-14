@@ -398,7 +398,10 @@ Token Scanner::readIdentifier()
     QStringRef value = m_src.value();
 
     Token::Kind kind = Token::Identifier;
-    if (value.at(0) == QLatin1Char('@')) {
+    if (m_src.peek() == QLatin1Char(':') && m_src.peek(1) != QLatin1Char(':')) {
+        m_src.move();
+        kind = Token::SymbolHashKey;
+    } else if (value.at(0) == QLatin1Char('@')) {
         kind = Token::ClassField;
     } else if (value.length() > 1 && value.at(0) == QLatin1Char(':')) {
         kind = Token::Symbol;

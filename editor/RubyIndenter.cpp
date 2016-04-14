@@ -2,8 +2,7 @@
 #include "RubyScanner.h"
 
 #include <texteditor/tabsettings.h>
-#include <QRegExp>
-#include <QSet>
+#include <QRegularExpression>
 #include <QDebug>
 
 namespace Ruby {
@@ -18,23 +17,27 @@ static bool didBlockStart(const QTextBlock &block)
 
 void Indenter::indentBlock(QTextDocument*, const QTextBlock &block, const QChar &, const TextEditor::TabSettings &settings)
 {
-    bool isNewBlock = false;
-    int indent = block.userState() >> 20;
+    int indent;
 
-    if (indent < 0) {
-        QTextBlock previous = block.previous();
-        while (indent == -1 && previous.isValid()) {
-            indent = previous.userState() >> 20;
-            previous = block.previous();
+    QTextBlock previous = block.previous();
+    // Previous line ends on comma, ignore everything and follow the indent
+    if (previous.text().endsWith(QLatin1Char(','))) {
+        indent = previous.text().indexOf(QRegularExpression(QStringLiteral("[^\\s]"))) / settings.m_indentSize;
+    } else {
+        // Use the stored indent plus some bizarre heuristics that even myself remember how it works.
+        indent = block.userState() >> 20;
+        if (indent < 0) {
+            while (indent == -1 && previous.isValid()) {
+                indent = previous.userState() >> 20;
+                previous = block.previous();
+            }
         }
-        isNewBlock = true;
+
+        if (didBlockStart(block) && indent > 0)
+            indent--;
     }
 
-    if (didBlockStart(block) && indent > 0)
-        indent--;
-
-    if (isNewBlock || !block.text().isEmpty())
-        settings.indentLine(block, indent  *settings.m_indentSize);
+    settings.indentLine(block, indent  * settings.m_indentSize);
 }
 
 }

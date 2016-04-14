@@ -102,6 +102,10 @@ static void parseRubySymbol(const QString &contents, Token token, QSet<QString>&
 {
     if (contents[token.position] == QLatin1Char(':')) {
         symbols << contents.mid(token.position, token.length);
+    } else if (contents[token.position + token.length - 1] == QLatin1Char(':')) {
+        QString symbol = contents.mid(token.position, token.length - 1);
+        symbol.prepend(QLatin1Char(':'));
+        symbols << symbol;
     } else {
         QStringRef symbolsToSplit;
         if (contents[token.position] == QLatin1Char('%')) {

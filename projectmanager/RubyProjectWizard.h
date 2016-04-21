@@ -13,7 +13,7 @@ public:
 protected:
     Core::BaseFileWizard *create(QWidget *parent, const Core::WizardDialogParameters &wizardDialogParameters) const Q_DECL_OVERRIDE;
     Core::GeneratedFiles generateFiles(const QWizard *widget, QString *) const Q_DECL_OVERRIDE;
-    bool postGenerateFiles(const QWizard *, const Core::GeneratedFiles &files, QString *errorMessage);
+    bool postGenerateFiles(const QWizard *, const Core::GeneratedFiles &files, QString *errorMessage) const Q_DECL_OVERRIDE;
 };
 
 }

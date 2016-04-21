@@ -52,7 +52,7 @@ Core::GeneratedFiles ProjectWizard::generateFiles(const QWizard *widget, QString
     return Core::GeneratedFiles() << projectFile;
 }
 
-bool ProjectWizard::postGenerateFiles(const QWizard*, const Core::GeneratedFiles &files, QString *errorMessage)
+bool ProjectWizard::postGenerateFiles(const QWizard*, const Core::GeneratedFiles &files, QString *errorMessage) const
 {
     return ProjectExplorer::CustomProjectWizard::postGenerateOpen(files, errorMessage);
 }

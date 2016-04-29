@@ -1,8 +1,7 @@
-#ifndef Ruby_Editor_h
-#define Ruby_Editor_h
+#ifndef RubyEditor_h
+#define RubyEditor_h
 
 #include <texteditor/texteditor.h>
-#include <QTimer>
 
 namespace Ruby {
 

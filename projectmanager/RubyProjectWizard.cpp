@@ -1,4 +1,5 @@
 #include "RubyProjectWizard.h"
+#include "../RubyConstants.h"
 
 #include <coreplugin/basefilewizard.h>
 #include <projectexplorer/customwizard/customwizard.h>
@@ -19,7 +20,7 @@ ProjectWizard::ProjectWizard()
     setCategory(QLatin1String(ProjectExplorer::Constants::IMPORT_WIZARD_CATEGORY));
     setDisplayCategory(QLatin1String(ProjectExplorer::Constants::IMPORT_WIZARD_CATEGORY_DISPLAY));
 
-    setIcon(QIcon(QLatin1String(":/rubysupport/Ruby.png")));
+    setIcon(QIcon(QLatin1String(Constants::RubyIcon)));
 }
 
 Core::BaseFileWizard *ProjectWizard::create(QWidget *parent, const Core::WizardDialogParameters &parameters) const

@@ -22,6 +22,7 @@ QDebug &operator<<(QDebug &s, Token::Kind t)
         CASE_STR(Identifier);
         CASE_STR(Regexp);
         CASE_STR(Symbol);
+        CASE_STR(SymbolHashKey);
         CASE_STR(Method);
         CASE_STR(Parameter);
         CASE_STR(ClassField);
@@ -256,6 +257,14 @@ void Plugin::test_brackets()
     QCOMPARE(tokenize("%q[[]]"), expectedTokens);
     QCOMPARE(tokenize("%w(())"), expectedTokens);
     QCOMPARE(tokenize("%q!\\!!"), expectedTokens);
+}
+
+void Plugin::test_keyword_symbols()
+{
+    Tokens expectedTokens = { Token::SymbolHashKey, Token::Whitespace, Token::Symbol };
+    QCOMPARE(tokenize("if: :foo"), expectedTokens);
+    expectedTokens = { Token::Identifier, Token::OperatorAssign, Token::Whitespace, Token::Symbol };
+    QCOMPARE(tokenize("a= :if"), expectedTokens);
 }
 
 } // namespace Ruby

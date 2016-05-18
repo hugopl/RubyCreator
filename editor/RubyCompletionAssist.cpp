@@ -19,7 +19,8 @@ enum KindOfCompletion {
     MayBeAIdentifier,
     MayBeAMethod,
     MayBeConstant,
-    MayBeASymbol
+    MayBeASymbol,
+    MaybeNothing
 };
 
 static KindOfCompletion kindOfCompletion(QTextDocument *document, int &startPosition)
@@ -33,8 +34,12 @@ static KindOfCompletion kindOfCompletion(QTextDocument *document, int &startPosi
             startPosition++;
             return MayBeAMethod;
         }
-        if (ch == QLatin1Char(':'))
+        if (ch == QLatin1Char(':')) {
+            QChar lastChar = document->characterAt(startPosition - 1);
+            if (lastChar.isLetterOrNumber() || lastChar == QLatin1Char(':'))
+                return MaybeNothing;
             return MayBeASymbol;
+        }
         if (ch.isUpper())
             mayBeAConstant = true;
     } while (ch.isLetterOrNumber() || ch == QLatin1Char('_'));
@@ -145,12 +150,13 @@ TextEditor::IAssistProposal *CompletionAssistProcessor::perform(const TextEditor
     case MayBeASymbol:
         addProposalFromSet(proposals, cm->symbolsIn(fileName), myTyping, m_symbolIcon);
         break;
+    default:
+        break;
     }
 
     if (proposals.empty()) {
         return 0;
     }
-
     TextEditor::GenericProposalModel *model = new TextEditor::GenericProposalModel;
     model->loadContent(proposals);
     TextEditor::IAssistProposal *proposal = new TextEditor::GenericProposal(startPosition, model);

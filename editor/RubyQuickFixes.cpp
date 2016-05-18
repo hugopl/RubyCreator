@@ -1,6 +1,6 @@
 #include "RubyQuickFixes.h"
 
-#include <QTextBlock>
+#include <QTextDocument>
 #include <texteditor/codeassist/assistinterface.h>
 #include <algorithm>
 
@@ -16,13 +16,14 @@ void SwitchStringQuotes::matchingOperations(const TextEditor::QuickFixInterface 
 {
     QTextBlock block = interface->textDocument()->findBlock(interface->position());
     QString line = block.text();
-    int position = interface->position() - block.position();
+    int userCursorPosition = interface->position();
+    int position = userCursorPosition - block.position();
     Token token = Scanner::tokenAt(&line, position);
 
     if (token.kind != Ruby::Token::String)
         return;
 
-    SwitchStringQuotesOp* operation = new SwitchStringQuotesOp(interface->textDocument(), token.position + block.position(), token.length);
+    SwitchStringQuotesOp* operation = new SwitchStringQuotesOp(block, token, userCursorPosition);
     QString description;
     if (line[token.position] == QLatin1Char('"'))
         description = QStringLiteral("Convert to single quotes");
@@ -33,17 +34,14 @@ void SwitchStringQuotes::matchingOperations(const TextEditor::QuickFixInterface 
     result.append(operation);
 }
 
-SwitchStringQuotesOp::SwitchStringQuotesOp(QTextDocument* document, int position, int length)
-    : m_document(document), m_position(position), m_length(length)
+SwitchStringQuotesOp::SwitchStringQuotesOp(QTextBlock &block, const Token &token, int userCursorPosition)
+    : m_block(block), m_token(token), m_userCursorPosition(userCursorPosition)
 {
 }
 
 void SwitchStringQuotesOp::perform()
 {
-    QTextBlock block = m_document->findBlock(m_position);
-    QString line = block.text();
-    int linePos = m_position - block.position();
-    QString string = line.mid(linePos, m_length);
+    QString string = m_block.text().mid(m_token.position, m_token.length);
 
     QString oldQuote = QStringLiteral("\"");
     QString newQuote = QStringLiteral("'");
@@ -55,14 +53,13 @@ void SwitchStringQuotesOp::perform()
     string[0] = newQuote[0];
     string[string.length() - 1] = newQuote[0];
 
-    QTextCursor cursor(block);
+    QTextCursor cursor(m_block);
     cursor.beginEditBlock();
-    cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor, linePos);
-    cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, m_length);
+    cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor, m_token.position);
+    cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, m_token.length);
     cursor.removeSelectedText();
     cursor.insertText(string);
     cursor.endEditBlock();
 }
-
 
 }

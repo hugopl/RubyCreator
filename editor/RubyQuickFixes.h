@@ -1,10 +1,12 @@
 #ifndef Ruby_QuickFixes_h
 #define Ruby_QuickFixes_h
 
-#include <QTextDocument>
+#include <QTextBlock>
 
 #include <extensionsystem/iplugin.h>
 #include <texteditor/quickfix.h>
+
+#include "RubyScanner.h"
 
 namespace Ruby {
 
@@ -21,12 +23,12 @@ public:
 
 class SwitchStringQuotesOp : public TextEditor::QuickFixOperation {
 public:
-    SwitchStringQuotesOp(QTextDocument* document, int position, int length);
+    SwitchStringQuotesOp(QTextBlock &block, const Token &token, int userCursorPosition);
     void perform() Q_DECL_OVERRIDE;
 private:
-    QTextDocument *m_document;
-    int m_position;
-    int m_length;
+    QTextBlock m_block;
+    Token m_token;
+    int m_userCursorPosition;
 };
 }
 

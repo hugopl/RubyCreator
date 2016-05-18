@@ -21,7 +21,7 @@ ProjectWizard::ProjectWizard()
     setCategory(QLatin1String(ProjectExplorer::Constants::IMPORT_WIZARD_CATEGORY));
     setDisplayCategory(QLatin1String(ProjectExplorer::Constants::IMPORT_WIZARD_CATEGORY_DISPLAY));
 
-    setIcon(QIcon(QLatin1String(":/rubysupport/Ruby.png")));
+    setIcon(QIcon(QLatin1String(Constants::RubyIcon)));
 }
 
 Core::BaseFileWizard *ProjectWizard::create(QWidget *parent, const Core::WizardDialogParameters &parameters) const
@@ -54,7 +54,7 @@ Core::GeneratedFiles ProjectWizard::generateFiles(const QWizard *widget, QString
     return Core::GeneratedFiles() << projectFile;
 }
 
-bool ProjectWizard::postGenerateFiles(const QWizard*, const Core::GeneratedFiles &files, QString *errorMessage)
+bool ProjectWizard::postGenerateFiles(const QWizard*, const Core::GeneratedFiles &files, QString *errorMessage) const
 {
     return ProjectExplorer::CustomProjectWizard::postGenerateOpen(files, errorMessage);
 }

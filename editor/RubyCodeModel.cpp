@@ -4,6 +4,7 @@
 #include <QElapsedTimer>
 #include <QFile>
 #include <QFileInfo>
+#include <QRegularExpression>
 #include <QDebug>
 
 namespace Ruby {
@@ -96,6 +97,40 @@ static Symbol createSymbol(const QString *fileName, const QString &contents, Sca
     return sym;
 }
 
+// This does not support multiline symbols defined by %i.
+static void parseRubySymbol(const QString &contents, Token token, QSet<QString>& symbols)
+{
+    if (contents[token.position] == QLatin1Char(':')) {
+        symbols << contents.mid(token.position, token.length);
+    } else if (contents[token.position + token.length - 1] == QLatin1Char(':')) {
+        QString symbol = contents.mid(token.position, token.length - 1);
+        symbol.prepend(QLatin1Char(':'));
+        symbols << symbol;
+    } else {
+        QStringRef symbolsToSplit;
+        if (contents[token.position] == QLatin1Char('%')) {
+            if (token.length < 4 || contents[token.position + 1] != QLatin1Char('i'))
+                return;
+
+            QChar endDelimiter = translateDelimiter(contents[token.position + 2]);
+            int start = token.position + 3;
+            QStringRef contentsRef(&contents, start, token.length - 3);
+            int end = contentsRef.indexOf(endDelimiter);
+            symbolsToSplit = end < 0 ? contentsRef : contentsRef.left(end);
+        } else {
+            // Work 90% of the time... but not for the last item in a multiline symbol declaration.
+            symbolsToSplit = QStringRef(&contents, token.position, token.length);
+        }
+
+        // To be able to use QStringRef everywhere we split things by spaces instead of by the regexp /\s+/
+        // But who cares for the ones using TABS!? :-)
+        QVector<QStringRef> result = symbolsToSplit.split(QLatin1Char(' '));
+        foreach(const QStringRef& item, result) {
+            symbols << QStringRef(item).toString().prepend(QLatin1Char(':'));
+        }
+    }
+}
+
 void addMethodParameter(Symbol& method, const QString& parameter)
 {
     QString& name = method.name;
@@ -145,7 +180,8 @@ void CodeModel::updateFile(const QString &fileName, const QString &contents)
             data->constants << contents.mid(token.position, token.length);
             break;
         case Token::Symbol:
-            data->symbols << contents.mid(token.position, token.length);
+        case Token::SymbolHashKey:
+            parseRubySymbol(contents, token, data->symbols);
             break;
         case Token::OperatorAssign:
             if (previousToken.kind == Token::Constant)

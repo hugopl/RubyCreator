@@ -45,6 +45,7 @@ static void initFormats(QVector<QTextCharFormat> &formats)
     formats[Token::ClassField].setForeground(QColor(0, 128, 128));
     formats[Token::Number].setForeground(QColor(0, 153, 153));
     formats[Token::Symbol].setForeground(QColor(153, 0, 115));
+    formats[Token::SymbolHashKey].setForeground(QColor(70, 0, 115));
     formats[Token::Method].setForeground(QColor(153, 0, 0));
     formats[Token::Method].setFontWeight(75);
     formats[Token::Parameter].setFontItalic(true);
@@ -79,7 +80,7 @@ int Highlighter::highlightLine(const QString &text, int state)
     Token token;
     while ((token = scanner.read()).kind != Token::EndOfBlock) {
         setFormat(token.position, token.length, formatForToken(token));
-        if (token.kind == Token::Operator) {
+        if (token.isParenthesisLike()) {
             QChar ch = text[token.position];
             if (openParenthesis.contains(ch))
                 m_currentBlockParentheses << Parenthesis(Parenthesis::Opened, ch, token.position);

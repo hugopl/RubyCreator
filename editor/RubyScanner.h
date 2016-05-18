@@ -9,6 +9,8 @@
 
 namespace Ruby {
 
+QChar translateDelimiter(QChar ch);
+
 class Token
 {
 public:
@@ -43,6 +45,7 @@ public:
         OperatorAssign      = 25,
         OperatorSemiColon   = 26,
         KeywordElseElsIfRescueEnsure = 27,
+        // If you change this order, see isParenthesisLike() method.
         OpenBraces                   = 28,
         CloseBraces                  = 29,
         OpenBrackets  = 30,
@@ -51,6 +54,7 @@ public:
         Backtick,
         InStringCode,
         KeywordVisibility,
+        SymbolHashKey,
         EndOfBlock
     };
 
@@ -63,6 +67,11 @@ public:
     Kind kind;
     int position;
     int length;
+
+    bool isParenthesisLike() const
+    {
+        return kind == Operator || (kind >= OpenBraces && kind <= CloseBrackets);
+    }
 };
 
 class Scanner
@@ -73,7 +82,8 @@ public:
     enum State {
         State_Default,
         State_String,
-        State_Regexp
+        State_Regexp,
+        State_Symbols
     };
 
     Scanner(const QString *text);

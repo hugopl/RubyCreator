@@ -42,7 +42,7 @@ static const char *const RUBY_KEYWORDS[] = {
 
 static const int N_KEYWORDS = std::extent<decltype(RUBY_KEYWORDS)>::value;
 
-static QChar translateDelimiter(QChar ch)
+QChar translateDelimiter(QChar ch)
 {
     switch (ch.toLatin1()) {
     case '(': return QLatin1Char(')');
@@ -131,6 +131,7 @@ Token Scanner::read()
     switch (state) {
     case State_String:
     case State_Regexp:
+    case State_Symbols:
         return readStringLiteral(saved, state);
     default:
         return onDefaultState();
@@ -236,6 +237,10 @@ Token Scanner::onDefaultState()
         token = Token(Token::OpenBrackets, m_src.anchor(), m_src.length());
     } else if (first == QLatin1Char(']')) {
         token = Token(Token::CloseBrackets, m_src.anchor(), m_src.length());
+        // For historic reasons, ( and ) are the Operator token, this will
+        // be changed soon.
+    } else if (first == QLatin1Char('(') || first == QLatin1Char(')')) {
+        token = Token(Token::Operator, m_src.anchor(), m_src.length());
     } else {
         token = readOperator(first);
     }
@@ -250,6 +255,8 @@ static Token::Kind tokenKindFor(QChar ch, Scanner::State state)
 {
     if (state == Scanner::State_Regexp)
         return Token::Regexp;
+    else if (state == Scanner::State_Symbols)
+        return Token::Symbol;
 
     switch(ch.toLatin1()) {
     case '`':
@@ -286,8 +293,10 @@ Token Scanner::readStringLiteral(QChar quoteChar, Scanner::State state)
 
     forever {
         ch = m_src.peek();
-        if (ch.isNull())
+        if (isLineFeed(ch) || ch.isNull()) {
+            saveState(state, quoteChar);
             break;
+        }
 
         if (ch == quoteChar && bracketCount == 0)
             break;
@@ -389,7 +398,10 @@ Token Scanner::readIdentifier()
     QStringRef value = m_src.value();
 
     Token::Kind kind = Token::Identifier;
-    if (value.at(0) == QLatin1Char('@')) {
+    if (m_src.peek() == QLatin1Char(':') && m_src.peek(1) != QLatin1Char(':')) {
+        m_src.move();
+        kind = Token::SymbolHashKey;
+    } else if (value.at(0) == QLatin1Char('@')) {
         kind = Token::ClassField;
     } else if (value.length() > 1 && value.at(0) == QLatin1Char(':')) {
         kind = Token::Symbol;
@@ -579,10 +591,6 @@ Token Scanner::readWhiteSpace()
   */
 Token Scanner::readOperator(QChar first)
 {
-    static const QString singleCharOperators = QStringLiteral("[]{}()");
-    if (singleCharOperators.contains(first))
-        return Token(Token::Operator, m_src.anchor(), m_src.length());
-
     static const QString operators = QStringLiteral("<=>+-/*%!");
     static const QString colon = QStringLiteral(":");
     const QString &acceptedChars = first == QLatin1Char(':') ? colon : operators;
@@ -605,6 +613,8 @@ Token Scanner::readPercentageNotation()
     if (ch.isLetter()) {
         if (ch == QLatin1Char('r'))
             state = State_Regexp;
+        if (ch == QLatin1Char('i'))
+            state = State_Symbols;
         m_src.move();
     }
     QChar delimiter = translateDelimiter(m_src.peek());

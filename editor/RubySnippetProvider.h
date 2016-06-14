@@ -14,17 +14,17 @@ namespace Ruby {
 class SnippetProvider : public TextEditor::ISnippetProvider
 {
 public:
-    QString groupId() const Q_DECL_OVERRIDE
+    QString groupId() const override
     {
         return QLatin1String(Constants::SnippetGroupId);
     }
 
-    QString displayName() const Q_DECL_OVERRIDE
+    QString displayName() const override
     {
         return QLatin1String("Ruby");
     }
 
-    void decorateEditor(TextEditor::SnippetEditorWidget *editor) const Q_DECL_OVERRIDE
+    void decorateEditor(TextEditor::SnippetEditorWidget *editor) const override
     {
         if (TextEditor::TextDocument *document = editor->textDocument()) {
             document->setSyntaxHighlighter(new Highlighter);

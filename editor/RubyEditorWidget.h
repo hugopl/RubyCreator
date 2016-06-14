@@ -18,12 +18,12 @@ public:
     EditorWidget();
     ~EditorWidget();
 
-    Link findLinkAt(const QTextCursor &cursor, bool, bool inNextSplit) Q_DECL_OVERRIDE;
-    void unCommentSelection() Q_DECL_OVERRIDE;
+    Link findLinkAt(const QTextCursor &cursor, bool, bool inNextSplit) override;
+    void unCommentSelection() override;
 
-    void aboutToOpen(const QString &fileName, const QString &realFileName) Q_DECL_OVERRIDE;
+    void aboutToOpen(const QString &fileName, const QString &realFileName) override;
 protected:
-    void finalizeInitialization() Q_DECL_OVERRIDE;
+    void finalizeInitialization() override;
 
 private slots:
     void scheduleCodeModelUpdate();

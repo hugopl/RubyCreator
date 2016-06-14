@@ -12,9 +12,9 @@ namespace Ruby {
 class AmbigousMethodAssistProvider : public TextEditor::IAssistProvider
 {
 public:
-    RunType runType() const Q_DECL_OVERRIDE;
-    bool supportsEditor(Core::Id editorId) const Q_DECL_OVERRIDE;
-    TextEditor::IAssistProcessor *createProcessor() const Q_DECL_OVERRIDE;
+    RunType runType() const override;
+    bool supportsEditor(Core::Id editorId) const override;
+    TextEditor::IAssistProcessor *createProcessor() const override;
 
     void setSymbols(const QList<Symbol> &symbols) { m_symbols = symbols; }
     void setCursorPosition(int cursorPosition) { m_cursorPosition = cursorPosition; }

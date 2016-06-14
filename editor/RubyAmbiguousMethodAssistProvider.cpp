@@ -27,7 +27,7 @@ public:
         : GenericProposal(cursorPos, items)
     {}
 
-    bool isFragile() const Q_DECL_OVERRIDE { return true; }
+    bool isFragile() const override { return true; }
 };
 
 class AmbigousMethodProposalItem : public TextEditor::AssistProposalItem
@@ -45,7 +45,7 @@ public:
         setDetail(*symbol.file);
     }
 
-    void apply(TextEditor::TextDocumentManipulatorInterface&, int) const Q_DECL_OVERRIDE
+    void apply(TextEditor::TextDocumentManipulatorInterface&, int) const override
     {
         Core::EditorManager::OpenEditorFlags flags = Core::EditorManager::NoFlags;
         if (m_inNextSplit)
@@ -70,7 +70,7 @@ public:
     {
     }
 
-    TextEditor::IAssistProposal *perform(const TextEditor::AssistInterface *interface) Q_DECL_OVERRIDE
+    TextEditor::IAssistProposal *perform(const TextEditor::AssistInterface *interface) override
     {
         delete interface;
 

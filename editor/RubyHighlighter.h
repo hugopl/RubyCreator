@@ -12,7 +12,7 @@ class Highlighter :  public TextEditor::SyntaxHighlighter
 public:
     Highlighter(QTextDocument *parent = 0);
 protected:
-    virtual void highlightBlock(const QString &text) Q_DECL_OVERRIDE;
+    virtual void highlightBlock(const QString &text) override;
 private:
     int highlightLine(const QString &text, int state);
     QTextCharFormat formatForToken(const Token &);

@@ -18,13 +18,13 @@ class QuickFixFactory : public TextEditor::QuickFixFactory {
 
 class SwitchStringQuotes : public QuickFixFactory {
 public:
-    void matchingOperations(const TextEditor::QuickFixInterface &interface, TextEditor::QuickFixOperations &result) Q_DECL_OVERRIDE;
+    void matchingOperations(const TextEditor::QuickFixInterface &interface, TextEditor::QuickFixOperations &result) override;
 };
 
 class SwitchStringQuotesOp : public TextEditor::QuickFixOperation {
 public:
     SwitchStringQuotesOp(QTextBlock &block, const Token &token, int userCursorPosition);
-    void perform() Q_DECL_OVERRIDE;
+    void perform() override;
 private:
     QTextBlock m_block;
     Token m_token;

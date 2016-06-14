@@ -11,9 +11,9 @@ class ProjectWizard : public Core::BaseFileWizardFactory
 public:
     ProjectWizard();
 protected:
-    Core::BaseFileWizard *create(QWidget *parent, const Core::WizardDialogParameters &wizardDialogParameters) const Q_DECL_OVERRIDE;
-    Core::GeneratedFiles generateFiles(const QWizard *widget, QString *) const Q_DECL_OVERRIDE;
-    bool postGenerateFiles(const QWizard *, const Core::GeneratedFiles &files, QString *errorMessage) const Q_DECL_OVERRIDE;
+    Core::BaseFileWizard *create(QWidget *parent, const Core::WizardDialogParameters &wizardDialogParameters) const override;
+    Core::GeneratedFiles generateFiles(const QWizard *widget, QString *) const override;
+    bool postGenerateFiles(const QWizard *, const Core::GeneratedFiles &files, QString *errorMessage) const override;
 };
 
 }

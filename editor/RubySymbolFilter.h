@@ -21,9 +21,9 @@ class SymbolFilter : public  Core::ILocatorFilter
 public:
     SymbolFilter(SymbolProvider provider, const char *description, QChar shortcut);
 
-    QList<Core::LocatorFilterEntry> matchesFor(QFutureInterface<Core::LocatorFilterEntry> &future, const QString &entry) Q_DECL_OVERRIDE;
-    void accept(Core::LocatorFilterEntry selection) const Q_DECL_OVERRIDE;
-    void refresh(QFutureInterface<void> &future) Q_DECL_OVERRIDE;
+    QList<Core::LocatorFilterEntry> matchesFor(QFutureInterface<Core::LocatorFilterEntry> &future, const QString &entry) override;
+    void accept(Core::LocatorFilterEntry selection) const override;
+    void refresh(QFutureInterface<void> &future) override;
 private slots:
     void onCurrentEditorChanged(Core::IEditor *editor);
 

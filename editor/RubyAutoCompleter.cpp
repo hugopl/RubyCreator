@@ -6,7 +6,7 @@
 
 namespace Ruby {
 
-bool AutoCompleter::contextAllowsAutoParentheses(const QTextCursor &cursor, const QString &textToInsert) const
+bool AutoCompleter::contextAllowsAutoQuotes(const QTextCursor &cursor, const QString &textToInsert) const
 {
     if (isInComment(cursor))
         return false;
@@ -19,6 +19,24 @@ bool AutoCompleter::contextAllowsAutoParentheses(const QTextCursor &cursor, cons
     switch (ch.unicode()) {
     case '"':
     case '\'':
+        return true;
+
+    default:
+        return false;
+    }
+}
+
+bool AutoCompleter::contextAllowsAutoBrackets(const QTextCursor &cursor, const QString &textToInsert) const
+{
+    if (isInComment(cursor))
+        return false;
+
+    QChar ch;
+
+    if (!textToInsert.isEmpty())
+        ch = textToInsert.at(0);
+
+    switch (ch.unicode()) {
     case '(':
     case '[':
     case '{':
@@ -32,25 +50,13 @@ bool AutoCompleter::contextAllowsAutoParentheses(const QTextCursor &cursor, cons
     }
 }
 
-QString AutoCompleter::insertMatchingBrace(const QTextCursor &, const QString &text, QChar la, int *skippedChars) const
+QString AutoCompleter::insertMatchingBrace(const QTextCursor &, const QString &text, QChar la, bool skipChars, int *skippedChars) const
 {
     if (text.length() != 1)
         return QString();
 
     const QChar ch = text.at(0);
     switch (ch.unicode()) {
-    case '\'':
-        if (la != ch)
-            return QString(ch);
-        ++*skippedChars;
-        break;
-
-    case '"':
-        if (la != ch)
-            return QString(ch);
-        ++*skippedChars;
-        break;
-
     case '(':
         return QStringLiteral(")");
 
@@ -64,7 +70,40 @@ QString AutoCompleter::insertMatchingBrace(const QTextCursor &, const QString &t
     case ']':
     case '}':
     case ';':
-        if (la == ch)
+        if (skipChars && la == ch)
+            ++*skippedChars;
+        break;
+
+    default:
+        break;
+    } // end of switch
+
+    return QString();
+}
+
+QString AutoCompleter::insertMatchingQuote(const QTextCursor &, const QString &text, QChar la, bool skipChars, int *skippedChars) const
+{
+    if (text.length() != 1)
+        return QString();
+
+    const QChar ch = text.at(0);
+    switch (ch.unicode()) {
+    case '\'':
+        if (la != ch)
+            return QString(ch);
+        if (skipChars)
+            ++*skippedChars;
+        break;
+
+    case '"':
+        if (la != ch)
+            return QString(ch);
+        if (skipChars)
+            ++*skippedChars;
+        break;
+
+    case ';':
+        if (skipChars && la == ch)
             ++*skippedChars;
         break;
 

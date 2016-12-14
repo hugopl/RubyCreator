@@ -2,6 +2,7 @@
 #define Ruby_Plugin_h
 
 #include <extensionsystem/iplugin.h>
+#include "editor/RubyQuickFixAssistProvider.h"
 
 namespace Ruby {
 
@@ -14,11 +15,17 @@ public:
     Plugin();
     ~Plugin();
 
+    static Plugin *instance();
+
     virtual bool initialize(const QStringList &arguments, QString *errorString) override;
     virtual void extensionsInitialized() override;
+    QuickFixAssistProvider* quickFixProvider();
 
 private:
     void initializeToolsSettings();
+
+    static Plugin* m_instance;
+    QuickFixAssistProvider* m_quickFixProvider;
 
 #ifdef WITH_TESTS
 private slots:

@@ -14,6 +14,7 @@ SOURCES += RubyPlugin.cpp \
     editor/RubyCodeStylePreferencesFactory.cpp \
     editor/RubyCompletionAssist.cpp \
     editor/RubyEditor.cpp \
+    editor/RubyEditorDocument.cpp \
     editor/RubyEditorFactory.cpp \
     editor/RubyEditorWidget.cpp \
     editor/RubyHighlighter.cpp \
@@ -40,6 +41,7 @@ HEADERS += RubyPlugin.h \
     editor/RubyCodeStylePreferencesFactory.h \
     editor/RubyCompletionAssist.h \
     editor/RubyEditor.h \
+    editor/RubyEditorDocument.h \
     editor/RubyEditorFactory.h \
     editor/RubyEditorWidget.h \
     editor/RubyHighlighter.h \

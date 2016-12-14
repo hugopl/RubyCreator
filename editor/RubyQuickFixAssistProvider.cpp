@@ -9,6 +9,11 @@
 
 namespace Ruby {
 
+QuickFixAssistProvider::QuickFixAssistProvider(QObject *parent)
+    : TextEditor::QuickFixAssistProvider(parent)
+{
+}
+
 TextEditor::IAssistProvider::RunType QuickFixAssistProvider::runType() const
 {
     return TextEditor::IAssistProvider::Synchronous;

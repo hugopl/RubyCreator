@@ -22,6 +22,7 @@ public:
     void unCommentSelection() override;
 
     void aboutToOpen(const QString &fileName, const QString &realFileName) override;
+
 protected:
     void finalizeInitialization() override;
 

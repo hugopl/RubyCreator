@@ -25,8 +25,11 @@
 
 namespace Ruby {
 
+Plugin *Plugin::m_instance = 0;
+
 Plugin::Plugin()
 {
+    m_instance = this;
 }
 
 Plugin::~Plugin()
@@ -34,6 +37,13 @@ Plugin::~Plugin()
     TextEditor::TextEditorSettings::unregisterCodeStyle(Constants::SettingsId);
     TextEditor::TextEditorSettings::unregisterCodeStylePool(Constants::SettingsId);
     TextEditor::TextEditorSettings::unregisterCodeStyleFactory(Constants::SettingsId);
+
+    m_instance = 0;
+}
+
+Plugin *Plugin::instance()
+{
+    return m_instance;
 }
 
 bool Plugin::initialize(const QStringList &, QString *errorString)
@@ -66,7 +76,7 @@ bool Plugin::initialize(const QStringList &, QString *errorString)
 
     addAutoReleasedObject(new CompletionAssistProvider);
 
-    addAutoReleasedObject(new QuickFixAssistProvider);
+    m_quickFixProvider = new QuickFixAssistProvider(this);
     registerQuickFixes(this);
 
     return true;
@@ -74,6 +84,11 @@ bool Plugin::initialize(const QStringList &, QString *errorString)
 
 void Plugin::extensionsInitialized()
 {
+}
+
+QuickFixAssistProvider *Plugin::quickFixProvider()
+{
+    return m_quickFixProvider;
 }
 
 void Plugin::initializeToolsSettings()

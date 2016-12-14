@@ -1,5 +1,6 @@
 #include "RubyAutoCompleter.h"
 #include "RubyCompletionAssist.h"
+#include "RubyEditorDocument.h"
 #include "RubyEditor.h"
 #include "RubyEditorFactory.h"
 #include "RubyHighlighter.h"
@@ -23,7 +24,7 @@ EditorFactory::EditorFactory()
     addMimeType(Constants::MimeType);
     addMimeType(Constants::ProjectMimeType);
 
-    setDocumentCreator([]() { return new TextEditor::TextDocument(Constants::EditorId); });
+    setDocumentCreator([]() { return new EditorDocument; });
     setIndenterCreator([]() { return new Indenter; });
     setEditorWidgetCreator([]() { return new EditorWidget; });
     setEditorCreator([]() { return new Editor; });

@@ -31,7 +31,7 @@ void SwitchStringQuotes::matchingOperations(const TextEditor::QuickFixInterface 
         description = QStringLiteral("Convert to double quotes");
     operation->setDescription(description);
 
-    result.append(operation);
+    result << operation;
 }
 
 SwitchStringQuotesOp::SwitchStringQuotesOp(QTextBlock &block, const Token &token, int userCursorPosition)

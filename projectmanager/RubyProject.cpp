@@ -2,6 +2,7 @@
 
 #include "../editor/RubyCodeModel.h"
 #include "../RubyConstants.h"
+#include "RubyProjectFile.h"
 #include "RubyProjectManager.h"
 #include "RubyProjectNode.h"
 
@@ -20,6 +21,7 @@ Project::Project(ProjectManager *projectManager, const QString &fileName)
 {
     m_projectDir = QFileInfo(fileName).dir();
     m_rootNode = new ProjectNode(Utils::FileName::fromString(m_projectDir.dirName()));
+    setDocument(new ProjectFile(fileName));
 
     m_projectScanTimer.setSingleShot(true);
     connect(&m_projectScanTimer, &QTimer::timeout, this, &Project::populateProject);

@@ -26,6 +26,7 @@ SOURCES += RubyPlugin.cpp \
     editor/RubyScanner.cpp \
     editor/RubySymbolFilter.cpp \
     projectmanager/RubyProject.cpp \
+    projectmanager/RubyProjectFile.cpp \
     projectmanager/RubyProjectManager.cpp \
     projectmanager/RubyProjectWizard.cpp
 
@@ -56,6 +57,7 @@ HEADERS += RubyPlugin.h \
     editor/RubySymbolFilter.h \
     editor/SourceCodeStream.h \
     projectmanager/RubyProject.h \
+    projectmanager/RubyProjectFile.h \
     projectmanager/RubyProjectManager.h \
     projectmanager/RubyProjectNode.h \
     projectmanager/RubyProjectWizard.h

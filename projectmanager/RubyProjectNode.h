@@ -15,18 +15,19 @@ public:
     {
     }
 
-    QList<ProjectExplorer::ProjectAction> supportedActions(Node *) const override { return QList<ProjectExplorer::ProjectAction>(); }
+    QList<ProjectExplorer::ProjectAction> supportedActions(Node *) const override;
 
     bool canAddSubProject(const QString &) const override { return false; }
+    bool canRenameFile(const QString &, const QString &) override { return true; }
 
     bool addSubProjects(const QStringList &) override { return false; }
 
     bool removeSubProjects(const QStringList &) override { return false; }
 
-    bool addFiles(const QStringList &, QStringList*) override { return false; }
-    bool removeFiles(const QStringList &, QStringList*) override { return false; }
-    bool deleteFiles(const QStringList &) override { return false; }
-    bool renameFile(const QString &, const QString &) override { return false; }
+    bool addFiles(const QStringList &, QStringList*) override { return true; }
+    bool removeFiles(const QStringList &, QStringList*) override { return true; }
+    bool deleteFiles(const QStringList &) override { return true; }
+    bool renameFile(const QString &, const QString &) override { return true; }
 };
 
 }

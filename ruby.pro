@@ -28,6 +28,7 @@ SOURCES += RubyPlugin.cpp \
     projectmanager/RubyProject.cpp \
     projectmanager/RubyProjectFile.cpp \
     projectmanager/RubyProjectManager.cpp \
+    projectmanager/RubyProjectNode.cpp \
     projectmanager/RubyProjectWizard.cpp
 
 equals(TEST, 1) {

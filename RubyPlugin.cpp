@@ -21,8 +21,6 @@
 #include <texteditor/texteditor.h>
 #include <texteditor/texteditorsettings.h>
 
-#include <utils/mimetypes/mimedatabase.h>
-
 namespace Ruby {
 
 Plugin *Plugin::m_instance = 0;
@@ -49,8 +47,6 @@ Plugin *Plugin::instance()
 bool Plugin::initialize(const QStringList &, QString *errorString)
 {
     Q_UNUSED(errorString);
-
-    Utils::MimeDatabase::addMimeTypes(QLatin1String(":/rubysupport/Ruby.mimetypes.xml"));
 
     initializeToolsSettings();
 

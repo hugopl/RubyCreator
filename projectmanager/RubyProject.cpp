@@ -110,8 +110,7 @@ void Project::addNodes(const QSet<QString> &nodes)
         path = m_projectDir.relativeFilePath(node).split(sep);
         path.pop_back();
         FolderNode *folder = findFolderFor(path);
-        folder->addFileNodes(QList<FileNode*>() << new FileNode(Utils::FileName::fromString(node),
-                                                                SourceType, false));
+        folder->addNode(new FileNode(Utils::FileName::fromString(node), FileType::Source, false));
     }
 }
 
@@ -123,8 +122,8 @@ void Project::tryRemoveEmptyFolder(ProjectExplorer::FolderNode *folder)
         return;
 
     FolderNode *parent = folder->parentFolderNode();
-    if (parent && folder->fileNodes().empty() && folder->subFolderNodes().empty()) {
-        parent->removeFolderNodes(QList<FolderNode *>() << folder);
+    if (parent && folder->fileNodes().empty() && folder->folderNodes().empty()) {
+        parent->removeNode(folder);
         tryRemoveEmptyFolder(parent);
     }
 }
@@ -143,7 +142,7 @@ void Project::removeNodes(const QSet<QString> &nodes)
 
         foreach (FileNode *file, folder->fileNodes()) {
             if (file->filePath().toString() == node) {
-                folder->removeFileNodes(QList<FileNode*>() << file);
+                folder->removeNode(file);
                 tryRemoveEmptyFolder(folder);
                 break;
             }
@@ -158,7 +157,7 @@ ProjectExplorer::FolderNode *Project::findFolderFor(const QStringList &path)
 
     foreach (const QString &part, path) {
         bool folderFound = false;
-        foreach (FolderNode *subFolder, folder->subFolderNodes()) {
+        foreach (FolderNode *subFolder, folder->folderNodes()) {
             if (subFolder->displayName() == part) {
                 folder = subFolder;
                 folderFound = true;
@@ -167,7 +166,7 @@ ProjectExplorer::FolderNode *Project::findFolderFor(const QStringList &path)
         }
         if (!folderFound) {
             FolderNode *newFolder = new FolderNode(Utils::FileName::fromString(part));
-            folder->addFolderNodes(QList<FolderNode*>() << newFolder);
+            folder->addNode(newFolder);
             folder = newFolder;
         }
     }

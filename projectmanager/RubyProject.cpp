@@ -16,8 +16,7 @@ namespace Ruby {
 
 const int MIN_TIME_BETWEEN_PROJECT_SCANS = 4500;
 
-Project::Project(ProjectManager *projectManager, const QString &fileName)
-    : m_projectManager(projectManager)
+Project::Project(const QString &fileName)
 {
     m_projectDir = QFileInfo(fileName).dir();
     m_rootNode = new ProjectNode(Utils::FileName::fromString(m_projectDir.dirName()));
@@ -36,11 +35,6 @@ Project::Project(ProjectManager *projectManager, const QString &fileName)
 QString Project::displayName() const
 {
     return m_projectDir.dirName();
-}
-
-ProjectExplorer::IProjectManager *Project::projectManager() const
-{
-    return m_projectManager;
 }
 
 ProjectExplorer::ProjectNode *Project::rootProjectNode() const

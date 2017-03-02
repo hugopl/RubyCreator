@@ -16,7 +16,7 @@ QString ProjectManager::mimeType() const
 
 ProjectExplorer::Project *ProjectManager::openProject(const QString &fileName)
 {
-    return new Project(this, fileName);
+    return new Project(fileName);
 }
 
 }

@@ -12,16 +12,14 @@ namespace TextEditor { class TextDocument; }
 
 namespace Ruby {
 
-class ProjectManager;
 class ProjectNode;
 
 class Project : public ProjectExplorer::Project
 {
     Q_OBJECT
 public:
-    Project(ProjectManager *projectManager, const QString &fileName);
+    Project(const QString &fileName);
     QString displayName() const override;
-    ProjectExplorer::IProjectManager *projectManager() const override;
     ProjectExplorer::ProjectNode *rootProjectNode() const override;
 
     QStringList files(FilesMode) const override;
@@ -30,7 +28,6 @@ private slots:
     void scheduleProjectScan();
     void populateProject();
 private:
-    ProjectManager *m_projectManager;
     ProjectNode *m_rootNode;
 
     QDir m_projectDir;

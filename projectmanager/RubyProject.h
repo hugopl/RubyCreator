@@ -18,7 +18,7 @@ class Project : public ProjectExplorer::Project
 {
     Q_OBJECT
 public:
-    Project(const QString &fileName);
+    explicit Project(const Utils::FileName &fileName);
     QString displayName() const override;
     ProjectExplorer::ProjectNode *rootProjectNode() const override;
 

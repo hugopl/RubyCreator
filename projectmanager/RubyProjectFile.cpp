@@ -6,11 +6,11 @@
 
 namespace Ruby {
 
-ProjectFile::ProjectFile(const QString &filePath)
+ProjectFile::ProjectFile(const Utils::FileName &filePath)
 {
     setId(Core::Id(Constants::ProjectFileId));
     setMimeType(QLatin1String(Constants::ProjectMimeType));
-    setFilePath(Utils::FileName::fromString(filePath));
+    setFilePath(filePath);
 }
 
 }

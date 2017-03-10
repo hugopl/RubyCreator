@@ -11,10 +11,11 @@
 #include "editor/RubySnippetProvider.h"
 #include "editor/RubySymbolFilter.h"
 #include "editor/RubyCompletionAssist.h"
-#include "projectmanager/RubyProjectManager.h"
+#include "projectmanager/RubyProject.h"
 #include "projectmanager/RubyProjectWizard.h"
 
 #include <coreplugin/icore.h>
+#include <projectexplorer/projectmanager.h>
 #include <texteditor/codestylepool.h>
 #include <texteditor/simplecodestylepreferences.h>
 #include <texteditor/tabsettings.h>
@@ -62,7 +63,7 @@ bool Plugin::initialize(const QStringList &, QString *errorString)
     addAutoReleasedObject(new SymbolFilter([](const QString &) {
         return CodeModel::instance()->allClasses();
     }, "Ruby classes", QLatin1Char('c')));
-    addAutoReleasedObject(new ProjectManager);
+    ProjectExplorer::ProjectManager::registerProjectType<Project>(Constants::ProjectMimeType);
 
     Core::IWizardFactory::registerFactoryCreator([]() {
         return QList<Core::IWizardFactory *>() << new ProjectWizard;

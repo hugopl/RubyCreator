@@ -8,7 +8,7 @@ namespace Ruby {
 class ProjectFile : public Core::IDocument
 {
 public:
-    ProjectFile(const QString &filePath);
+    ProjectFile(const Utils::FileName &filePath);
 
 };
 

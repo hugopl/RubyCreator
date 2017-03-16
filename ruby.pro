@@ -65,4 +65,4 @@ RESOURCES += \
     Ruby.qrc
 
 OTHER_FILES += \
-    Readme.md
+    Readme.md Ruby.json.in

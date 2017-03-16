@@ -18,24 +18,25 @@
     $$dependencyList,
 
     \"Mimetypes\" : \"
-    <?xml version="1.0"?>
-    <mime-info xmlns='http://www.freedesktop.org/standards/shared-mime-info'>
-      <mime-type type="text/x-rubycreator-project">
-        <sub-class-of type="text/plain"/>
+    <?xml version=\'1.0\'?>
+
+    <mime-info xmlns=\'http://www.freedesktop.org/standards/shared-mime-info\'>
+      <mime-type type=\'text/x-rubycreator-project\'>
+        <sub-class-of type=\'text/plain\'/>
         <comment>Ruby project file</comment>
-        <glob pattern="*.rubyproject"/>
+        <glob pattern=\'*.rubyproject\'/>
       </mime-type>
 
-      <mime-type type="application/x-ruby">
-        <sub-class-of type="text/plain"/>
+      <mime-type type=\'application/x-ruby\'>
+        <sub-class-of type=\'text/plain\'/>
         <comment>Ruby source file</comment>
-        <glob pattern="*.rb"/>
-        <glob pattern="*.rake"/>
-        <glob pattern="*.gemspec"/>
-        <glob pattern="Gemfile"/>
-        <glob pattern="Rakefile"/>
-        <magic priority="1">
-          <match type="string" offset="0" value="#!/usr/bin/env ruby"/>
+        <glob pattern=\'*.rb\'/>
+        <glob pattern=\'*.rake\'/>
+        <glob pattern=\'*.gemspec\'/>
+        <glob pattern=\'Gemfile\'/>
+        <glob pattern=\'Rakefile\'/>
+        <magic priority=\'1\'>
+          <match type=\'string\' offset=\'0\' value=\'#!/usr/bin/env ruby\'/>
         </magic>
       </mime-type>
     </mime-info>

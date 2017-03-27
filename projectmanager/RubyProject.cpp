@@ -25,7 +25,7 @@ Project::Project(const Utils::FileName &fileName)
     connect(&m_projectScanTimer, &QTimer::timeout, this, &Project::populateProject);
 
     populateProject();
-    CodeModel::instance()->addFiles(files(AllFiles));
+    CodeModel::instance()->addFiles(m_files.toList());
 
     connect(&m_fsWatcher, &QFileSystemWatcher::directoryChanged, this, &Project::scheduleProjectScan);
 }
@@ -39,11 +39,6 @@ QString Project::displayName() const
 ProjectExplorer::ProjectNode *Project::rootProjectNode() const
 {
     return m_rootNode;
-}
-
-QStringList Project::files(FilesMode) const
-{
-    return QStringList(m_files.toList());
 }
 
 void Project::scheduleProjectScan()
@@ -76,9 +71,6 @@ void Project::populateProject()
         CodeModel::instance()->removeSymbolsFrom(file);
     foreach (const QString &file, addedFiles)
         CodeModel::instance()->addFile(file);
-
-    if (removedFiles.size() || addedFiles.size())
-        emit fileListChanged();
 }
 
 void Project::recursiveScanDirectory(const QDir &dir, QSet<QString> &container)

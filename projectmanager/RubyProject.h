@@ -22,8 +22,6 @@ public:
     QString displayName() const override;
     ProjectExplorer::ProjectNode *rootProjectNode() const override;
 
-    QStringList files(FilesMode) const override;
-
 private slots:
     void scheduleProjectScan();
     void populateProject();

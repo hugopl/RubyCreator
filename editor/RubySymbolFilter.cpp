@@ -15,8 +15,8 @@ SymbolFilter::SymbolFilter(SymbolProvider provider, const char *description, QCh
     setShortcutString(shortcut);
     setIncludedByDefault(false);
 
-    connect(Core::EditorManager::instance(), SIGNAL(currentEditorChanged(Core::IEditor*)),
-            this, SLOT(onCurrentEditorChanged(Core::IEditor*)));
+    connect(Core::EditorManager::instance(), &Core::EditorManager::currentEditorChanged,
+            this, &SymbolFilter::onCurrentEditorChanged);
 
 }
 

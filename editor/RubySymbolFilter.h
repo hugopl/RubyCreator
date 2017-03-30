@@ -24,7 +24,8 @@ public:
     QList<Core::LocatorFilterEntry> matchesFor(QFutureInterface<Core::LocatorFilterEntry> &future, const QString &entry) override;
     void accept(Core::LocatorFilterEntry selection) const override;
     void refresh(QFutureInterface<void> &future) override;
-private slots:
+
+private:
     void onCurrentEditorChanged(Core::IEditor *editor);
 
 private:

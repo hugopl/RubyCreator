@@ -33,11 +33,17 @@ EditorWidget::EditorWidget()
 
     m_updateCodeModelTimer.setSingleShot(true);
     m_updateCodeModelTimer.setInterval(CODEMODEL_UPDATE_INTERVAL);
-    connect(&m_updateCodeModelTimer, &QTimer::timeout, this, &EditorWidget::maybeUpdateCodeModel);
+    connect(&m_updateCodeModelTimer, &QTimer::timeout, this, [this] {
+        if (m_codeModelUpdatePending)
+            updateCodeModel();
+    });
 
     m_updateRubocopTimer.setSingleShot(true);
     m_updateRubocopTimer.setInterval(RUBOCOP_UPDATE_INTERVAL);
-    connect(&m_updateRubocopTimer, &QTimer::timeout, this, &EditorWidget::maybeUpdateRubocop);
+    connect(&m_updateRubocopTimer, &QTimer::timeout, this, [this] {
+        if (m_rubocopUpdatePending)
+            updateRubocop();
+    });
 
     CodeModel::instance();
 }
@@ -117,12 +123,6 @@ void EditorWidget::scheduleCodeModelUpdate()
     m_updateCodeModelTimer.start();
 }
 
-void EditorWidget::maybeUpdateCodeModel()
-{
-    if (m_codeModelUpdatePending)
-        updateCodeModel();
-}
-
 void EditorWidget::updateCodeModel()
 {
     const QString textData = textDocument()->plainText();
@@ -140,12 +140,6 @@ void EditorWidget::scheduleRubocopUpdate()
     m_updateRubocopTimer.start();
 }
 
-void EditorWidget::maybeUpdateRubocop()
-{
-    if (m_rubocopUpdatePending)
-        updateRubocop();
-}
-
 void EditorWidget::updateRubocop()
 {
     if (!RubocopHighlighter::instance()->run(textDocument(), m_filePathDueToMaybeABug)) {
@@ -156,8 +150,8 @@ void EditorWidget::updateRubocop()
 
 void EditorWidget::finalizeInitialization()
 {
-    connect(document(), SIGNAL(contentsChanged()), this, SLOT(scheduleCodeModelUpdate()));
-    connect(document(), SIGNAL(contentsChanged()), this, SLOT(scheduleRubocopUpdate()));
+    connect(document(), &QTextDocument::contentsChanged, this, &EditorWidget::scheduleCodeModelUpdate);
+    connect(document(), &QTextDocument::contentsChanged, this, &EditorWidget::scheduleRubocopUpdate);
 }
 
 }

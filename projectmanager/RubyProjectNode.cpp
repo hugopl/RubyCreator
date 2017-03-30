@@ -1,11 +1,20 @@
 #include "RubyProjectNode.h"
 
+using namespace ProjectExplorer;
+
 namespace Ruby {
 
-QList<ProjectExplorer::ProjectAction> ProjectNode::supportedActions(ProjectExplorer::Node *) const
+bool ProjectNode::supportsAction(ProjectAction action, Node *) const
 {
-    using namespace ProjectExplorer;
-    return QList<ProjectAction>({ AddNewFile, EraseFile, Rename, DuplicateFile });
+    switch (action) {
+    case AddNewFile:
+    case EraseFile:
+    case Rename:
+    case DuplicateFile:
+        return true;
+    default:
+        return false;
+    }
 }
 
 }

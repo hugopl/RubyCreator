@@ -4,6 +4,7 @@
 /.moc/
 /.obj/
 /.rcc/
+/.qmake.stash
 Makefile*
 Ruby.json
 *.user*

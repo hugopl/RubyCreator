@@ -2,7 +2,6 @@
 
 #include "../editor/RubyCodeModel.h"
 #include "../RubyConstants.h"
-#include "RubyProjectFile.h"
 #include "RubyProjectNode.h"
 
 #include <QDebug>
@@ -15,11 +14,11 @@ namespace Ruby {
 
 const int MIN_TIME_BETWEEN_PROJECT_SCANS = 4500;
 
-Project::Project(const Utils::FileName &fileName)
+Project::Project(const Utils::FileName &fileName) :
+    ProjectExplorer::Project(Constants::MimeType, fileName, [this] { scheduleProjectScan(); })
 {
     m_projectDir = fileName.toFileInfo().dir();
     m_rootNode = new ProjectNode(Utils::FileName::fromString(m_projectDir.dirName()));
-    setDocument(new ProjectFile(fileName));
 
     m_projectScanTimer.setSingleShot(true);
     connect(&m_projectScanTimer, &QTimer::timeout, this, &Project::populateProject);

@@ -26,12 +26,12 @@ public:
 protected:
     void finalizeInitialization() override;
 
-private slots:
+private:
     void scheduleCodeModelUpdate();
-    void maybeUpdateCodeModel();
 
     void scheduleRubocopUpdate();
-    void maybeUpdateRubocop();
+    void updateCodeModel();
+    void updateRubocop();
 
 private:
     QRegExp m_wordRegex;
@@ -45,9 +45,6 @@ private:
     QString m_filePathDueToMaybeABug;
 
     AmbigousMethodAssistProvider *m_ambigousMethodAssistProvider;
-
-    void updateCodeModel();
-    void updateRubocop();
 };
 
 }

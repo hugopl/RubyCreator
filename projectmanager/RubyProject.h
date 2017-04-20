@@ -20,7 +20,6 @@ class Project : public ProjectExplorer::Project
 
 public:
     explicit Project(const Utils::FileName &fileName);
-    QString displayName() const override;
     ProjectExplorer::ProjectNode *rootProjectNode() const override;
 
 private:

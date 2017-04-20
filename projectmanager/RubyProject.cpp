@@ -27,12 +27,8 @@ Project::Project(const Utils::FileName &fileName) :
     CodeModel::instance()->addFiles(m_files.toList());
 
     connect(&m_fsWatcher, &QFileSystemWatcher::directoryChanged, this, &Project::scheduleProjectScan);
-}
 
-
-QString Project::displayName() const
-{
-    return m_projectDir.dirName();
+    setDisplayName(m_projectDir.dirName());
 }
 
 ProjectExplorer::ProjectNode *Project::rootProjectNode() const

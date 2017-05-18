@@ -29,7 +29,7 @@ void Indenter::indentBlock(QTextDocument*, const QTextBlock &block, const QChar 
         if (indent < 0) {
             while (indent == -1 && previous.isValid()) {
                 indent = previous.userState() >> 20;
-                previous = block.previous();
+                previous = previous.previous();
             }
         }
 

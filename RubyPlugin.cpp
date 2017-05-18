@@ -8,7 +8,6 @@
 #include "editor/RubyHighlighter.h"
 #include "editor/RubyQuickFixAssistProvider.h"
 #include "editor/RubyQuickFixes.h"
-#include "editor/RubySnippetProvider.h"
 #include "editor/RubySymbolFilter.h"
 #include "editor/RubyCompletionAssist.h"
 #include "projectmanager/RubyProject.h"
@@ -18,6 +17,7 @@
 #include <projectexplorer/projectmanager.h>
 #include <texteditor/codestylepool.h>
 #include <texteditor/simplecodestylepreferences.h>
+#include <texteditor/snippets/snippetprovider.h>
 #include <texteditor/tabsettings.h>
 #include <texteditor/texteditor.h>
 #include <texteditor/texteditorsettings.h>
@@ -51,8 +51,6 @@ bool Plugin::initialize(const QStringList &, QString *errorString)
 
     initializeToolsSettings();
 
-    addAutoReleasedObject(new SnippetProvider);
-
     addAutoReleasedObject(new EditorFactory);
     addAutoReleasedObject(new SymbolFilter([](const QString &file) {
         return CodeModel::instance()->methodsIn(file);
@@ -75,6 +73,9 @@ bool Plugin::initialize(const QStringList &, QString *errorString)
 
     m_quickFixProvider = new QuickFixAssistProvider(this);
     registerQuickFixes(this);
+    TextEditor::SnippetProvider::registerGroup(Constants::SnippetGroupId,
+                                               tr("Ruby", "SnippetProvider"),
+                                               &EditorFactory::decorateEditor);
 
     return true;
 }

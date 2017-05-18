@@ -3,8 +3,8 @@
 #include "RubyIndenter.h"
 
 #include <coreplugin/id.h>
-#include <texteditor/snippets/isnippetprovider.h>
 #include <texteditor/simplecodestylepreferences.h>
+#include <texteditor/snippets/snippetprovider.h>
 
 #include <extensionsystem/pluginmanager.h>
 
@@ -37,14 +37,12 @@ TextEditor::Indenter *CodeStylePreferencesFactory::createIndenter() const
     return new Indenter;
 }
 
-TextEditor::ISnippetProvider *CodeStylePreferencesFactory::snippetProvider() const
+TextEditor::SnippetProvider *CodeStylePreferencesFactory::snippetProvider() const
 {
-    const QList<TextEditor::ISnippetProvider *> &providers =
-    ExtensionSystem::PluginManager::getObjects<TextEditor::ISnippetProvider>();
-    foreach (TextEditor::ISnippetProvider *provider, providers)
-        if (provider->groupId() == QLatin1String(Constants::SnippetGroupId))
-            return provider;
-    return 0;
+    return ExtensionSystem::PluginManager::getObject<TextEditor::SnippetProvider>(
+        [](TextEditor::SnippetProvider *provider) {
+            return provider->groupId() == QLatin1String(Constants::SnippetGroupId);
+    });
 }
 
 QString CodeStylePreferencesFactory::previewText() const

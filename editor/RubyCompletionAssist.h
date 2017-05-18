@@ -3,6 +3,7 @@
 
 #include <texteditor/codeassist/completionassistprovider.h>
 #include <texteditor/codeassist/iassistprocessor.h>
+#include <texteditor/snippets/snippetassistcollector.h>
 
 #include <QIcon>
 
@@ -30,6 +31,7 @@ private:
     QIcon m_identifierIcon;
     QIcon m_constantIcon;
     QIcon m_symbolIcon;
+    TextEditor::SnippetAssistCollector m_snippetCollector;
 };
 
 }

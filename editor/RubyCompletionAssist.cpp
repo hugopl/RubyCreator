@@ -104,6 +104,8 @@ CompletionAssistProcessor::CompletionAssistProcessor()
     , m_identifierIcon(QLatin1String(":/codemodel/images/var.png"))
     , m_constantIcon(QLatin1String(":/codemodel/images/macro.png"))
     , m_symbolIcon(m_identifierIcon)
+    , m_snippetCollector(QLatin1String(Constants::SnippetGroupId),
+                         QIcon(QLatin1String(":/texteditor/images/snippet.png")))
 {
 
 }
@@ -153,6 +155,7 @@ TextEditor::IAssistProposal *CompletionAssistProcessor::perform(const TextEditor
     default:
         break;
     }
+    proposals += m_snippetCollector.collect();
 
     if (proposals.empty()) {
         return 0;

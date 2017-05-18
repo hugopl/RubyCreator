@@ -11,6 +11,7 @@ class EditorFactory : public TextEditor::TextEditorFactory
 
 public:
     EditorFactory();
+    static void decorateEditor(TextEditor::TextEditorWidget *editor);
 };
 
 }

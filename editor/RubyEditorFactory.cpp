@@ -31,7 +31,7 @@ EditorFactory::EditorFactory()
     setAutoCompleterCreator([]() { return new AutoCompleter; });
     setCompletionAssistProvider(new CompletionAssistProvider);
     setSyntaxHighlighterCreator([]() { return new Highlighter; });
-    setCommentStyle(Utils::CommentDefinition::HashStyle);
+    setCommentDefinition(Utils::CommentDefinition::HashStyle);
     setParenthesesMatchingEnabled(true);
     setCodeFoldingSupported(true);
     setMarksVisible(true);
@@ -41,6 +41,14 @@ EditorFactory::EditorFactory()
                           | TextEditor::TextEditorActionHandler::UnCommentSelection
                           | TextEditor::TextEditorActionHandler::UnCollapseAll
                           | TextEditor::TextEditorActionHandler::FollowSymbolUnderCursor);
+}
+
+void EditorFactory::decorateEditor(TextEditor::TextEditorWidget *editor)
+{
+    if (TextEditor::TextDocument *document = editor->textDocument()) {
+        document->setSyntaxHighlighter(new Highlighter);
+        document->setIndenter(new Indenter);
+    }
 }
 
 }

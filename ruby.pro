@@ -51,7 +51,6 @@ HEADERS += RubyPlugin.h \
     editor/RubyQuickFixes.h \
     editor/RubyRubocopHighlighter.h \
     editor/RubyScanner.h \
-    editor/RubySnippetProvider.h \
     editor/RubySymbol.h \
     editor/RubySymbolFilter.h \
     editor/SourceCodeStream.h \

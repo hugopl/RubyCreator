@@ -13,7 +13,7 @@ public:
     TextEditor::ICodeStylePreferences *createCodeStyle() const override;
     QWidget *createEditor(TextEditor::ICodeStylePreferences*, QWidget *parent) const override;
     TextEditor::Indenter *createIndenter() const override;
-    TextEditor::ISnippetProvider *snippetProvider() const override;
+    TextEditor::SnippetProvider *snippetProvider() const override;
     QString previewText() const override;
 
 };

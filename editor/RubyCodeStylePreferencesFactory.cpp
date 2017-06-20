@@ -41,13 +41,13 @@ TextEditor::SnippetProvider *CodeStylePreferencesFactory::snippetProvider() cons
 {
     return ExtensionSystem::PluginManager::getObject<TextEditor::SnippetProvider>(
         [](TextEditor::SnippetProvider *provider) {
-            return provider->groupId() == QLatin1String(Constants::SnippetGroupId);
+            return provider->groupId() == Constants::SnippetGroupId;
     });
 }
 
 QString CodeStylePreferencesFactory::previewText() const
 {
-    return QLatin1String(
+    return QStringLiteral(
             "module Foo\n"
             "  class Bar\n"
             "    attr_reader :something\n"

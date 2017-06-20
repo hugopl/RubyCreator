@@ -25,10 +25,10 @@ void SwitchStringQuotes::matchingOperations(const TextEditor::QuickFixInterface 
 
     SwitchStringQuotesOp* operation = new SwitchStringQuotesOp(block, token, userCursorPosition);
     QString description;
-    if (line[token.position] == QLatin1Char('"'))
-        description = QStringLiteral("Convert to single quotes");
+    if (line[token.position] == '"')
+        description = "Convert to single quotes";
     else
-        description = QStringLiteral("Convert to double quotes");
+        description = "Convert to double quotes";
     operation->setDescription(description);
 
     result << operation;
@@ -43,13 +43,13 @@ void SwitchStringQuotesOp::perform()
 {
     QString string = m_block.text().mid(m_token.position, m_token.length);
 
-    QString oldQuote = QStringLiteral("\"");
-    QString newQuote = QStringLiteral("'");
-    if (string[0] != QLatin1Char('"'))
+    QString oldQuote = "\"";
+    QString newQuote = "'";
+    if (string[0] != '"')
         std::swap(oldQuote, newQuote);
 
-    string.replace(QLatin1String("\\") + oldQuote, oldQuote);
-    string.replace(newQuote, QLatin1String("\\") + newQuote);
+    string.replace("\\" + oldQuote, oldQuote);
+    string.replace(newQuote, "\\" + newQuote);
     string[0] = newQuote[0];
     string[string.length() - 1] = newQuote[0];
 

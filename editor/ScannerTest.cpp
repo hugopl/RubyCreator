@@ -60,7 +60,7 @@ static Tokens tokenize(const QByteArray &code, bool debug = false)
 {
     if (m_scanner)
         delete m_scanner;
-    QString strCode = QLatin1String(code);
+    QString strCode = QString::fromUtf8(code);
     m_scanner = new Scanner(&strCode);
     m_scanner->enableContextRecognition();
 

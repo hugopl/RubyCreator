@@ -20,7 +20,7 @@ const int CODEMODEL_UPDATE_INTERVAL = 150;
 const int RUBOCOP_UPDATE_INTERVAL = 300;
 
 EditorWidget::EditorWidget()
-    : m_wordRegex(QLatin1String("[\\w!\\?]+"))
+    : m_wordRegex("[\\w!\\?]+")
     , m_codeModelUpdatePending(false)
     , m_rubocopUpdatePending(false)
     , m_ambigousMethodAssistProvider(new AmbigousMethodAssistProvider)
@@ -29,7 +29,7 @@ EditorWidget::EditorWidget()
 
     m_commentDefinition.multiLineStart.clear();
     m_commentDefinition.multiLineEnd.clear();
-    m_commentDefinition.singleLine = QLatin1Char('#');
+    m_commentDefinition.singleLine = '#';
 
     m_updateCodeModelTimer.setSingleShot(true);
     m_updateCodeModelTimer.setInterval(CODEMODEL_UPDATE_INTERVAL);
@@ -62,12 +62,13 @@ TextEditor::TextEditorWidget::Link EditorWidget::findLinkAt(const QTextCursor &c
     QString word;
     int cursorPos = cursor.positionInBlock();
     int pos = 0;
-    forever {
-        pos = m_wordRegex.indexIn(text, pos + word.length());
-        if (pos == -1)
+    for (;;) {
+        QRegularExpressionMatch match = m_wordRegex.match(text, pos + word.length());
+        if (!match.hasMatch())
             return Link();
 
-        word = m_wordRegex.cap();
+        word = match.captured();
+        pos = match.capturedStart();
         if (pos <= cursorPos && (pos + word.length()) >= cursorPos)
             break;
     }

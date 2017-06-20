@@ -138,11 +138,6 @@ private:
 
     QList<int> m_contextDepths;
     int m_indentDepth;
-
-    static QRegExp m_methodPattern;
-    static QRegExp m_parameterPattern;
-    static QRegExp m_contextPattern;
-    static QRegExp m_controlFlowShouldIncIndentPattern;
 };
 
 }

@@ -1,6 +1,7 @@
 #ifndef RubyEditorWidget_h
 #define RubyEditorWidget_h
 
+#include <QRegularExpression>
 #include <QTimer>
 
 #include <texteditor/texteditor.h>
@@ -34,7 +35,7 @@ private:
     void updateRubocop();
 
 private:
-    QRegExp m_wordRegex;
+    QRegularExpression m_wordRegex;
     Utils::CommentDefinition m_commentDefinition;
     QTimer m_updateCodeModelTimer;
     bool m_codeModelUpdatePending;

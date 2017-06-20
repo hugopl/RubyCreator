@@ -30,19 +30,19 @@ static KindOfCompletion kindOfCompletion(QTextDocument *document, int &startPosi
     do {
         ch = document->characterAt(--startPosition);
 
-        if (ch == QLatin1Char('.')) {
+        if (ch == '.') {
             startPosition++;
             return MayBeAMethod;
         }
-        if (ch == QLatin1Char(':')) {
+        if (ch == ':') {
             QChar lastChar = document->characterAt(startPosition - 1);
-            if (lastChar.isLetterOrNumber() || lastChar == QLatin1Char(':'))
+            if (lastChar.isLetterOrNumber() || lastChar == ':')
                 return MaybeNothing;
             return MayBeASymbol;
         }
         if (ch.isUpper())
             mayBeAConstant = true;
-    } while (ch.isLetterOrNumber() || ch == QLatin1Char('_'));
+    } while (ch.isLetterOrNumber() || ch == '_');
 
     startPosition++;
     return mayBeAConstant ? MayBeConstant : MayBeAIdentifier;
@@ -60,7 +60,7 @@ TextEditor::IAssistProcessor *CompletionAssistProvider::createProcessor() const
 
 bool CompletionAssistProvider::isActivationCharSequence(const QString &sequence) const
 {
-    return sequence.at(0) == QLatin1Char('.') || sequence.at(0) == QLatin1Char(':');
+    return sequence.at(0) == '.' || sequence.at(0) == ':';
 }
 
 static const QString &nameFor(const QString &s)
@@ -78,14 +78,14 @@ static void addProposalFromSet(QList<TextEditor::AssistProposalItemInterface*> &
                                const T &container, const QString &myTyping,
                                const QIcon &icon, int order = 0)
 {
-    foreach (const typename T::value_type &item, container) {
+    for (const auto &item : container) {
         const QString &name = nameFor(item);
         if (myTyping == name)
             continue;
 
         auto proposal = new TextEditor::AssistProposalItem;
 
-        int indexOfParenthesis = name.indexOf(QLatin1Char('('));
+        int indexOfParenthesis = name.indexOf('(');
         if (indexOfParenthesis != -1) {
             proposal->setText(name.mid(0, indexOfParenthesis));
             proposal->setDetail(name);
@@ -100,12 +100,12 @@ static void addProposalFromSet(QList<TextEditor::AssistProposalItemInterface*> &
 }
 
 CompletionAssistProcessor::CompletionAssistProcessor()
-    : m_methodIcon(QLatin1String(":/codemodel/images/func.png"))
-    , m_identifierIcon(QLatin1String(":/codemodel/images/var.png"))
-    , m_constantIcon(QLatin1String(":/codemodel/images/macro.png"))
+    : m_methodIcon(":/codemodel/images/func.png")
+    , m_identifierIcon(":/codemodel/images/var.png")
+    , m_constantIcon(":/codemodel/images/macro.png")
     , m_symbolIcon(m_identifierIcon)
-    , m_snippetCollector(QLatin1String(Constants::SnippetGroupId),
-                         QIcon(QLatin1String(":/texteditor/images/snippet.png")))
+    , m_snippetCollector(Constants::SnippetGroupId,
+                         QIcon(":/texteditor/images/snippet.png"))
 {
 
 }

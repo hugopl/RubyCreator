@@ -116,26 +116,24 @@ QString AutoCompleter::insertMatchingQuote(const QTextCursor &, const QString &t
 
 bool AutoCompleter::isInComment(const QTextCursor &cursor) const
 {
-    QString line = cursor.block().text();
-    int hashIndex = line.indexOf(QLatin1Char('#'));
-    if (hashIndex == -1 || hashIndex < cursor.columnNumber())
-        return false;
-    return true;
+    const int hashIndex = cursor.block().text().indexOf('#');
+    return (hashIndex != -1 && hashIndex >= cursor.columnNumber());
 }
 
 int AutoCompleter::paragraphSeparatorAboutToBeInserted(QTextCursor &cursor, const TextEditor::TabSettings &tabSettings)
 {
     QTextBlock block = cursor.block();
-    QString text = block.text().trimmed();
-    if (text == QLatin1String("end")
-            || text == QLatin1String("else")
-            || text.startsWith(QLatin1String("elsif"))
-            || text.startsWith(QLatin1String("rescue"))
-            || text == QLatin1String("ensure")) {
+    const QString text = block.text().trimmed();
+    if (text == "end"
+            || text == "else"
+            || text.startsWith("elsif")
+            || text.startsWith("rescue")
+            || text == "ensure") {
         Indenter indenter;
         indenter.indentBlock(const_cast<QTextDocument*>(block.document()), block, QChar(), tabSettings);
     }
 
+    return 0;
     // This implementation is buggy
 #if 0
     const QString textFromCursor = text.mid(cursor.positionInBlock()).trimmed();
@@ -148,7 +146,7 @@ int AutoCompleter::paragraphSeparatorAboutToBeInserted(QTextCursor &cursor, cons
     }
 
     int spaces = 0;
-    foreach (const QChar c, text) {
+    for (const QChar c : text) {
         if (!c.isSpace())
             break;
         spaces++;
@@ -168,12 +166,11 @@ int AutoCompleter::paragraphSeparatorAboutToBeInserted(QTextCursor &cursor, cons
 
     int pos = cursor.position();
     cursor.insertBlock();
-    cursor.insertText(QLatin1String("end"));
+    cursor.insertText("end");
     cursor.setPosition(pos);
 
     return 1;
 #endif
-    return 0;
 }
 
 }

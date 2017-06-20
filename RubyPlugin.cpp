@@ -54,13 +54,13 @@ bool Plugin::initialize(const QStringList &, QString *errorString)
     addAutoReleasedObject(new EditorFactory);
     addAutoReleasedObject(new SymbolFilter([](const QString &file) {
         return CodeModel::instance()->methodsIn(file);
-    }, "Ruby Methods in Current Document", QLatin1Char('.')));
+    }, "Ruby Methods in Current Document", '.'));
     addAutoReleasedObject(new SymbolFilter([](const QString &) {
         return CodeModel::instance()->allMethods();
-    }, "Ruby methods", QLatin1Char('m')));
+    }, "Ruby methods", 'm'));
     addAutoReleasedObject(new SymbolFilter([](const QString &) {
         return CodeModel::instance()->allClasses();
-    }, "Ruby classes", QLatin1Char('c')));
+    }, "Ruby classes", 'c'));
     ProjectExplorer::ProjectManager::registerProjectType<Project>(Constants::ProjectMimeType);
 
     Core::IWizardFactory::registerFactoryCreator([]() {
@@ -127,7 +127,7 @@ void Plugin::initializeToolsSettings()
     pool->loadCustomCodeStyles();
 
     // load global settings (after built-in settings are added to the pool)
-    globalCodeStyle->fromSettings(QLatin1String(Constants::SettingsId), Core::ICore::settings());
+    globalCodeStyle->fromSettings(Constants::SettingsId, Core::ICore::settings());
 
     // mimetypes to be handled
     TextEditor::TextEditorSettings::registerMimeTypeForLanguageId(Constants::MimeType, Constants::SettingsId);

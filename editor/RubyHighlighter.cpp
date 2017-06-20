@@ -74,8 +74,8 @@ int Highlighter::highlightLine(const QString &text, int state)
     Scanner scanner(&text);
     scanner.setState(state & 0xfffff);
 
-    static QString openParenthesis = QStringLiteral("([{");
-    static QString closeParenthesis = QStringLiteral(")]}");
+    static QString openParenthesis = "([{";
+    static QString closeParenthesis = ")]}";
 
     Token token;
     while ((token = scanner.read()).kind != Token::EndOfBlock) {

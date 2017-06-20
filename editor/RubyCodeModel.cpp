@@ -59,7 +59,7 @@ void CodeModel::removeSymbolsFrom(const QString &file)
 
 void CodeModel::addFile(const QString &file)
 {
-    if (!file.endsWith(QLatin1String(".rb")) && !file.endsWith(QLatin1String(".rake")))
+    if (!file.endsWith(".rb") && !file.endsWith(".rake"))
         return;
 
     QFileInfo info(file);
@@ -81,7 +81,7 @@ void CodeModel::addFiles(const QStringList &files)
     QElapsedTimer timer;
     timer.start();
 
-    foreach (const QString &file, files)
+    for (const QString &file : files)
         addFile(file);
 
     qDebug() << "Code model updated in" << timer.elapsed() << "ms";
@@ -100,16 +100,16 @@ static Symbol createSymbol(const QString *fileName, const QString &contents, Sca
 // This does not support multiline symbols defined by %i.
 static void parseRubySymbol(const QString &contents, Token token, QSet<QString>& symbols)
 {
-    if (contents[token.position] == QLatin1Char(':')) {
+    if (contents[token.position] == ':') {
         symbols << contents.mid(token.position, token.length);
-    } else if (contents[token.position + token.length - 1] == QLatin1Char(':')) {
+    } else if (contents[token.position + token.length - 1] == ':') {
         QString symbol = contents.mid(token.position, token.length - 1);
-        symbol.prepend(QLatin1Char(':'));
+        symbol.prepend(':');
         symbols << symbol;
     } else {
         QStringRef symbolsToSplit;
-        if (contents[token.position] == QLatin1Char('%')) {
-            if (token.length < 4 || contents[token.position + 1] != QLatin1Char('i'))
+        if (contents[token.position] == '%') {
+            if (token.length < 4 || contents[token.position + 1] != 'i')
                 return;
 
             QChar endDelimiter = translateDelimiter(contents[token.position + 2]);
@@ -124,10 +124,9 @@ static void parseRubySymbol(const QString &contents, Token token, QSet<QString>&
 
         // To be able to use QStringRef everywhere we split things by spaces instead of by the regexp /\s+/
         // But who cares for the ones using TABS!? :-)
-        QVector<QStringRef> result = symbolsToSplit.split(QLatin1Char(' '));
-        foreach(const QStringRef& item, result) {
-            symbols << QStringRef(item).toString().prepend(QLatin1Char(':'));
-        }
+        QVector<QStringRef> result = symbolsToSplit.split(' ');
+        for (QStringRef item : result)
+            symbols << item.toString().prepend(':');
     }
 }
 
@@ -136,14 +135,14 @@ void addMethodParameter(Symbol& method, const QString& parameter)
     QString& name = method.name;
     const QChar end = name[name.length() -1];
 
-    if (end == QLatin1Char(')')) {
+    if (end == ')') {
         name.chop(1);
-        name.append(QLatin1String(", "));
+        name.append(", ");
     } else {
-        name.append(QLatin1Char('('));
+        name.append('(');
     }
     name.append(parameter);
-    name.append(QLatin1Char(')'));
+    name.append(')');
 }
 
 void CodeModel::updateFile(const QString &fileName, const QString &contents)
@@ -224,7 +223,7 @@ QSet<QString> CodeModel::symbolsIn(const QString &file) const
 QList<Symbol> CodeModel::allMethods() const
 {
     QList<Symbol> result;
-    foreach (const Data *data, m_model)
+    for (const Data *data : m_model)
         result << data->methods;
     return result;
 }
@@ -232,7 +231,7 @@ QList<Symbol> CodeModel::allMethods() const
 QList<Symbol> CodeModel::allClasses() const
 {
     QList<Symbol> result;
-    foreach (const Data *data, m_model)
+    for (const Data *data : m_model)
         result << data->classes;
     return result;
 }
@@ -242,11 +241,11 @@ QList<Symbol> CodeModel::allMethodsNamed(const QString &name) const
     QList<Symbol> result;
     const int nameLength = name.length();
     // FIXME: Replace this linear brute force approach
-    foreach (const Data *data, m_model) {
-        foreach (const Symbol &symbol, data->methods) {
-            const QString& symbolName = symbol.name;
+    for (const Data *data : m_model) {
+        for (const Symbol &symbol : data->methods) {
+            const QString &symbolName = symbol.name;
             if (symbolName.startsWith(name)) {
-                if (symbolName.length() > nameLength && symbolName[nameLength] != QLatin1Char('('))
+                if (symbolName.length() > nameLength && symbolName[nameLength] != '(')
                     continue;
                 result << symbol;
             }
@@ -259,16 +258,16 @@ QList<Symbol> CodeModel::allClassesAndConstantsNamed(const QString &name) const
 {
     QList<Symbol> result;
     // FIXME: Replace this linear brute force approach
-    foreach (const Data *data, m_model) {
-        foreach (const Symbol &symbol, data->classes) {
+    for (const Data *data : m_model) {
+        for (const Symbol &symbol : data->classes) {
             if (symbol.name == name)
                 result << symbol;
         }
     }
 
     // constants are less important, keep them at the bottom.
-    foreach (const Data *data, m_model) {
-        foreach (const Symbol &symbol, data->constantsDelc) {
+    for (const Data *data : m_model) {
+        for (const Symbol &symbol : data->constantsDelc) {
             if (symbol.name == name)
                 result << symbol;
         }

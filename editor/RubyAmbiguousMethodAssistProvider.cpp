@@ -1,10 +1,6 @@
 #include "RubyAmbiguousMethodAssistProvider.h"
 #include "../RubyConstants.h"
 
-#include <QDebug>
-#include <QEvent>
-#include <QKeyEvent>
-
 #include <texteditor/codeassist/assistinterface.h>
 #include <texteditor/codeassist/assistproposalitem.h>
 #include <texteditor/codeassist/genericproposal.h>
@@ -16,6 +12,10 @@
 
 #include <coreplugin/actionmanager/actionmanager.h>
 #include <coreplugin/editormanager/editormanager.h>
+
+#include <QDebug>
+#include <QEvent>
+#include <QKeyEvent>
 
 namespace Ruby {
 
@@ -39,7 +39,7 @@ public:
     {
         QString text = symbol.context;
         if (!text.isEmpty())
-            text += QStringLiteral("::");
+            text += "::";
         text += symbol.name + QString::fromLatin1(" [line %1]").arg(symbol.line);
         setText(text);
         setDetail(*symbol.file);
@@ -75,7 +75,7 @@ public:
         delete interface;
 
         QList<TextEditor::AssistProposalItemInterface *> proposals;
-        foreach (const Symbol &symbol, m_symbols)
+        for (const Symbol &symbol : m_symbols)
             proposals << new AmbigousMethodProposalItem(symbol, m_inNextSplit);
         return new AmbigousMethodProposal(m_cursorPosition, proposals);
     }

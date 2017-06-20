@@ -4,8 +4,8 @@
 #include "../RubyConstants.h"
 
 #include <coreplugin/id.h>
-#include <extensionsystem/pluginmanager.h>
 #include <texteditor/codeassist/quickfixassistprocessor.h>
+#include <extensionsystem/pluginmanager.h>
 
 namespace Ruby {
 
@@ -32,7 +32,8 @@ TextEditor::IAssistProcessor*QuickFixAssistProvider::createProcessor() const
 QList<TextEditor::QuickFixFactory*> QuickFixAssistProvider::quickFixFactories() const
 {
     QList<TextEditor::QuickFixFactory *> results;
-    foreach (QuickFixFactory *f, ExtensionSystem::PluginManager::getObjects<QuickFixFactory>())
+    const auto factories = ExtensionSystem::PluginManager::getObjects<QuickFixFactory>();
+    for (QuickFixFactory *f : factories)
         results.append(f);
     return results;
 }

@@ -21,8 +21,8 @@ void Indenter::indentBlock(QTextDocument*, const QTextBlock &block, const QChar 
 
     QTextBlock previous = block.previous();
     // Previous line ends on comma, ignore everything and follow the indent
-    if (previous.text().endsWith(QLatin1Char(','))) {
-        indent = previous.text().indexOf(QRegularExpression(QStringLiteral("[^\\s]"))) / settings.m_indentSize;
+    if (previous.text().endsWith(',')) {
+        indent = previous.text().indexOf(QRegularExpression("\\S")) / settings.m_indentSize;
     } else {
         // Use the stored indent plus some bizarre heuristics that even myself remember how it works.
         indent = block.userState() >> 20;

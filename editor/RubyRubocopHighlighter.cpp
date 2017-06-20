@@ -1,5 +1,10 @@
 #include "RubyRubocopHighlighter.h"
 
+#include <texteditor/textdocument.h>
+#include <texteditor/semantichighlighter.h>
+
+#include <utils/asconst.h>
+
 #include <QDebug>
 #include <QProcess>
 #include <QTextDocument>
@@ -7,10 +12,6 @@
 #include <QMessageBox>
 #include <QTextBlock>
 
-#include <texteditor/textdocument.h>
-#include <texteditor/semantichighlighter.h>
-
-#define RUBOCOP QStringLiteral("rubocop")
 namespace Ruby {
 
 class RubocopFuture : public QFutureInterface<TextEditor::HighlightingResult>, public QObject
@@ -89,7 +90,7 @@ QString RubocopHighlighter::diagnosticAt(const Utils::FileName &file, int pos)
 void RubocopHighlighter::initRubocopProcess()
 {
     if (m_rubocopScript.open()) {
-        QFile script(QStringLiteral(":/rubysupport/rubocop.rb"));
+        QFile script(":/rubysupport/rubocop.rb");
         script.open(QFile::ReadOnly);
         m_rubocopScript.write(script.readAll());
         m_rubocopScript.close();
@@ -99,18 +100,18 @@ void RubocopHighlighter::initRubocopProcess()
     void (QProcess::*signal)(int) = &QProcess::finished;
     QObject::connect(m_rubocop, signal, [&](int status) {
         if (status) {
-            QMessageBox::critical(0, QLatin1String("Rubocop"), QString::fromUtf8(m_rubocop->readAllStandardError().trimmed()));
+            QMessageBox::critical(0, "Rubocop", QString::fromUtf8(m_rubocop->readAllStandardError().trimmed()));
             m_rubocopFound = false;
         }
     });
 
     QObject::connect(m_rubocop, &QProcess::readyReadStandardOutput, [&]() {
         m_outputBuffer.append(QString::fromUtf8(m_rubocop->readAllStandardOutput()));
-        if (m_outputBuffer.endsWith(QLatin1String("--\n")))
+        if (m_outputBuffer.endsWith("--\n"))
             finishRuboCopHighlight();
     });
 
-    m_rubocop->start(QStringLiteral("ruby"), QStringList(m_rubocopScript.fileName()));
+    m_rubocop->start("ruby", {m_rubocopScript.fileName()});
 }
 
 void RubocopHighlighter::finishRuboCopHighlight()
@@ -146,17 +147,18 @@ Offenses RubocopHighlighter::processRubocopOutput()
     Offenses result;
     Diagnostics &diag = m_diagnostics[m_document->filePath()] = Diagnostics();
 
-    foreach (const QStringRef &line, m_outputBuffer.splitRef(QLatin1Char('\n'))) {
-        if (line == QStringLiteral("--"))
+    const QVector<QStringRef> lines = m_outputBuffer.splitRef('\n');
+    for (const QStringRef &line : lines) {
+        if (line == "--")
             break;
-        QVector<QStringRef> fields = line.split(QLatin1Char(':'));
+        QVector<QStringRef> fields = line.split(':');
         if (fields.size() < 5)
             continue;
         int kind = kindOfSeverity(fields[0]);
         int lineN = fields[1].toInt();
         int column = fields[2].toInt();
         int length = fields[3].toInt();
-        result << TextEditor::HighlightingResult(lineN, column, length, kind);
+        result << TextEditor::HighlightingResult(uint(lineN), uint(column), uint(length), kind);
 
         int messagePos = fields[4].position();
         QStringRef message(line.string(), messagePos, line.position() + line.length() - messagePos);

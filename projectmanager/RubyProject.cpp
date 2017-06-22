@@ -5,10 +5,12 @@
 #include "RubyProjectNode.h"
 
 #include <QDebug>
+#include <QtConcurrent>
 #include <QFileInfo>
 #include <QThread>
 
 #include <texteditor/textdocument.h>
+#include <coreplugin/progressmanager/progressmanager.h>
 
 namespace Ruby {
 
@@ -16,6 +18,7 @@ const int MIN_TIME_BETWEEN_PROJECT_SCANS = 4500;
 
 Project::Project(const Utils::FileName &fileName) :
     ProjectExplorer::Project(Constants::MimeType, fileName, [this] { scheduleProjectScan(); })
+    , m_populatingProject(false)
 {
     m_projectDir = fileName.toFileInfo().dir();
     m_rootNode = new ProjectNode(Utils::FileName::fromString(m_projectDir.dirName()));
@@ -23,8 +26,8 @@ Project::Project(const Utils::FileName &fileName) :
     m_projectScanTimer.setSingleShot(true);
     connect(&m_projectScanTimer, &QTimer::timeout, this, &Project::populateProject);
 
-    populateProject();
-    CodeModel::instance()->addFiles(m_files.toList());
+    QFuture<void> future = QtConcurrent::run(this, &Project::populateProject);
+    Core::ProgressManager::instance()->addTask(future, tr("Parsing Ruby Files"), Constants::RubyProjectTask);
 
     connect(&m_fsWatcher, &QFileSystemWatcher::directoryChanged, this, &Project::scheduleProjectScan);
 
@@ -51,6 +54,10 @@ void Project::scheduleProjectScan()
 
 void Project::populateProject()
 {
+    if (m_populatingProject)
+        return;
+    m_populatingProject = true;
+
     m_lastProjectScan.start();
     QSet<QString> oldFiles(m_files);
     m_files.clear();
@@ -66,6 +73,7 @@ void Project::populateProject()
         CodeModel::instance()->removeSymbolsFrom(file);
     foreach (const QString &file, addedFiles)
         CodeModel::instance()->addFile(file);
+    m_populatingProject = false;
 }
 
 void Project::recursiveScanDirectory(const QDir &dir, QSet<QString> &container)

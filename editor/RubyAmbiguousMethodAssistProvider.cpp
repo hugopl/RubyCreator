@@ -90,11 +90,6 @@ TextEditor::IAssistProvider::RunType AmbigousMethodAssistProvider::runType() con
     return TextEditor::IAssistProvider::AsynchronousWithThread;
 }
 
-bool AmbigousMethodAssistProvider::supportsEditor(Core::Id editorId) const
-{
-    return editorId == Constants::EditorId;
-}
-
 TextEditor::IAssistProcessor *AmbigousMethodAssistProvider::createProcessor() const
 {
     return new AmbigousMethodAssistProcessor(m_symbols, m_cursorPosition, m_inNexSplit);

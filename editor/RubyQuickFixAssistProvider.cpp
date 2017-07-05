@@ -19,11 +19,6 @@ TextEditor::IAssistProvider::RunType QuickFixAssistProvider::runType() const
     return TextEditor::IAssistProvider::Synchronous;
 }
 
-bool QuickFixAssistProvider::supportsEditor(Core::Id editorId) const
-{
-    return editorId == Constants::EditorId;
-}
-
 TextEditor::IAssistProcessor*QuickFixAssistProvider::createProcessor() const
 {
     return new TextEditor::QuickFixAssistProcessor(this);

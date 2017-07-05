@@ -13,7 +13,6 @@ class AmbigousMethodAssistProvider : public TextEditor::IAssistProvider
 {
 public:
     RunType runType() const override;
-    bool supportsEditor(Core::Id editorId) const override;
     TextEditor::IAssistProcessor *createProcessor() const override;
 
     void setSymbols(const QList<Symbol> &symbols) { m_symbols = symbols; }

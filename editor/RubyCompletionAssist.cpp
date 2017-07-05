@@ -48,11 +48,6 @@ static KindOfCompletion kindOfCompletion(QTextDocument *document, int &startPosi
     return mayBeAConstant ? MayBeConstant : MayBeAIdentifier;
 }
 
-bool CompletionAssistProvider::supportsEditor(Core::Id editorId) const
-{
-    return editorId == Constants::EditorId;
-}
-
 TextEditor::IAssistProcessor *CompletionAssistProvider::createProcessor() const
 {
     return new CompletionAssistProcessor;

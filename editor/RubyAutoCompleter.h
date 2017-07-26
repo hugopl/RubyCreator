@@ -19,7 +19,7 @@ public:
     QString insertMatchingQuote(const QTextCursor &cursor, const QString &text, QChar la, bool skipChars, int *skippedChars) const override;
     bool isInComment(const QTextCursor &cursor) const override;
 
-    int paragraphSeparatorAboutToBeInserted(QTextCursor &cursor, const TextEditor::TabSettings &tabSettings) override;
+    int paragraphSeparatorAboutToBeInserted(QTextCursor &cursor) override;
 
 };
 

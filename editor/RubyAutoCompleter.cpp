@@ -120,7 +120,7 @@ bool AutoCompleter::isInComment(const QTextCursor &cursor) const
     return (hashIndex != -1 && hashIndex >= cursor.columnNumber());
 }
 
-int AutoCompleter::paragraphSeparatorAboutToBeInserted(QTextCursor &cursor, const TextEditor::TabSettings &tabSettings)
+int AutoCompleter::paragraphSeparatorAboutToBeInserted(QTextCursor &cursor)
 {
     QTextBlock block = cursor.block();
     const QString text = block.text().trimmed();
@@ -130,7 +130,8 @@ int AutoCompleter::paragraphSeparatorAboutToBeInserted(QTextCursor &cursor, cons
             || text.startsWith("rescue")
             || text == "ensure") {
         Indenter indenter;
-        indenter.indentBlock(const_cast<QTextDocument*>(block.document()), block, QChar(), tabSettings);
+        indenter.indentBlock(const_cast<QTextDocument*>(block.document()),
+                             block, QChar(), tabSettings());
     }
 
     return 0;

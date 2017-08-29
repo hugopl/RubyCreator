@@ -15,7 +15,7 @@ public:
     {
     }
 
-    bool supportsAction(ProjectExplorer::ProjectAction action, Node *node) const override;
+    bool supportsAction(ProjectExplorer::ProjectAction action, const Node *node) const override;
 
     bool canAddSubProject(const QString &) const override { return false; }
     bool canRenameFile(const QString &, const QString &) override { return true; }

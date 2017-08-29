@@ -4,7 +4,7 @@ using namespace ProjectExplorer;
 
 namespace Ruby {
 
-bool ProjectNode::supportsAction(ProjectAction action, Node *) const
+bool ProjectNode::supportsAction(ProjectAction action, const Node *) const
 {
     switch (action) {
     case AddNewFile:

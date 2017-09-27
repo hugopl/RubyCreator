@@ -19,17 +19,6 @@
 
 namespace Ruby {
 
-// Override just to set fragile = true.
-class AmbigousMethodProposal : public TextEditor::GenericProposal
-{
-public:
-    AmbigousMethodProposal(int cursorPos, const QList<TextEditor::AssistProposalItemInterface *> &items)
-        : GenericProposal(cursorPos, items)
-    {}
-
-    bool isFragile() const override { return true; }
-};
-
 class AmbigousMethodProposalItem : public TextEditor::AssistProposalItem
 {
 public:
@@ -77,7 +66,9 @@ public:
         QList<TextEditor::AssistProposalItemInterface *> proposals;
         for (const Symbol &symbol : m_symbols)
             proposals << new AmbigousMethodProposalItem(symbol, m_inNextSplit);
-        return new AmbigousMethodProposal(m_cursorPosition, proposals);
+        auto proposal = new TextEditor::GenericProposal(m_cursorPosition, proposals);
+        proposal->setFragile(true);
+        return proposal;
     }
 
     const QList<Symbol> m_symbols;

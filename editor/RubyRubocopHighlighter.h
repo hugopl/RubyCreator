@@ -21,10 +21,10 @@ namespace Ruby {
 
 class Range {
 public:
-    int pos;
-    int length;
+    int pos = 0;
+    int length = 0;
 
-    Range() : pos(0), length(0) { }
+    Range() = default;
     Range(int pos, int length) : pos(pos), length(length) { }
 
     // Not really equal, since the length attribute is ignored.
@@ -57,14 +57,14 @@ public:
     bool run(TextEditor::TextDocument *document, const QString &fileNameTip);
     QString diagnosticAt(const Utils::FileName &file, int pos);
 private:
-    bool m_rubocopFound;
-    bool m_busy;
-    QProcess *m_rubocop;
+    bool m_rubocopFound = true;
+    bool m_busy = false;
+    QProcess *m_rubocop = nullptr;
     QTemporaryFile m_rubocopScript;
     QString m_outputBuffer;
 
-    int m_startRevision;
-    TextEditor::TextDocument *m_document;
+    int m_startRevision = 0;
+    TextEditor::TextDocument *m_document = nullptr;
     QHash<int, QTextCharFormat> m_extraFormats;
 
 

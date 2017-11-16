@@ -23,8 +23,6 @@ const int RUBOCOP_UPDATE_INTERVAL = 300;
 
 EditorWidget::EditorWidget()
     : m_wordRegex("[\\w!\\?]+")
-    , m_codeModelUpdatePending(false)
-    , m_rubocopUpdatePending(false)
     , m_ambigousMethodAssistProvider(new AmbigousMethodAssistProvider)
 {
     setLanguageSettingsId(Constants::SettingsId);

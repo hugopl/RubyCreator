@@ -38,10 +38,10 @@ private:
     QRegularExpression m_wordRegex;
     Utils::CommentDefinition m_commentDefinition;
     QTimer m_updateCodeModelTimer;
-    bool m_codeModelUpdatePending;
+    bool m_codeModelUpdatePending = false;
 
     QTimer m_updateRubocopTimer;
-    bool m_rubocopUpdatePending;
+    bool m_rubocopUpdatePending = false;
 
     QString m_filePathDueToMaybeABug;
 

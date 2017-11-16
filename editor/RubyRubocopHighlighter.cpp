@@ -24,11 +24,6 @@ public:
 };
 
 RubocopHighlighter::RubocopHighlighter()
-    : m_rubocopFound(true)
-    , m_busy(false)
-    , m_rubocop(nullptr)
-    , m_startRevision(0)
-    , m_document(nullptr)
 {
     QTextCharFormat format;
     format.setUnderlineColor(Qt::darkYellow);

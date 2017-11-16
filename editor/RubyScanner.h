@@ -127,17 +127,17 @@ private:
     void parseState(State &state, QChar &savedData) const;
 
     SourceCodeStream m_src;
-    int m_state;
-    bool m_hasContextRecognition;
+    int m_state = 0;
+    bool m_hasContextRecognition = false;
 
     QString m_tokenSequence;
 
     QStringList m_context;
-    int m_line;
-    int m_lineStartOffset;
+    int m_line = 1;
+    int m_lineStartOffset = 0;
 
     QList<int> m_contextDepths;
-    int m_indentDepth;
+    int m_indentDepth = 0;
 };
 
 }

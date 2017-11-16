@@ -12,8 +12,6 @@ public:
         : m_text(text)
         , m_textPtr(m_text->data())
         , m_textLength(text->length())
-        , m_position(0)
-        , m_markedPosition(0)
     {}
 
     inline void setAnchor()
@@ -68,8 +66,8 @@ private:
     const QString *m_text;
     const QChar *m_textPtr;
     const int m_textLength;
-    int m_position;
-    int m_markedPosition;
+    int m_position = 0;
+    int m_markedPosition = 0;
 };
 
 }

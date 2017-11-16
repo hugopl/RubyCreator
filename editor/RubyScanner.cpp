@@ -97,11 +97,6 @@ static bool isLineFeed(QChar ch)
 
 Scanner::Scanner(const QString *text)
     : m_src(text)
-    , m_state(0)
-    , m_hasContextRecognition(false)
-    , m_line(1)
-    , m_lineStartOffset(0)
-    , m_indentDepth(0)
 {
 }
 

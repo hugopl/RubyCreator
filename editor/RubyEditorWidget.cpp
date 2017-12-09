@@ -14,6 +14,8 @@
 #include <QTextBlock>
 #include <QTextCursor>
 
+using Utils::Link;
+
 namespace Ruby {
 
 const int CODEMODEL_UPDATE_INTERVAL = 150;
@@ -53,7 +55,7 @@ EditorWidget::~EditorWidget()
     delete m_ambigousMethodAssistProvider;
 }
 
-TextEditor::TextEditorWidget::Link EditorWidget::findLinkAt(const QTextCursor &cursor, bool, bool inNextSplit)
+Link EditorWidget::findLinkAt(const QTextCursor &cursor, bool, bool inNextSplit)
 {
     QString text = cursor.block().text();
     if (text.isEmpty())

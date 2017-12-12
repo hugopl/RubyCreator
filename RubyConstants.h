@@ -11,6 +11,7 @@ const char SettingsId[] = "Ruby.Settings";
 const char SnippetGroupId[] = "Ruby.Snippets";
 const char EditorDisplayName[] = "Ruby Editor";
 const char LangRuby[] = "RUBY";
+const char RubyProjectTask[] = "RubyProject.task";
 
 const char MimeType[] = "application/x-ruby";
 const char ProjectMimeType[] = "text/x-rubycreator-project";

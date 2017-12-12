@@ -39,6 +39,7 @@ private:
     QDir m_projectDir;
     QSet<QString> m_files;
     QFileSystemWatcher m_fsWatcher;
+    bool m_populatingProject;
 
     QElapsedTimer m_lastProjectScan;
     QTimer m_projectScanTimer;

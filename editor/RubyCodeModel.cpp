@@ -76,17 +76,6 @@ void CodeModel::addFile(const QString &file)
     updateFile(file, QString::fromUtf8(fp.readAll()));
 }
 
-void CodeModel::addFiles(const QStringList &files)
-{
-    QElapsedTimer timer;
-    timer.start();
-
-    for (const QString &file : files)
-        addFile(file);
-
-    qDebug() << "Code model updated in" << timer.elapsed() << "ms";
-}
-
 static Symbol createSymbol(const QString *fileName, const QString &contents, Scanner &scanner, Token token)
 {
     Symbol sym(fileName);

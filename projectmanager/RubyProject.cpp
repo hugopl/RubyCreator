@@ -75,6 +75,9 @@ void Project::populateProject()
     for (const QString &file : addedFiles)
         CodeModel::instance()->addFile(file);
     m_populatingProject = false;
+
+    if (!addedFiles.isEmpty() || !removedFiles.isEmpty())
+        emit fileListChanged();
 }
 
 void Project::recursiveScanDirectory(const QDir &dir, QSet<QString> &container)
@@ -85,7 +88,7 @@ void Project::recursiveScanDirectory(const QDir &dir, QSet<QString> &container)
     for (const QFileInfo &info : files) {
         if (info.isDir())
             recursiveScanDirectory(QDir(info.filePath()), container);
-        else if (projectFilePattern.match(info.fileName()).hasMatch())
+        else if (!projectFilePattern.match(info.fileName()).hasMatch())
             container << info.filePath();
     }
     m_fsWatcher.addPath(dir.absolutePath());

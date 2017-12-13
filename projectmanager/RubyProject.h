@@ -23,10 +23,12 @@ public:
     ProjectExplorer::ProjectNode *rootProjectNode() const override;
 
 private:
+    void readProjectSettings(const Utils::FileName &fileName);
     void scheduleProjectScan();
     void populateProject();
 
     void recursiveScanDirectory(const QDir &dir, QSet<QString> &container);
+    bool shouldIgnoreDir(const QString &filePath) const;
     void addNodes(const QSet<QString> &nodes);
     void removeNodes(const QSet<QString> &nodes);
 
@@ -38,6 +40,7 @@ private:
 
     QDir m_projectDir;
     QSet<QString> m_files;
+    QStringList m_ignoredDirectories;
     QFileSystemWatcher m_fsWatcher;
     bool m_populatingProject;
 

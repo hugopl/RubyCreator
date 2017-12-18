@@ -4,13 +4,15 @@
 #include "../RubyConstants.h"
 
 #include <coreplugin/id.h>
-#include <texteditor/codeassist/quickfixassistprocessor.h>
+#include <texteditor/codeassist/iassistprocessor.h>
+#include <texteditor/codeassist/genericproposal.h>
+#include <texteditor/quickfix.h>
 #include <extensionsystem/pluginmanager.h>
 
 namespace Ruby {
 
 QuickFixAssistProvider::QuickFixAssistProvider(QObject *parent)
-    : TextEditor::QuickFixAssistProvider(parent)
+    : TextEditor::IAssistProvider(parent)
 {
 }
 
@@ -19,18 +21,24 @@ TextEditor::IAssistProvider::RunType QuickFixAssistProvider::runType() const
     return TextEditor::IAssistProvider::Synchronous;
 }
 
-TextEditor::IAssistProcessor*QuickFixAssistProvider::createProcessor() const
+class RubyQuickFixAssistProcessor : public TextEditor::IAssistProcessor
 {
-    return new TextEditor::QuickFixAssistProcessor(this);
-}
+    TextEditor::IAssistProposal *perform(const TextEditor::AssistInterface *interface) override
+    {
+        QSharedPointer<const TextEditor::AssistInterface> assistInterface(interface);
 
-QList<TextEditor::QuickFixFactory*> QuickFixAssistProvider::quickFixFactories() const
+        TextEditor::QuickFixOperations quickFixes;
+
+        for (QuickFixFactory *factory : QuickFixFactory::quickFixFactories())
+            factory->match(assistInterface, quickFixes);
+
+        return TextEditor::GenericProposal::createProposal(interface, quickFixes);
+    }
+};
+
+TextEditor::IAssistProcessor *QuickFixAssistProvider::createProcessor() const
 {
-    QList<TextEditor::QuickFixFactory *> results;
-    const auto factories = ExtensionSystem::PluginManager::getObjects<QuickFixFactory>();
-    for (QuickFixFactory *f : factories)
-        results.append(f);
-    return results;
+    return new RubyQuickFixAssistProcessor;
 }
 
 }

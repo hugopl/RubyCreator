@@ -2,17 +2,35 @@
 
 #include <QTextDocument>
 #include <texteditor/codeassist/assistinterface.h>
-#include <algorithm>
 
 #include "RubyScanner.h"
 
 namespace Ruby {
+
+static QList<QuickFixFactory *> g_quickFixFactories;
+
+QuickFixFactory::QuickFixFactory()
+{
+    g_quickFixFactories.append(this);
+}
+
+QuickFixFactory::~QuickFixFactory()
+{
+    g_quickFixFactories.removeOne(this);
+}
+
+const QList<QuickFixFactory *> &QuickFixFactory::quickFixFactories()
+{
+    return g_quickFixFactories;
+}
+
 void registerQuickFixes(ExtensionSystem::IPlugin *plugIn)
 {
     plugIn->addAutoReleasedObject(new SwitchStringQuotes);
 }
 
-void SwitchStringQuotes::matchingOperations(const TextEditor::QuickFixInterface &interface, TextEditor::QuickFixOperations &result)
+void SwitchStringQuotes::match(const TextEditor::QuickFixInterface &interface,
+                               TextEditor::QuickFixOperations &result)
 {
     QTextBlock block = interface->textDocument()->findBlock(interface->position());
     QString line = block.text();

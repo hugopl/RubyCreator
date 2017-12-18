@@ -10,7 +10,7 @@ class EditorDocument : public TextEditor::TextDocument
 public:
     explicit EditorDocument();
 
-    TextEditor::QuickFixAssistProvider *quickFixAssistProvider() const override;
+    TextEditor::IAssistProvider *quickFixAssistProvider() const override;
 };
 
 }

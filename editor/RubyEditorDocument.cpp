@@ -10,7 +10,7 @@ EditorDocument::EditorDocument()
     setId(Constants::EditorId);
 }
 
-TextEditor::QuickFixAssistProvider *EditorDocument::quickFixAssistProvider() const
+TextEditor::IAssistProvider *EditorDocument::quickFixAssistProvider() const
 {
     return Plugin::instance()->quickFixProvider();
 }

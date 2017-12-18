@@ -12,13 +12,23 @@ namespace Ruby {
 
 void registerQuickFixes(ExtensionSystem::IPlugin *plugIn);
 
-class QuickFixFactory : public TextEditor::QuickFixFactory {
+class QuickFixFactory : public QObject
+{
     Q_OBJECT
+
+public:
+    QuickFixFactory();
+    ~QuickFixFactory();
+    virtual void match(const TextEditor::QuickFixInterface &interface,
+                       TextEditor::QuickFixOperations &result) = 0;
+
+    static const QList<QuickFixFactory *> &quickFixFactories();
 };
 
 class SwitchStringQuotes : public QuickFixFactory {
 public:
-    void matchingOperations(const TextEditor::QuickFixInterface &interface, TextEditor::QuickFixOperations &result) override;
+    void match(const TextEditor::QuickFixInterface &interface,
+               TextEditor::QuickFixOperations &result) override;
 };
 
 class SwitchStringQuotesOp : public TextEditor::QuickFixOperation {

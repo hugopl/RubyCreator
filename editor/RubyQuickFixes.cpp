@@ -26,9 +26,9 @@ void SwitchStringQuotes::matchingOperations(const TextEditor::QuickFixInterface 
     SwitchStringQuotesOp* operation = new SwitchStringQuotesOp(block, token, userCursorPosition);
     QString description;
     if (line[token.position] == '"')
-        description = "Convert to single quotes";
+        description = tr("Convert to single quotes");
     else
-        description = "Convert to double quotes";
+        description = tr("Convert to double quotes");
     operation->setDescription(description);
 
     result << operation;

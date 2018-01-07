@@ -4,6 +4,7 @@
 #include "../RubyConstants.h"
 
 #include <coreplugin/id.h>
+#include <texteditor/codeassist/assistinterface.h>
 #include <texteditor/codeassist/iassistprocessor.h>
 #include <texteditor/codeassist/genericproposal.h>
 #include <texteditor/quickfix.h>

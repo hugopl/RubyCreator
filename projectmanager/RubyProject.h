@@ -4,8 +4,9 @@
 #include <projectexplorer/project.h>
 #include <projectexplorer/projectnodes.h>
 
-#include <QFileSystemWatcher>
 #include <QElapsedTimer>
+#include <QFileSystemWatcher>
+#include <QFuture>
 #include <QTimer>
 
 namespace TextEditor { class TextDocument; }
@@ -20,24 +21,18 @@ class Project : public ProjectExplorer::Project
 
 public:
     explicit Project(const Utils::FileName &fileName);
-    ProjectExplorer::ProjectNode *rootProjectNode() const override;
+    ~Project();
 
 private:
     void scheduleProjectScan();
     void populateProject();
-
-    void recursiveScanDirectory(const QDir &dir, QSet<QString> &container);
-    void addNodes(const QSet<QString> &nodes);
-    void removeNodes(const QSet<QString> &nodes);
-
-    ProjectExplorer::FolderNode *findFolderFor(const QStringList &path);
-    void tryRemoveEmptyFolder(ProjectExplorer::FolderNode* folder);
+    void scanProjectNow();
+    void recursiveScanDirectory(const QDir &dir);
 
 private:
-    ProjectNode *m_rootNode;
-
     QDir m_projectDir;
     QSet<QString> m_files;
+    QFuture<void> m_projectScanFuture;
     QFileSystemWatcher m_fsWatcher;
     bool m_populatingProject;
 

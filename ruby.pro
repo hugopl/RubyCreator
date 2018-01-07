@@ -27,7 +27,8 @@ SOURCES += RubyPlugin.cpp \
     editor/RubySymbolFilter.cpp \
     projectmanager/RubyProject.cpp \
     projectmanager/RubyProjectNode.cpp \
-    projectmanager/RubyProjectWizard.cpp
+    projectmanager/RubyProjectWizard.cpp \
+    projectmanager/RubyRunConfiguration.cpp
 
 equals(TEST, 1) {
     SOURCES += editor/ScannerTest.cpp
@@ -56,7 +57,8 @@ HEADERS += RubyPlugin.h \
     editor/SourceCodeStream.h \
     projectmanager/RubyProject.h \
     projectmanager/RubyProjectNode.h \
-    projectmanager/RubyProjectWizard.h
+    projectmanager/RubyProjectWizard.h \
+    projectmanager/RubyRunConfiguration.h
 
 RESOURCES += \
     Ruby.qrc

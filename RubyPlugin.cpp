@@ -12,6 +12,7 @@
 #include "editor/RubyCompletionAssist.h"
 #include "projectmanager/RubyProject.h"
 #include "projectmanager/RubyProjectWizard.h"
+#include "projectmanager/RubyRunConfiguration.h"
 
 #include <coreplugin/icore.h>
 #include <projectexplorer/projectmanager.h>
@@ -52,6 +53,7 @@ bool Plugin::initialize(const QStringList &, QString *errorString)
     initializeToolsSettings();
 
     addAutoReleasedObject(new EditorFactory);
+    addAutoReleasedObject(new RunConfigurationFactory);
     addAutoReleasedObject(new SymbolFilter([](const QString &file) {
         return CodeModel::instance()->methodsIn(file);
     }, "Ruby Methods in Current Document", '.'));

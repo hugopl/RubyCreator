@@ -104,9 +104,20 @@ public:
     // current line has a else, elsif, rescue or ensure.
     bool didBlockInterrupt();
 private:
+    union StateUnion {
+        int all;
+        struct {
+            unsigned short delimiter;
+            State state;
+        };
+
+        StateUnion();
+        StateUnion(QChar delim, State st);
+    };
+
     Token onDefaultState();
 
-    Token readStringLiteral(QChar quoteChar, State stateRestored);
+    Token readStringLiteral(StateUnion state);
     Token readInStringToken();
     Token readRegexp();
     Token readIdentifier();
@@ -123,11 +134,11 @@ private:
     void consumeRegexpModifiers();
 
     void clearState();
-    void saveState(State state, QChar savedData);
-    void parseState(State &state, QChar &savedData) const;
+    void saveState(StateUnion state);
+    void parseState(StateUnion &state) const;
 
     SourceCodeStream m_src;
-    int m_state = 0;
+    StateUnion m_state;
     bool m_hasContextRecognition = false;
 
     QString m_tokenSequence;

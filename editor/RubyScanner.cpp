@@ -95,6 +95,17 @@ static bool isLineFeed(QChar ch)
     return ch == '\n';
 }
 
+Scanner::StateUnion::StateUnion()
+{
+    all = 0;
+}
+
+Scanner::StateUnion::StateUnion(QChar delim, State st)
+{
+    delimiter = delim.unicode();
+    state = st;
+}
+
 Scanner::Scanner(const QString *text)
     : m_src(text)
 {
@@ -107,12 +118,12 @@ void Scanner::enableContextRecognition()
 
 void Scanner::setState(int state)
 {
-    m_state = state;
+    m_state.all = state;
 }
 
 int Scanner::state() const
 {
-    return m_state;
+    return m_state.all;
 }
 
 Token Scanner::read()
@@ -121,14 +132,13 @@ Token Scanner::read()
     if (m_src.isEnd())
         return Token(Token::EndOfBlock, m_src.anchor(), 0);
 
-    State state;
-    QChar saved;
-    parseState(state, saved);
-    switch (state) {
+    StateUnion state;
+    parseState(state);
+    switch (state.state) {
     case State::String:
     case State::Regexp:
     case State::Symbols:
-        return readStringLiteral(saved, state);
+        return readStringLiteral(state);
     default:
         return onDefaultState();
     }
@@ -201,7 +211,8 @@ Token Scanner::onDefaultState()
     if (first.isDigit()) {
         token = readFloatNumber();
     } else if (first == '\'' || first == '\"' || first == '`') {
-        token = readStringLiteral(first, State::String);
+        StateUnion state(first, State::String);
+        token = readStringLiteral(state);
     } else if (m_methodPattern.match(m_tokenSequence).hasMatch()) {
         token = readMethodDefinition();
     } else if (first == '$' && (m_src.peek() == '`' || m_src.peek() == '\'')) {
@@ -267,14 +278,14 @@ static Token::Kind tokenKindFor(QChar ch, Scanner::State state)
     }
 }
 
-Token Scanner::readStringLiteral(QChar quoteChar, Scanner::State state)
+Token Scanner::readStringLiteral(StateUnion state)
 {
     QChar ch = m_src.peek();
 
     if (ch == '#' && m_src.peek(1) == '{') {
         if (m_src.length()) {
-            saveState(state, quoteChar);
-            return Token(tokenKindFor(quoteChar, state), m_src.anchor(), m_src.length());
+            saveState(state);
+            return Token(tokenKindFor(state.delimiter, state.state), m_src.anchor(), m_src.length());
         }
         return readInStringToken();
     }
@@ -286,18 +297,18 @@ Token Scanner::readStringLiteral(QChar quoteChar, Scanner::State state)
         m_line++;
     }
 
-    QChar startQuoteChar = translateDelimiter(quoteChar);
-    bool quoteCharHasPair = delimiterHasPair(quoteChar);
+    QChar startQuoteChar = translateDelimiter(state.delimiter);
+    bool quoteCharHasPair = delimiterHasPair(state.delimiter);
     int bracketCount = 0;
 
     forever {
         ch = m_src.peek();
         if (isLineFeed(ch) || ch.isNull()) {
-            saveState(state, quoteChar);
+            saveState(state);
             break;
         }
 
-        if (ch == quoteChar && bracketCount == 0)
+        if (ch == state.delimiter && bracketCount == 0)
             break;
 
         // handles %r{{}}
@@ -306,7 +317,7 @@ Token Scanner::readStringLiteral(QChar quoteChar, Scanner::State state)
                 bracketCount++;
                 m_src.move();
                 continue;
-            } else if (ch == quoteChar) {
+            } else if (ch == state.delimiter) {
                 bracketCount--;
                 m_src.move();
                 continue;
@@ -318,28 +329,28 @@ Token Scanner::readStringLiteral(QChar quoteChar, Scanner::State state)
             ch = m_src.peek();
             m_src.move();
             if (isLineFeed(ch) || ch.isNull()) {
-                saveState(state, quoteChar);
+                saveState(state);
                 break;
             }
-        } else if (quoteChar != '\'' && ch == '#' && m_src.peek(1) == '{') {
-            saveState(state, quoteChar);
+        } else if (state.delimiter != '\'' && ch == '#' && m_src.peek(1) == '{') {
+            saveState(state);
             break;
         } else if (isLineFeed(ch) || ch.isNull()) {
-            saveState(state, quoteChar);
+            saveState(state);
             break;
         } else {
             m_src.move();
         }
     }
 
-    if (ch == quoteChar) {
+    if (ch == state.delimiter) {
         m_src.move();
-        if (state == State::Regexp)
+        if (state.state == State::Regexp)
             consumeRegexpModifiers();
         clearState();
     }
 
-    return Token(tokenKindFor(quoteChar, state), m_src.anchor(), m_src.length());
+    return Token(tokenKindFor(state.delimiter, state.state), m_src.anchor(), m_src.length());
 }
 
 Token Scanner::readInStringToken()
@@ -608,7 +619,8 @@ Token Scanner::readPercentageNotation()
     if (ch.isSpace() || ch.isDigit())
         return Token(Token::Operator, m_src.anchor(), m_src.length());
 
-    State state = State::String;
+    State state;
+    state = State::String;
     if (ch.isLetter()) {
         if (ch == 'r')
             state = State::Regexp;
@@ -616,9 +628,9 @@ Token Scanner::readPercentageNotation()
             state = State::Symbols;
         m_src.move();
     }
-    QChar delimiter = translateDelimiter(m_src.peek());
+    StateUnion fullState(translateDelimiter(m_src.peek()), state);
     m_src.move();
-    return readStringLiteral(delimiter, state);
+    return readStringLiteral(fullState);
 }
 
 Token Scanner::readMethodDefinition()
@@ -648,17 +660,16 @@ void Scanner::consumeUntil(const char* stopAt, const char* stopAfter)
 
 void Scanner::clearState()
 {
-    m_state = 0;
+    m_state.all = 0;
 }
 
-void Scanner::saveState(State state, QChar savedData)
+void Scanner::saveState(StateUnion state)
 {
-    m_state = (int(state) << 16) | static_cast<int>(savedData.unicode());
+    m_state = state;
 }
 
-void Scanner::parseState(State &state, QChar &savedData) const
+void Scanner::parseState(StateUnion &state) const
 {
-    state = static_cast<State>((m_state >> 16) & 0xf);
-    savedData = m_state & 0xffff;
+    state = m_state;
 }
 }

@@ -104,6 +104,7 @@ Scanner::StateUnion::StateUnion(QChar delim, State st)
 {
     delimiter = delim.unicode();
     state = st;
+    bracketCount = 0;
 }
 
 Scanner::Scanner(const QString *text)
@@ -299,7 +300,6 @@ Token Scanner::readStringLiteral(StateUnion state)
 
     QChar startQuoteChar = translateDelimiter(state.delimiter);
     bool quoteCharHasPair = delimiterHasPair(state.delimiter);
-    int bracketCount = 0;
 
     forever {
         ch = m_src.peek();
@@ -308,17 +308,17 @@ Token Scanner::readStringLiteral(StateUnion state)
             break;
         }
 
-        if (ch == state.delimiter && bracketCount == 0)
+        if (ch == state.delimiter && state.bracketCount == 0)
             break;
 
         // handles %r{{}}
         if (quoteCharHasPair) {
             if (ch == startQuoteChar) {
-                bracketCount++;
+                state.bracketCount++;
                 m_src.move();
                 continue;
             } else if (ch == state.delimiter) {
-                bracketCount--;
+                state.bracketCount--;
                 m_src.move();
                 continue;
             }

@@ -109,6 +109,7 @@ private:
         struct {
             unsigned short delimiter;
             State state;
+            unsigned char bracketCount;
         };
 
         StateUnion();

@@ -119,7 +119,7 @@ private:
     Token readPercentageNotation();
     Token readMethodDefinition();
 
-    void consumeUntil(const char* stopAt, const char* stopAfter = 0);
+    void consumeUntil(const char* stopAt, const char* stopAfter = nullptr);
     void consumeRegexpModifiers();
 
     void clearState();

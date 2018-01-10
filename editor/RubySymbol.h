@@ -8,7 +8,7 @@ namespace Ruby {
 
 struct Symbol
 {
-    Symbol(const QString *file = 0) : file(file) { }
+    Symbol(const QString *file = nullptr) : file(file) { }
     const QString *file;
     QString name;
     QString context;

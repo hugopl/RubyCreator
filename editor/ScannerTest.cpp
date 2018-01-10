@@ -77,7 +77,7 @@ static Tokens tokenize(const QByteArray &code, bool debug = false)
 void Plugin::cleanupTestCase()
 {
     delete m_scanner;
-    m_scanner = 0;
+    m_scanner = nullptr;
 }
 
 void Plugin::test_namespaceIsNotASymbol()

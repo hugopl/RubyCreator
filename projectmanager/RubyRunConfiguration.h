@@ -19,7 +19,7 @@ class RunConfiguration : public ProjectExplorer::RunConfiguration
     Q_OBJECT
 
 public:
-	explicit RunConfiguration(ProjectExplorer::Target *target);
+    explicit RunConfiguration(ProjectExplorer::Target *target);
 
     QWidget *createConfigurationWidget() override;
     ProjectExplorer::Runnable runnable() const override;
@@ -39,13 +39,13 @@ class RunConfigurationWidget : public QWidget
     Q_OBJECT
 
 public:
-	explicit RunConfigurationWidget(RunConfiguration *rc, QWidget *parent = 0);
+	explicit RunConfigurationWidget(RunConfiguration *rc, QWidget *parent = nullptr);
 };
 
 class RunConfigurationFactory : public ProjectExplorer::IRunConfigurationFactory
 {
 public:
-	RunConfigurationFactory();
+    RunConfigurationFactory();
 
     QList<ProjectExplorer::BuildTargetInfo> availableBuildTargets(
             ProjectExplorer::Target *parent, CreationMode mode) const override;

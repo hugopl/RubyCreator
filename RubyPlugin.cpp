@@ -25,7 +25,7 @@
 
 namespace Ruby {
 
-Plugin *Plugin::m_instance = 0;
+Plugin *Plugin::m_instance = nullptr;
 
 Plugin::Plugin()
 {
@@ -38,7 +38,7 @@ Plugin::~Plugin()
     TextEditor::TextEditorSettings::unregisterCodeStylePool(Constants::SettingsId);
     TextEditor::TextEditorSettings::unregisterCodeStyleFactory(Constants::SettingsId);
 
-    m_instance = 0;
+    m_instance = nullptr;
 }
 
 Plugin *Plugin::instance()

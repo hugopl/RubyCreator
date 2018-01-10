@@ -79,11 +79,11 @@ class Scanner
     Q_DISABLE_COPY(Scanner)
 
 public:
-    enum State {
-        State_Default,
-        State_String,
-        State_Regexp,
-        State_Symbols
+    enum class State : char {
+        Default,
+        String,
+        Regexp,
+        Symbols
     };
 
     Scanner(const QString *text);

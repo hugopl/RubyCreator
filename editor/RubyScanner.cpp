@@ -125,9 +125,9 @@ Token Scanner::read()
     QChar saved;
     parseState(state, saved);
     switch (state) {
-    case State_String:
-    case State_Regexp:
-    case State_Symbols:
+    case State::String:
+    case State::Regexp:
+    case State::Symbols:
         return readStringLiteral(saved, state);
     default:
         return onDefaultState();
@@ -201,7 +201,7 @@ Token Scanner::onDefaultState()
     if (first.isDigit()) {
         token = readFloatNumber();
     } else if (first == '\'' || first == '\"' || first == '`') {
-        token = readStringLiteral(first, State_String);
+        token = readStringLiteral(first, State::String);
     } else if (m_methodPattern.match(m_tokenSequence).hasMatch()) {
         token = readMethodDefinition();
     } else if (first == '$' && (m_src.peek() == '`' || m_src.peek() == '\'')) {
@@ -252,9 +252,9 @@ Token Scanner::onDefaultState()
 
 static Token::Kind tokenKindFor(QChar ch, Scanner::State state)
 {
-    if (state == Scanner::State_Regexp)
+    if (state == Scanner::State::Regexp)
         return Token::Regexp;
-    else if (state == Scanner::State_Symbols)
+    else if (state == Scanner::State::Symbols)
         return Token::Symbol;
 
     switch(ch.toLatin1()) {
@@ -334,7 +334,7 @@ Token Scanner::readStringLiteral(QChar quoteChar, Scanner::State state)
 
     if (ch == quoteChar) {
         m_src.move();
-        if (state == State_Regexp)
+        if (state == State::Regexp)
             consumeRegexpModifiers();
         clearState();
     }
@@ -608,12 +608,12 @@ Token Scanner::readPercentageNotation()
     if (ch.isSpace() || ch.isDigit())
         return Token(Token::Operator, m_src.anchor(), m_src.length());
 
-    State state = State_String;
+    State state = State::String;
     if (ch.isLetter()) {
         if (ch == 'r')
-            state = State_Regexp;
+            state = State::Regexp;
         if (ch == 'i')
-            state = State_Symbols;
+            state = State::Symbols;
         m_src.move();
     }
     QChar delimiter = translateDelimiter(m_src.peek());
@@ -653,7 +653,7 @@ void Scanner::clearState()
 
 void Scanner::saveState(State state, QChar savedData)
 {
-    m_state = (state << 16) | static_cast<int>(savedData.unicode());
+    m_state = (int(state) << 16) | static_cast<int>(savedData.unicode());
 }
 
 void Scanner::parseState(State &state, QChar &savedData) const

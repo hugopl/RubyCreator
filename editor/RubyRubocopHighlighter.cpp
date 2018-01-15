@@ -6,11 +6,14 @@
 #include <utils/asconst.h>
 
 #include <QDebug>
+#include <QLoggingCategory>
 #include <QProcess>
 #include <QTextDocument>
 #include <QtConcurrent>
 #include <QMessageBox>
 #include <QTextBlock>
+
+Q_LOGGING_CATEGORY(log, "qtc.ruby.rubocop");
 
 namespace Ruby {
 
@@ -125,7 +128,7 @@ void RubocopHighlighter::finishRuboCopHighlight()
                                                                          rubocopFuture.future());
     m_busy = false;
 
-    qDebug() << "rubocop in" << m_timer.elapsed() << "ms," << offenses.count() << "offenses found.";
+    qCDebug(log) << "rubocop in" << m_timer.elapsed() << "ms," << offenses.count() << "offenses found.";
 }
 
 static int kindOfSeverity(const QStringRef &severity)

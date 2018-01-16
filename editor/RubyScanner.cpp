@@ -204,6 +204,9 @@ Token Scanner::onDefaultState()
         token = readStringLiteral(first, State_String);
     } else if (m_methodPattern.match(m_tokenSequence).hasMatch()) {
         token = readMethodDefinition();
+    } else if (first == '$' && (m_src.peek() == '`' || m_src.peek() == '\'')) {
+        m_src.move();
+        token = Token(Token::String, m_src.anchor(), m_src.length());
     } else if (first.isLetter() || first == '_' || first == '@'
                || first == '$' || (first == ':' && m_src.peek() != ':')) {
         token = readIdentifier();

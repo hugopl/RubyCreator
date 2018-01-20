@@ -175,6 +175,7 @@ void Plugin::test_ifs()
 void Plugin::test_scanner()
 {
     QFETCH(TestData, td);
+    QEXPECT_FAIL("Brackets + newline", "Not working", Continue);
     QCOMPARE(tokenize(td.input), td.tokens);
 }
 
@@ -258,6 +259,7 @@ void Plugin::test_scanner_data()
     QTest::newRow("Brackets 3") << TestData("%q[[]]", { Token::String });
     QTest::newRow("Brackets 4") << TestData("%w(())", { Token::String });
     QTest::newRow("Brackets 5") << TestData("%q!\\!!", { Token::String });
+    QTest::newRow("Brackets + newline") << TestData("%q{{\n}\n}", { Token::String, Token::String });
     QTest::newRow("keyword symbols 1")
             << TestData("if: :foo", { Token::SymbolHashKey, Token::Whitespace, Token::Symbol });
     QTest::newRow("keyword symbols 2")

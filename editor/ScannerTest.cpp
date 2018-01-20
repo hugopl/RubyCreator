@@ -4,10 +4,25 @@
 #include <QtTest/QtTest>
 #include <vector>
 
+typedef QVector<Ruby::Token::Kind> Tokens;
+
+struct TestData
+{
+    TestData() = default;
+    TestData(const QByteArray &input, const Tokens &tokens) :
+        input(input), tokens(tokens)
+    {}
+
+    const QByteArray input;
+    const Tokens tokens;
+
+};
+
+Q_DECLARE_METATYPE(TestData);
+
 namespace Ruby {
 
-Scanner *m_scanner;
-typedef QVector<Token::Kind> Tokens;
+static Scanner *m_scanner = nullptr;
 
 #define CASE_STR(x) case Token::x: str = #x; break
 QDebug &operator<<(QDebug &s, Token::Kind t)
@@ -78,57 +93,6 @@ void Plugin::cleanupTestCase()
 {
     delete m_scanner;
     m_scanner = nullptr;
-}
-
-void Plugin::test_namespaceIsNotASymbol()
-{
-    Tokens expectedTokens = { Token::Constant, Token::Operator, Token::Constant, Token::Whitespace, Token::Identifier};
-    QCOMPARE(tokenize("Foo::Bar oi"), expectedTokens);
-}
-
-void Plugin::test_symbolOnArray()
-{
-    Tokens expectedTokens = { Token::Identifier, Token::OpenBrackets, Token::Symbol, Token::CloseBrackets };
-    QCOMPARE(tokenize("foo[:bar]"), expectedTokens);
-}
-
-void Plugin::test_methodDefinition()
-{
-    Tokens expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::Whitespace,
-                              Token::Parameter, Token::OperatorComma, Token::Whitespace, Token::Parameter};
-    QCOMPARE(tokenize("def foo bar, tender"), expectedTokens);
-    expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::Whitespace,
-                              Token::Parameter, Token::Whitespace, Token::OperatorComma, Token::Whitespace, Token::Parameter};
-    QCOMPARE(tokenize("def foo bar  , tender"), expectedTokens);
-    expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::KeywordSelf, Token::OperatorDot, Token::Method, Token::Whitespace,
-                              Token::Parameter};
-    QCOMPARE(tokenize("def self.foo bar"), expectedTokens);
-    expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::Operator, Token::Parameter, Token::Operator};
-    QCOMPARE(tokenize("def foo(bar)"), expectedTokens);
-    expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::Operator, Token::Parameter,
-                       Token::OperatorComma, Token::Whitespace, Token::Operator, Token::Parameter, Token::Operator};
-    QCOMPARE(tokenize("def foo(bar, &tender)"), expectedTokens);
-    expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::Whitespace, Token::Operator, Token::Parameter,
-                       Token::OperatorComma, Token::Whitespace, Token::Parameter};
-    QCOMPARE(tokenize("def foo &bar, tender"), expectedTokens);
-
-    expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method };
-    QCOMPARE(tokenize("def foo!"), expectedTokens);
-    QCOMPARE(tokenize("def foo?"), expectedTokens);
-    QCOMPARE(tokenize("def foo="), expectedTokens);
-    QCOMPARE(tokenize("def <=>"), expectedTokens);
-    QCOMPARE(tokenize("def +="), expectedTokens);
-
-    expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::Comment };
-    QCOMPARE(tokenize("def foo# comment"), expectedTokens);
-    expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::Whitespace, Token::Parameter };
-    QCOMPARE(tokenize("def foo oi"), expectedTokens);
-    expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::Operator, Token::Parameter,
-                       Token::Operator };
-    QCOMPARE(tokenize("def foo(oi)"), expectedTokens);
-    expectedTokens = { Token::KeywordDef, Token::Whitespace, Token::Method, Token::Parameter };
-    QCOMPARE(tokenize("def foo!bar"), expectedTokens);
-
 }
 
 void Plugin::test_context()
@@ -208,63 +172,96 @@ void Plugin::test_ifs()
     QCOMPARE(m_scanner->contextName(), QStringLiteral("Foo"));
 }
 
-void Plugin::test_strings()
+void Plugin::test_scanner()
 {
-    Tokens expectedTokens = { Token::Backtick };
-    QCOMPARE(tokenize("`Nice \"backtikc\" son`"), expectedTokens);
-    expectedTokens = { Token::Backtick, Token::Backtick };
-    QCOMPARE(tokenize("`Nice \"backt \\\nikc\" son`"), expectedTokens);
-    expectedTokens = { Token::String };
-    QCOMPARE(tokenize("\"Nice \\\"escape!\""), expectedTokens);
+    QFETCH(TestData, td);
+    QCOMPARE(tokenize(td.input), td.tokens);
 }
 
-void Plugin::test_inStringCode()
+void Plugin::test_scanner_data()
 {
-    Tokens expectedTokens = { Token::Backtick, Token::InStringCode, Token::Backtick };
-    QCOMPARE(tokenize("`Nice #{Hello}`"), expectedTokens);
-    expectedTokens = { Token::String };
-    QCOMPARE(tokenize("'Nice #{Hello}'"), expectedTokens);
-    expectedTokens = { Token::String, Token::InStringCode, Token::String };
-    QCOMPARE(tokenize("\"#{foo}bar\""), expectedTokens);
+    QTest::addColumn<TestData>("td");
 
-}
+    QTest::newRow("symbol on array")
+            << TestData("foo[:bar]", {
+                            Token::Identifier,
+                            Token::OpenBrackets, Token::Symbol, Token::CloseBrackets });
+    QTest::newRow("method def - param after comma")
+            << TestData("def foo bar, tender", {
+                            Token::KeywordDef, Token::Whitespace, Token::Method, Token::Whitespace,
+                            Token::Parameter, Token::OperatorComma, Token::Whitespace, Token::Parameter });
+    QTest::newRow("method def - param after WS and comma")
+            << TestData("def foo bar  , tender", {
+                            Token::KeywordDef, Token::Whitespace, Token::Method, Token::Whitespace,
+                            Token::Parameter, Token::Whitespace, Token::OperatorComma,
+                            Token::Whitespace, Token::Parameter });
+    QTest::newRow("method def - self with param")
+            << TestData("def self.foo bar", {
+                            Token::KeywordDef, Token::Whitespace, Token::KeywordSelf,
+                            Token::OperatorDot, Token::Method, Token::Whitespace, Token::Parameter });
+    QTest::newRow("method def - parentheses")
+            << TestData("def foo(bar)", {
+                            Token::KeywordDef, Token::Whitespace, Token::Method, Token::Operator,
+                            Token::Parameter, Token::Operator });
+    QTest::newRow("method def - param and block")
+            << TestData("def foo(bar, &tender)", {
+                            Token::KeywordDef, Token::Whitespace, Token::Method, Token::Operator,
+                            Token::Parameter, Token::OperatorComma, Token::Whitespace,
+                            Token::Operator, Token::Parameter, Token::Operator });
+    QTest::newRow("method def - block and param, no parens")
+            << TestData("def foo &bar, tender", {
+                            Token::KeywordDef, Token::Whitespace, Token::Method, Token::Whitespace,
+                            Token::Operator, Token::Parameter, Token::OperatorComma,
+                            Token::Whitespace, Token::Parameter });
 
-void Plugin::test_percentageNotation()
-{
-    Tokens expectedTokens = { Token::String };
-    QCOMPARE(tokenize("%(Hello)"), expectedTokens);
-    QCOMPARE(tokenize("%w/Hello asas/"), expectedTokens);
-    expectedTokens = { Token::Operator, Token::Number };
-    QCOMPARE(tokenize("%2"), expectedTokens);
-    expectedTokens = { Token::String, Token::OperatorDot, Token::Identifier };
-    QCOMPARE(tokenize("%w(a b).length"), expectedTokens);
-}
-
-void Plugin::test_regexpLiteral()
-{
-    Tokens expectedTokens = { Token::Regexp };
-    QCOMPARE(tokenize("%r{foo/bar}"), expectedTokens);
-    expectedTokens = { Token::Regexp, Token::Regexp };
-    QCOMPARE(tokenize("%r{foo\n/bar}x"), expectedTokens);
-}
-
-void Plugin::test_brackets()
-{
-    Tokens expectedTokens = { Token::Regexp };
-    QCOMPARE(tokenize("%r{{}}"), expectedTokens);
-    QCOMPARE(tokenize("%r<<>>"), expectedTokens);
-    expectedTokens = { Token::String };
-    QCOMPARE(tokenize("%q[[]]"), expectedTokens);
-    QCOMPARE(tokenize("%w(())"), expectedTokens);
-    QCOMPARE(tokenize("%q!\\!!"), expectedTokens);
-}
-
-void Plugin::test_keyword_symbols()
-{
-    Tokens expectedTokens = { Token::SymbolHashKey, Token::Whitespace, Token::Symbol };
-    QCOMPARE(tokenize("if: :foo"), expectedTokens);
-    expectedTokens = { Token::Identifier, Token::OperatorAssign, Token::Whitespace, Token::Symbol };
-    QCOMPARE(tokenize("a= :if"), expectedTokens);
+    const Tokens simpleFunc{ Token::KeywordDef, Token::Whitespace, Token::Method };
+    QTest::newRow("method excl") << TestData("def foo!", simpleFunc);
+    QTest::newRow("method question") << TestData("def foo?", simpleFunc);
+    QTest::newRow("method equals") << TestData("def foo=", simpleFunc);
+    QTest::newRow("method spaceship") << TestData("def <=>", simpleFunc);
+    QTest::newRow("method plus-equals") << TestData("def +=", simpleFunc);
+    QTest::newRow("method with comment")
+            << TestData("def foo# comment", {
+                            Token::KeywordDef, Token::Whitespace, Token::Method, Token::Comment });
+    QTest::newRow("method with param no paren")
+            << TestData("def foo oi", {
+                            Token::KeywordDef, Token::Whitespace, Token::Method,
+                            Token::Whitespace, Token::Parameter });
+    QTest::newRow("method with param with paren")
+            << TestData("def foo(oi)", {
+                            Token::KeywordDef, Token::Whitespace, Token::Method, Token::Operator,
+                            Token::Parameter, Token::Operator });
+    QTest::newRow("method excl with param")
+            << TestData("def foo!bar", { Token::KeywordDef, Token::Whitespace, Token::Method, Token::Parameter });
+    QTest::newRow("namespace is not a symbol")
+            << TestData("Foo::Bar oi", {
+                            Token::Constant, Token::Operator, Token::Constant,
+                            Token::Whitespace, Token::Identifier });
+    QTest::newRow("Backtick") << TestData("`Nice \"backtick\" son`", { Token::Backtick });
+    QTest::newRow("Newline in Backtick")
+            << TestData("`Nice \"backt \\\nick\" son`", { Token::Backtick, Token::Backtick });
+    QTest::newRow("Escpae in string") << TestData("\"Nice \\\"escape!\"", { Token::String });
+    QTest::newRow("Single-quote string") << TestData("'Nice #{Hello}'", { Token::String });
+    QTest::newRow("In string code")
+            << TestData("\"#{foo}bar\"", { Token::String, Token::InStringCode, Token::String });
+    QTest::newRow("In string code in backtick")
+            << TestData("`Nice #{Hello}`", { Token::Backtick, Token::InStringCode, Token::Backtick });
+    QTest::newRow("Percentage") << TestData("%(Hello)", { Token::String });
+    QTest::newRow("%w") << TestData("%w/Hello asas/", { Token::String });
+    QTest::newRow("Percentage operator") << TestData("%2", { Token::Operator, Token::Number });
+    QTest::newRow("%w with function call")
+            << TestData("%w(a b).length", { Token::String, Token::OperatorDot, Token::Identifier });
+    QTest::newRow("Regexp") << TestData("%r{foo/bar}", { Token::Regexp });
+    QTest::newRow("Regexp + newline") << TestData("%r{foo\n/bar}x", { Token::Regexp, Token::Regexp });
+    QTest::newRow("Brackets 1") << TestData("%r{{}}", { Token::Regexp });
+    QTest::newRow("Brackets 2") << TestData("%r<<>>", { Token::Regexp });
+    QTest::newRow("Brackets 3") << TestData("%q[[]]", { Token::String });
+    QTest::newRow("Brackets 4") << TestData("%w(())", { Token::String });
+    QTest::newRow("Brackets 5") << TestData("%q!\\!!", { Token::String });
+    QTest::newRow("keyword symbols 1")
+            << TestData("if: :foo", { Token::SymbolHashKey, Token::Whitespace, Token::Symbol });
+    QTest::newRow("keyword symbols 2")
+            << TestData("a= :if", { Token::Identifier, Token::OperatorAssign, Token::Whitespace, Token::Symbol });
 }
 
 } // namespace Ruby

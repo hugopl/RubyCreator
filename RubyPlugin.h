@@ -31,20 +31,13 @@ private:
 private slots:
     void cleanupTestCase();
 
-    void test_namespaceIsNotASymbol();
-    void test_symbolOnArray();
-    void test_methodDefinition();
     void test_context();
     void test_indentIf();
     void test_indentBraces();
     void test_lineCount();
     void test_ifs();
-    void test_strings();
-    void test_inStringCode();
-    void test_percentageNotation();
-    void test_regexpLiteral();
-    void test_brackets();
-    void test_keyword_symbols();
+    void test_scanner();
+    void test_scanner_data();
 #endif
 };
 

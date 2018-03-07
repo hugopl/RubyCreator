@@ -1,3 +1,5 @@
+[![Code Climate](https://codeclimate.com/github/hugopl/RubyCreator/badges/gpa.svg)](https://codeclimate.com/github/hugopl/RubyCreator)
+
 # RubyCreator
 
 Plugin to add Ruby language support to QtCreator IDE.

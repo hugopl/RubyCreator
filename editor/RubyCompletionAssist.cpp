@@ -155,7 +155,7 @@ TextEditor::IAssistProposal *CompletionAssistProcessor::perform(const TextEditor
     if (proposals.empty()) {
         return 0;
     }
-    TextEditor::GenericProposalModel *model = new TextEditor::GenericProposalModel;
+    TextEditor::GenericProposalModelPtr model(new TextEditor::GenericProposalModel);
     model->loadContent(proposals);
     TextEditor::IAssistProposal *proposal = new TextEditor::GenericProposal(startPosition, model);
     return proposal;

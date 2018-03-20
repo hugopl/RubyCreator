@@ -42,13 +42,10 @@ public:
 	explicit RunConfigurationWidget(RunConfiguration *rc, QWidget *parent = nullptr);
 };
 
-class RunConfigurationFactory : public ProjectExplorer::IRunConfigurationFactory
+class RunConfigurationFactory : public ProjectExplorer::RunConfigurationFactory
 {
 public:
     RunConfigurationFactory();
-
-    QList<ProjectExplorer::BuildTargetInfo> availableBuildTargets(
-            ProjectExplorer::Target *parent, CreationMode mode) const override;
 
     bool canCreateHelper(ProjectExplorer::Target *parent, const QString &buildTarget) const override;
 };

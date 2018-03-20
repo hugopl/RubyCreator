@@ -26,7 +26,8 @@ const QList<QuickFixFactory *> &QuickFixFactory::quickFixFactories()
 
 void registerQuickFixes(ExtensionSystem::IPlugin *plugIn)
 {
-    plugIn->addAutoReleasedObject(new SwitchStringQuotes);
+    auto ssq = new SwitchStringQuotes;
+    ssq->setParent(plugIn);
 }
 
 void SwitchStringQuotes::match(const TextEditor::QuickFixInterface &interface,

@@ -6,6 +6,8 @@
 
 namespace Ruby {
 
+class PluginPrivate;
+
 class Plugin : public ExtensionSystem::IPlugin
 {
     Q_OBJECT
@@ -25,7 +27,7 @@ private:
     void initializeToolsSettings();
 
     static Plugin* m_instance;
-    QuickFixAssistProvider* m_quickFixProvider;
+    PluginPrivate *d = nullptr;
 
 #ifdef WITH_TESTS
 private slots:

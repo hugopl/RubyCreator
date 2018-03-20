@@ -11,8 +11,10 @@
 #include <QRegularExpression>
 #include <QThread>
 
-#include <texteditor/textdocument.h>
 #include <coreplugin/progressmanager/progressmanager.h>
+#include <projectexplorer/buildtargetinfo.h>
+#include <projectexplorer/target.h>
+#include <texteditor/textdocument.h>
 
 namespace Ruby {
 
@@ -99,13 +101,24 @@ void Project::scanProjectNow()
     Core::ProgressManager::instance()->addTask(m_projectScanFuture, tr("Parsing Ruby Files"), Constants::RubyProjectTask);
     connect(watcher, &QFutureWatcher<void>::finished,
             this, [this, watcher] {
+        ProjectExplorer::BuildTargetInfoList appTargets;
         auto newRoot = new ProjectNode(projectDirectory());
         for (const QString &f : m_files) {
             const Utils::FileName path = Utils::FileName::fromString(f);
             newRoot->addNestedNode(new ProjectExplorer::FileNode(
                                        path, ProjectExplorer::FileNode::fileTypeForFileName(path), false));
+            using ProjectExplorer::FileType;
+            if (!f.endsWith(".rubyproject")) {
+                ProjectExplorer::BuildTargetInfo bti;
+                bti.targetName = f;
+                bti.targetFilePath = Utils::FileName::fromString(f);
+                bti.projectFilePath = projectFilePath();
+                appTargets.list.append(bti);
+            }
         }
         setRootProjectNode(newRoot);
+        if (ProjectExplorer::Target *target = activeTarget())
+            target->setApplicationTargets(appTargets);
         emitParsingFinished(true);
         watcher->deleteLater();
     });

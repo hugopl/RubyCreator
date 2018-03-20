@@ -91,18 +91,6 @@ RunConfigurationFactory::RunConfigurationFactory()
     addSupportedProjectType(Constants::ProjectId);
 }
 
-QList<BuildTargetInfo> RunConfigurationFactory::availableBuildTargets(
-		Target *parent, IRunConfigurationFactory::CreationMode mode) const
-{
-    Q_UNUSED(mode);
-    Ruby::Project *project = static_cast<Ruby::Project *>(parent->project());
-    return Utils::transform(project->files(Project::AllFiles), [project](const FileName &fn) {
-		BuildTargetInfo bti(fn.toString(), fn, project->projectFilePath());
-        bti.displayName = fn.fileName();
-        return bti;
-    });
-}
-
 bool RunConfigurationFactory::canCreateHelper(Target *parent, const QString &buildTarget) const
 {
     Ruby::Project *project = static_cast<Ruby::Project *>(parent->project());

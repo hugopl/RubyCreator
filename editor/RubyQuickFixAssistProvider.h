@@ -8,7 +8,7 @@ namespace Ruby {
 class QuickFixAssistProvider : public TextEditor::IAssistProvider
 {
 public:
-    QuickFixAssistProvider(QObject *parent);
+    QuickFixAssistProvider();
     IAssistProvider::RunType runType() const override;
     TextEditor::IAssistProcessor *createProcessor() const override;
 };

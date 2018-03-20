@@ -25,6 +25,31 @@
 
 namespace Ruby {
 
+class PluginPrivate
+{
+public:
+    EditorFactory editorFactory;
+    RunConfigurationFactory runConfigFactory;
+    SymbolFilter curDocumentMethodsSymbolFilter;
+    SymbolFilter methodsSymbolFilter;
+    SymbolFilter classesSymbolFilter;
+    ProjectWizard projectWizard;
+    CompletionAssistProvider completionAssistProvider;
+    QuickFixAssistProvider m_quickFixProvider;
+
+    PluginPrivate() :
+        curDocumentMethodsSymbolFilter([](const QString &file) {
+            return CodeModel::instance()->methodsIn(file);
+        }, "Ruby Methods in Current Document", '.'),
+        methodsSymbolFilter([](const QString &) {
+            return CodeModel::instance()->allMethods();
+        }, "Ruby methods", 'm'),
+        classesSymbolFilter([](const QString &) {
+            return CodeModel::instance()->allClasses();
+        }, "Ruby classes", 'c')
+    {}
+};
+
 Plugin *Plugin::m_instance = nullptr;
 
 Plugin::Plugin()
@@ -39,6 +64,7 @@ Plugin::~Plugin()
     TextEditor::TextEditorSettings::unregisterCodeStyleFactory(Constants::SettingsId);
 
     m_instance = nullptr;
+    delete d;
 }
 
 Plugin *Plugin::instance()
@@ -52,28 +78,13 @@ bool Plugin::initialize(const QStringList &, QString *errorString)
 
     initializeToolsSettings();
 
-    addAutoReleasedObject(new EditorFactory);
-    addAutoReleasedObject(new RunConfigurationFactory);
-    addAutoReleasedObject(new SymbolFilter([](const QString &file) {
-        return CodeModel::instance()->methodsIn(file);
-    }, "Ruby Methods in Current Document", '.'));
-    addAutoReleasedObject(new SymbolFilter([](const QString &) {
-        return CodeModel::instance()->allMethods();
-    }, "Ruby methods", 'm'));
-    addAutoReleasedObject(new SymbolFilter([](const QString &) {
-        return CodeModel::instance()->allClasses();
-    }, "Ruby classes", 'c'));
+    d = new PluginPrivate;
     ProjectExplorer::ProjectManager::registerProjectType<Project>(Constants::ProjectMimeType);
 
     Core::IWizardFactory::registerFactoryCreator([]() {
         return QList<Core::IWizardFactory *>() << new ProjectWizard;
     });
 
-    addAutoReleasedObject(new ProjectWizard);
-
-    addAutoReleasedObject(new CompletionAssistProvider);
-
-    m_quickFixProvider = new QuickFixAssistProvider(this);
     registerQuickFixes(this);
     TextEditor::SnippetProvider::registerGroup(Constants::SnippetGroupId,
                                                tr("Ruby", "SnippetProvider"),
@@ -88,7 +99,7 @@ void Plugin::extensionsInitialized()
 
 QuickFixAssistProvider *Plugin::quickFixProvider()
 {
-    return m_quickFixProvider;
+    return &d->m_quickFixProvider;
 }
 
 void Plugin::initializeToolsSettings()

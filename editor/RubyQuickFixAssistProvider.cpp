@@ -12,8 +12,7 @@
 
 namespace Ruby {
 
-QuickFixAssistProvider::QuickFixAssistProvider(QObject *parent)
-    : TextEditor::IAssistProvider(parent)
+QuickFixAssistProvider::QuickFixAssistProvider()
 {
 }
 

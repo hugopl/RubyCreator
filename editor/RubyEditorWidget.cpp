@@ -53,19 +53,27 @@ EditorWidget::~EditorWidget()
     delete m_ambigousMethodAssistProvider;
 }
 
-Link EditorWidget::findLinkAt(const QTextCursor &cursor, bool, bool inNextSplit)
+void EditorWidget::findLinkAt(const QTextCursor &cursor,
+                              Utils::ProcessLinkCallback &&processLinkCallback,
+                              bool resolveTarget,
+                              bool inNextSplit)
 {
+    Q_UNUSED(resolveTarget);
     QString text = cursor.block().text();
-    if (text.isEmpty())
-        return Link();
+    if (text.isEmpty()) {
+        processLinkCallback(Utils::Link());
+        return;
+    }
 
     QString word;
     int cursorPos = cursor.positionInBlock();
     int pos = 0;
     for (;;) {
         QRegularExpressionMatch match = m_wordRegex.match(text, pos + word.length());
-        if (!match.hasMatch())
-            return Link();
+        if (!match.hasMatch()) {
+            processLinkCallback(Utils::Link());
+            return;
+        }
 
         word = match.captured();
         pos = match.capturedStart();
@@ -73,14 +81,18 @@ Link EditorWidget::findLinkAt(const QTextCursor &cursor, bool, bool inNextSplit)
             break;
     }
 
-    if (word.isEmpty() || word[0].isDigit())
-        return Link();
+    if (word.isEmpty() || word[0].isDigit()) {
+        processLinkCallback(Utils::Link());
+        return;
+    }
 
     CodeModel* codeModel = CodeModel::instance();
 
     const QList<Symbol> symbols = word[0].isUpper() ? codeModel->allClassesAndConstantsNamed(word) : codeModel->allMethodsNamed(word);
-    if (symbols.empty())
-        return Link();
+    if (symbols.empty()) {
+        processLinkCallback(Utils::Link());
+        return;
+    }
 
     Link link;
     link.linkTextStart = cursor.position() + (pos - cursorPos);
@@ -92,14 +104,15 @@ Link EditorWidget::findLinkAt(const QTextCursor &cursor, bool, bool inNextSplit)
         m_ambigousMethodAssistProvider->setInNextSplit(inNextSplit);
 
         invokeAssist(TextEditor::FollowSymbol, m_ambigousMethodAssistProvider);
-        return link;
+        processLinkCallback(link);
+        return;
     }
 
     link.targetLine = symbols.last().line;
     link.targetColumn = symbols.last().column;
     link.targetFileName = *symbols.last().file;
 
-    return link;
+    processLinkCallback(link);
 }
 
 void EditorWidget::unCommentSelection()

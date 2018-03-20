@@ -37,12 +37,9 @@ TextEditor::Indenter *CodeStylePreferencesFactory::createIndenter() const
     return new Indenter;
 }
 
-TextEditor::SnippetProvider *CodeStylePreferencesFactory::snippetProvider() const
+QString CodeStylePreferencesFactory::snippetProviderGroupId() const
 {
-    return ExtensionSystem::PluginManager::getObject<TextEditor::SnippetProvider>(
-        [](TextEditor::SnippetProvider *provider) {
-            return provider->groupId() == Constants::SnippetGroupId;
-    });
+    return Constants::SnippetGroupId;
 }
 
 QString CodeStylePreferencesFactory::previewText() const

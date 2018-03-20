@@ -19,7 +19,10 @@ public:
     EditorWidget();
     ~EditorWidget();
 
-    Utils::Link findLinkAt(const QTextCursor &cursor, bool, bool inNextSplit) override;
+    void findLinkAt(const QTextCursor &cursor,
+                    Utils::ProcessLinkCallback &&processLinkCallback,
+                    bool resolveTarget = true,
+                    bool inNextSplit = false) override;
     void unCommentSelection() override;
 
     void aboutToOpen(const QString &fileName, const QString &realFileName) override;

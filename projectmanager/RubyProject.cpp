@@ -23,6 +23,7 @@ Project::Project(const Utils::FileName &fileName) :
 {
     setId(Constants::ProjectId);
     m_projectDir = QDir(fileName.parentDir().toString());
+    readProjectSettings(fileName);
 
     m_projectScanTimer.setSingleShot(true);
     connect(&m_projectScanTimer, &QTimer::timeout, this, &Project::scanProjectNow);
@@ -40,6 +41,17 @@ Project::~Project()
         m_projectScanFuture.cancel();
         m_projectScanFuture.waitForFinished();
     }
+}
+
+void Project::readProjectSettings(const Utils::FileName &fileName)
+{
+    QString base = fileName.toFileInfo().absoluteDir().absolutePath();
+    base.append("/");
+    QSettings settings(fileName.toString(), QSettings::IniFormat);
+    settings.beginGroup("Config");
+    for (const QString &path : settings.value("Ignore").toStringList())
+        m_ignoredDirectories << base + path;
+    settings.endGroup();
 }
 
 void Project::scheduleProjectScan()
@@ -109,7 +121,7 @@ void Project::recursiveScanDirectory(const QDir &dir)
     for (const QFileInfo &info : files) {
         if (m_projectScanFuture.isCanceled())
             return;
-        if (info.isDir())
+        if (info.isDir() && !shouldIgnoreDir(info.filePath()))
             recursiveScanDirectory(QDir(info.filePath()));
         else if (!projectFilePattern.match(info.fileName()).hasMatch())
             m_files << info.filePath();
@@ -117,4 +129,11 @@ void Project::recursiveScanDirectory(const QDir &dir)
     m_fsWatcher.addPath(dir.absolutePath());
 }
 
+bool Project::shouldIgnoreDir(const QString &filePath) const
+{
+    for (const QString& path : m_ignoredDirectories)
+        if (filePath.startsWith(path))
+          return true;
+    return false;
+}
 }

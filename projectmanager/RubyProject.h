@@ -24,15 +24,18 @@ public:
     ~Project();
 
 private:
+    void readProjectSettings(const Utils::FileName &fileName);
     void scheduleProjectScan();
     void populateProject();
     void scanProjectNow();
     void recursiveScanDirectory(const QDir &dir);
+    bool shouldIgnoreDir(const QString &filePath) const;
 
 private:
     QDir m_projectDir;
     QSet<QString> m_files;
     QFuture<void> m_projectScanFuture;
+    QStringList m_ignoredDirectories;
     QFileSystemWatcher m_fsWatcher;
     bool m_populatingProject;
 

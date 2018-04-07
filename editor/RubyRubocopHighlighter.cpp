@@ -3,8 +3,6 @@
 #include <texteditor/textdocument.h>
 #include <texteditor/semantichighlighter.h>
 
-#include <utils/asconst.h>
-
 #include <QDebug>
 #include <QLoggingCategory>
 #include <QProcess>

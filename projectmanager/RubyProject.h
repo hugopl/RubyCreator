@@ -27,11 +27,14 @@ private:
     void readProjectSettings(const Utils::FileName &fileName);
     void scheduleProjectScan();
     void populateProject();
-    void scanProjectNow();
+    void refresh(ProjectExplorer::Target *target = nullptr);
     void recursiveScanDirectory(const QDir &dir);
     bool shouldIgnoreDir(const QString &filePath) const;
 
 private:
+    RestoreResult fromMap(const QVariantMap &map, QString *errorMessage) override;
+    bool setupTarget(ProjectExplorer::Target *t) override;
+
     QDir m_projectDir;
     QSet<QString> m_files;
     QFuture<void> m_projectScanFuture;

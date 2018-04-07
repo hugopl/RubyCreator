@@ -86,18 +86,8 @@ RunConfigurationWidget::RunConfigurationWidget(RunConfiguration *rc, QWidget *pa
 
 RunConfigurationFactory::RunConfigurationFactory()
 {
-	setObjectName("RunConfigurationFactory");
     registerRunConfiguration<RunConfiguration>(C_RUNCONFIGURATIONPREFIX);
     addSupportedProjectType(Constants::ProjectId);
-}
-
-bool RunConfigurationFactory::canCreateHelper(Target *parent, const QString &buildTarget) const
-{
-    Ruby::Project *project = static_cast<Ruby::Project *>(parent->project());
-    const QString script = buildTarget;
-    if (script.endsWith(".rubyproject"))
-        return false;
-    return project->files(ProjectExplorer::Project::AllFiles).contains(FileName::fromString(script));
 }
 
 } // namespace Ruby

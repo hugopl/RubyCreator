@@ -13,6 +13,7 @@
 
 #include <coreplugin/progressmanager/progressmanager.h>
 #include <projectexplorer/buildtargetinfo.h>
+#include <projectexplorer/kitmanager.h>
 #include <projectexplorer/target.h>
 #include <texteditor/textdocument.h>
 
@@ -28,9 +29,7 @@ Project::Project(const Utils::FileName &fileName) :
     readProjectSettings(fileName);
 
     m_projectScanTimer.setSingleShot(true);
-    connect(&m_projectScanTimer, &QTimer::timeout, this, &Project::scanProjectNow);
-
-    scanProjectNow();
+    connect(&m_projectScanTimer, &QTimer::timeout, this, [this] { refresh(); });
 
     connect(&m_fsWatcher, &QFileSystemWatcher::directoryChanged, this, &Project::scheduleProjectScan);
 
@@ -65,7 +64,7 @@ void Project::scheduleProjectScan()
             m_projectScanTimer.start();
         }
     } else {
-        scanProjectNow();
+        refresh();
     }
 }
 
@@ -87,7 +86,7 @@ void Project::populateProject()
         CodeModel::instance()->addFile(file);
 }
 
-void Project::scanProjectNow()
+void Project::refresh(ProjectExplorer::Target *target)
 {
     if (isParsing()) {
         m_projectScanTimer.setInterval(MIN_TIME_BETWEEN_PROJECT_SCANS);
@@ -99,8 +98,10 @@ void Project::scanProjectNow()
     auto *watcher = new QFutureWatcher<void>();
     watcher->setFuture(m_projectScanFuture);
     Core::ProgressManager::instance()->addTask(m_projectScanFuture, tr("Parsing Ruby Files"), Constants::RubyProjectTask);
+    if (!target)
+        target = activeTarget();
     connect(watcher, &QFutureWatcher<void>::finished,
-            this, [this, watcher] {
+            this, [this, watcher, target] {
         ProjectExplorer::BuildTargetInfoList appTargets;
         auto newRoot = new ProjectNode(projectDirectory());
         for (const QString &f : m_files) {
@@ -117,7 +118,7 @@ void Project::scanProjectNow()
             }
         }
         setRootProjectNode(newRoot);
-        if (ProjectExplorer::Target *target = activeTarget())
+        if (target)
             target->setApplicationTargets(appTargets);
         emitParsingFinished(true);
         watcher->deleteLater();
@@ -149,4 +150,25 @@ bool Project::shouldIgnoreDir(const QString &filePath) const
           return true;
     return false;
 }
+
+Project::RestoreResult Project::fromMap(const QVariantMap &map, QString *errorMessage)
+{
+    RestoreResult res = ProjectExplorer::Project::fromMap(map, errorMessage);
+    if (res == RestoreResult::Ok) {
+        refresh();
+
+        ProjectExplorer::Kit *defaultKit = ProjectExplorer::KitManager::defaultKit();
+        if (!activeTarget() && defaultKit)
+            addTarget(createTarget(defaultKit));
+    }
+
+    return res;
+}
+
+bool Project::setupTarget(ProjectExplorer::Target *t)
+{
+    refresh(t);
+    return ProjectExplorer::Project::setupTarget(t);
+}
+
 }

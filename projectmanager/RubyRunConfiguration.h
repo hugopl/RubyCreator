@@ -46,8 +46,6 @@ class RunConfigurationFactory : public ProjectExplorer::RunConfigurationFactory
 {
 public:
     RunConfigurationFactory();
-
-    bool canCreateHelper(ProjectExplorer::Target *parent, const QString &buildTarget) const override;
 };
 
 } // namespace Ruby

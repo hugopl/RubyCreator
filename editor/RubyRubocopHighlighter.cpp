@@ -1,6 +1,7 @@
 #include "RubyRubocopHighlighter.h"
 
 #include <texteditor/textdocument.h>
+#include <texteditor/textmark.h>
 #include <texteditor/semantichighlighter.h>
 
 #include <QDebug>
@@ -24,6 +25,35 @@ public:
     }
 };
 
+class TextMark : public TextEditor::TextMark
+{
+public:
+    using RemovedFromEditorHandler = std::function<void(TextMark *)>;
+
+    TextMark(const QString &fileName,
+             int line,
+             const QString &text,
+             const RemovedFromEditorHandler &removedHandler)
+        : TextEditor::TextMark(fileName, line, "Rubocop")
+        , m_removedFromEditorHandler(removedHandler)
+    {
+        setColor(Utils::Theme::ClangCodeModel_Warning_TextMarkColor);
+        setDefaultToolTip(QCoreApplication::translate("Rubocop", "Rubocop Warning"));
+        setPriority(TextEditor::TextMark::NormalPriority);
+        setLineAnnotation(text);
+    }
+
+private:
+    void removedFromEditor() override;
+
+    RemovedFromEditorHandler m_removedFromEditorHandler;
+};
+
+void TextMark::removedFromEditor()
+{
+    m_removedFromEditorHandler(this);
+}
+
 RubocopHighlighter::RubocopHighlighter()
 {
     QTextCharFormat format;
@@ -40,6 +70,7 @@ RubocopHighlighter::RubocopHighlighter()
 
 RubocopHighlighter::~RubocopHighlighter()
 {
+    clearTextMarks();
     m_rubocop->closeWriteChannel();
     m_rubocop->waitForFinished(3000);
     delete m_rubocop;
@@ -83,6 +114,15 @@ QString RubocopHighlighter::diagnosticAt(const Utils::FileName &file, int pos)
     return it->messages[Range(pos + 1, 0)];
 }
 
+void RubocopHighlighter::clearTextMarks()
+{
+    for (TextMark *textMark : m_textMarks) {
+        m_document->removeMark(textMark);
+        delete textMark;
+    }
+    m_textMarks.clear();
+}
+
 void RubocopHighlighter::initRubocopProcess()
 {
     if (m_rubocopScript.open()) {
@@ -118,6 +158,20 @@ void RubocopHighlighter::finishRuboCopHighlight()
     }
 
     Offenses offenses = processRubocopOutput();
+    const Utils::FileName filePath = m_document->filePath();
+    Diagnostics &diag = m_diagnostics[filePath];
+    QMapIterator<Range, QString> it(diag.messages);
+    while (it.hasNext()) {
+        it.next();
+        const auto onMarkRemoved = [this](const TextMark *mark) {
+            const auto it = std::remove(m_textMarks.begin(), m_textMarks.end(), mark);
+            m_textMarks.erase(it, m_textMarks.end());
+            delete mark;
+        };
+        auto textMark = new TextMark(filePath.toString(), it.key().line, it.value(), onMarkRemoved);
+        m_textMarks.push_back(textMark);
+        m_document->addMark(textMark);
+    }
     RubocopFuture rubocopFuture(offenses);
     TextEditor::SemanticHighlighter::incrementalApplyExtraAdditionalFormats(m_document->syntaxHighlighter(),
                                                                             rubocopFuture.future(), 0,
@@ -142,6 +196,7 @@ Offenses RubocopHighlighter::processRubocopOutput()
 {
     Offenses result;
     Diagnostics &diag = m_diagnostics[m_document->filePath()] = Diagnostics();
+    clearTextMarks();
 
     const QVector<QStringRef> lines = m_outputBuffer.splitRef('\n');
     for (const QStringRef &line : lines) {
@@ -167,10 +222,9 @@ Offenses RubocopHighlighter::processRubocopOutput()
 
 Ruby::Range RubocopHighlighter::lineColumnLengthToRange(int line, int column, int length)
 {
-    QTextBlock block = m_document->document()->findBlockByLineNumber(line - 1);
-    int pos = block.position() + column;
-
-    return Ruby::Range(pos, length);
+    const QTextBlock block = m_document->document()->findBlockByLineNumber(line - 1);
+    const int pos = block.position() + column;
+    return Range(line, pos, length);
 }
 
 }

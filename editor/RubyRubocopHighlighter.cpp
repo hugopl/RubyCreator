@@ -16,6 +16,8 @@ Q_LOGGING_CATEGORY(log, "qtc.ruby.rubocop");
 
 namespace Ruby {
 
+static RubocopHighlighter *theInstance = nullptr;
+
 class RubocopFuture : public QFutureInterface<TextEditor::HighlightingResult>, public QObject
 {
 public:
@@ -56,6 +58,7 @@ void TextMark::removedFromEditor()
 
 RubocopHighlighter::RubocopHighlighter()
 {
+    theInstance = this;
     QTextCharFormat format;
     format.setUnderlineColor(Qt::darkYellow);
     format.setUnderlineStyle(QTextCharFormat::WaveUnderline);
@@ -78,8 +81,7 @@ RubocopHighlighter::~RubocopHighlighter()
 
 RubocopHighlighter *RubocopHighlighter::instance()
 {
-    static RubocopHighlighter rubocop;
-    return &rubocop;
+    return theInstance;
 }
 
 // return false if we are busy, true if everything is ok (or rubocop wasn't found)

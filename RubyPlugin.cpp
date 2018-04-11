@@ -10,6 +10,7 @@
 #include "editor/RubyQuickFixes.h"
 #include "editor/RubySymbolFilter.h"
 #include "editor/RubyCompletionAssist.h"
+#include "editor/RubyRubocopHighlighter.h"
 #include "projectmanager/RubyProject.h"
 #include "projectmanager/RubyProjectWizard.h"
 #include "projectmanager/RubyRunConfiguration.h"
@@ -36,6 +37,7 @@ public:
     ProjectWizard projectWizard;
     CompletionAssistProvider completionAssistProvider;
     QuickFixAssistProvider m_quickFixProvider;
+    RubocopHighlighter highlighter;
 
     PluginPrivate() :
         curDocumentMethodsSymbolFilter([](const QString &file) {

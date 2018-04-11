@@ -12,6 +12,7 @@
 #include <QTemporaryFile>
 
 #include <functional>
+#include <memory>
 
 QT_FORWARD_DECLARE_CLASS(QProcess)
 
@@ -46,11 +47,17 @@ public:
 typedef TextEditor::HighlightingResult Offense;
 typedef QVector<TextEditor::HighlightingResult> Offenses;
 
-struct Diagnostics {
-    QMap<Range, QString> messages;
+struct Diagnostic
+{
+    int line;
+    QString message;
+    std::shared_ptr<TextMark> textMark;
 };
 
-class RubocopHighlighter : public QObject {
+using Diagnostics = std::vector<Diagnostic>;
+
+class RubocopHighlighter : public QObject
+{
     Q_OBJECT
 public:
     RubocopHighlighter();
@@ -59,8 +66,7 @@ public:
     static RubocopHighlighter *instance();
 
     bool run(TextEditor::TextDocument *document, const QString &fileNameTip);
-    QString diagnosticAt(const Utils::FileName &file, int pos);
-    void clearTextMarks();
+
 private:
     bool m_rubocopFound = true;
     bool m_busy = false;
@@ -71,7 +77,6 @@ private:
     int m_startRevision = 0;
     TextEditor::TextDocument *m_document = nullptr;
     QHash<int, QTextCharFormat> m_extraFormats;
-
 
     QHash<Utils::FileName, Diagnostics> m_diagnostics;
     std::vector<TextMark *> m_textMarks;

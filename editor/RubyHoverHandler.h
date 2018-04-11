@@ -8,7 +8,8 @@ namespace Ruby {
 class HoverHandler : public TextEditor::BaseHoverHandler
 {
 private:
-    void identifyMatch(TextEditor::TextEditorWidget *editorWidget, int pos);
+    void identifyMatch(TextEditor::TextEditorWidget *editorWidget,
+                       int pos, ReportPriority priority) override;
 };
 
 }

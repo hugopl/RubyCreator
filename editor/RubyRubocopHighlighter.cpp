@@ -30,12 +30,21 @@ public:
 class TextMark : public TextEditor::TextMark
 {
 public:
-    TextMark(const QString &fileName, int line, const QString &text)
+    static Utils::Theme::Color colorForSeverity(int severity)
+    {
+        switch (severity)
+        {
+        case 1: return Utils::Theme::ProjectExplorer_TaskWarn_TextMarkColor;
+        case 2: return Utils::Theme::ProjectExplorer_TaskError_TextMarkColor;
+        default: return Utils::Theme::TextColorNormal;
+        }
+    }
+    TextMark(const QString &fileName, int line, int severity, const QString &text)
         : TextEditor::TextMark(fileName, line, "Rubocop")
     {
-        setColor(Utils::Theme::ClangCodeModel_Warning_TextMarkColor);
-        setDefaultToolTip(QCoreApplication::translate("Rubocop", "Rubocop Warning"));
-        setPriority(TextEditor::TextMark::NormalPriority);
+        setColor(colorForSeverity(severity));
+        setPriority(TextEditor::TextMark::Priority(severity));
+        setToolTip(text);
         setLineAnnotation(text);
     }
 };
@@ -44,13 +53,13 @@ RubocopHighlighter::RubocopHighlighter()
 {
     theInstance = this;
     QTextCharFormat format;
-    format.setUnderlineColor(Qt::darkYellow);
+    format.setUnderlineColor(Qt::darkGreen);
     format.setUnderlineStyle(QTextCharFormat::WaveUnderline);
     m_extraFormats[0] = format;
+    format.setUnderlineColor(Qt::darkYellow);
     m_extraFormats[1] = format;
-    m_extraFormats[1].setUnderlineColor(Qt::darkGreen);
+    format.setUnderlineColor(Qt::red);
     m_extraFormats[2] = format;
-    m_extraFormats[2].setUnderlineColor(Qt::red);
 
     initRubocopProcess();
 }
@@ -128,7 +137,7 @@ void RubocopHighlighter::finishRuboCopHighlight()
     const Utils::FileName filePath = m_document->filePath();
     for (Diagnostic &diag : m_diagnostics[filePath]) {
         diag.textMark = std::make_shared<TextMark>(
-                    filePath.toString(), diag.line, diag.message);
+                    filePath.toString(), diag.line, diag.severity, diag.message);
         m_document->addMark(diag.textMark.get());
     }
     RubocopFuture rubocopFuture(offenses);
@@ -145,8 +154,8 @@ void RubocopHighlighter::finishRuboCopHighlight()
 static int kindOfSeverity(const QStringRef &severity)
 {
     switch (severity.at(0).toLatin1()) {
-    case 'W': return 0; // yellow
-    case 'C': return 1; // green
+    case 'C': return 0; // green
+    case 'W': return 1; // yellow
     default:  return 2; // red
     }
 }
@@ -169,9 +178,9 @@ Offenses RubocopHighlighter::processRubocopOutput()
         int length = fields[3].toInt();
         result << TextEditor::HighlightingResult(uint(lineN), uint(column), uint(length), kind);
 
-        int messagePos = fields[4].position();
+        int messagePos = fields[5].position() + 1;
         QStringRef message(line.string(), messagePos, line.position() + line.length() - messagePos);
-        diag.push_back(Diagnostic{lineN, message.toString(), nullptr});
+        diag.push_back(Diagnostic{lineN, kind, message.toString(), nullptr});
     }
     m_outputBuffer.clear();
 

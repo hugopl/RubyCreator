@@ -50,6 +50,7 @@ typedef QVector<TextEditor::HighlightingResult> Offenses;
 struct Diagnostic
 {
     int line;
+    int severity;
     QString message;
     std::shared_ptr<TextMark> textMark;
 };

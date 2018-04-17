@@ -5,13 +5,6 @@
 
 #include <QWidget>
 
-namespace ProjectExplorer {
-class WorkingDirectoryAspect;
-class ArgumentsAspect;
-class TerminalAspect;
-class LocalEnvironmentAspect;
-}
-
 namespace Ruby {
 
 class RunConfiguration : public ProjectExplorer::RunConfiguration
@@ -23,15 +16,7 @@ public:
 
     QWidget *createConfigurationWidget() override;
     ProjectExplorer::Runnable runnable() const override;
-    QString extraId() const override;
-    bool fromMap(const QVariantMap &map) override;
-
-private:
-    ProjectExplorer::WorkingDirectoryAspect* m_workingDirectoryAspect;
-    ProjectExplorer::ArgumentsAspect* m_argumentAspect;
-    ProjectExplorer::TerminalAspect* m_terminalAspect;
-    ProjectExplorer::LocalEnvironmentAspect* m_localEnvironmentAspect;
-    QString m_script;
+    void doAdditionalSetup(const ProjectExplorer::RunConfigurationCreationInfo &info) override;
 };
 
 class RunConfigurationWidget : public QWidget

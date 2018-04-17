@@ -111,7 +111,7 @@ void Project::refresh(ProjectExplorer::Target *target)
             using ProjectExplorer::FileType;
             if (!f.endsWith(".rubyproject")) {
                 ProjectExplorer::BuildTargetInfo bti;
-                bti.targetName = f;
+                bti.buildKey = f;
                 bti.targetFilePath = Utils::FileName::fromString(f);
                 bti.projectFilePath = projectFilePath();
                 appTargets.list.append(bti);

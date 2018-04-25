@@ -12,19 +12,10 @@ class RunConfiguration : public ProjectExplorer::RunConfiguration
     Q_OBJECT
 
 public:
-    explicit RunConfiguration(ProjectExplorer::Target *target);
+    explicit RunConfiguration(ProjectExplorer::Target *target, const Core::Id &id);
 
-    QWidget *createConfigurationWidget() override;
     ProjectExplorer::Runnable runnable() const override;
     void doAdditionalSetup(const ProjectExplorer::RunConfigurationCreationInfo &info) override;
-};
-
-class RunConfigurationWidget : public QWidget
-{
-    Q_OBJECT
-
-public:
-	explicit RunConfigurationWidget(RunConfiguration *rc, QWidget *parent = nullptr);
 };
 
 class RunConfigurationFactory : public ProjectExplorer::RunConfigurationFactory

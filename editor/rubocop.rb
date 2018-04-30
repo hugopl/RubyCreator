@@ -35,6 +35,7 @@ class RouboCop
     idx = data.index("\n")
     path = data[0, idx]
     file = data[(idx + 1)..-2]
+    file.gsub!("\n", "\r\n") if RUBY_PLATFORM.include?('mingw')
     offenses = @runner._inspect_code(file, path)
 
     offenses.sort! { |a, b| a.location.line <=> b.location.line }

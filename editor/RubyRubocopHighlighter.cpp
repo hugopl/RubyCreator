@@ -123,7 +123,7 @@ void RubocopHighlighter::initRubocopProcess()
             finishRuboCopHighlight();
     });
 
-    m_rubocop->start("ruby", {m_rubocopScript.fileName()});
+    m_rubocop->start("ruby", {m_rubocopScript.fileName()}, QIODevice::ReadWrite | QIODevice::Text);
 }
 
 void RubocopHighlighter::finishRuboCopHighlight()

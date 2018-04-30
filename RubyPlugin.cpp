@@ -10,6 +10,7 @@
 #include "editor/RubyQuickFixes.h"
 #include "editor/RubySymbolFilter.h"
 #include "editor/RubyCompletionAssist.h"
+#include "editor/RubyRubocopHighlighter.h"
 #include "projectmanager/RubyProject.h"
 #include "projectmanager/RubyProjectWizard.h"
 #include "projectmanager/RubyRunConfiguration.h"
@@ -72,6 +73,7 @@ bool Plugin::initialize(const QStringList &, QString *errorString)
     addAutoReleasedObject(new ProjectWizard);
 
     addAutoReleasedObject(new CompletionAssistProvider);
+    addAutoReleasedObject(new RubocopHighlighter);
 
     m_quickFixProvider = new QuickFixAssistProvider(this);
     registerQuickFixes(this);

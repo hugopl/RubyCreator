@@ -35,7 +35,6 @@ QtcPlugin {
             "RubyEditor.h",
             "RubyEditorWidget.cpp", "RubyEditorWidget.h",
             "RubyHighlighter.cpp", "RubyHighlighter.h",
-            "RubyHoverHandler.cpp", "RubyHoverHandler.h",
             "RubyIndenter.cpp", "RubyIndenter.h",
             "RubyQuickFixAssistProvider.cpp", "RubyQuickFixAssistProvider.h",
             "RubyQuickFixes.cpp", "RubyQuickFixes.h",

@@ -1,6 +1,7 @@
 #include "RubyRubocopHighlighter.h"
 
 #include <texteditor/textdocument.h>
+#include <texteditor/textmark.h>
 #include <texteditor/semantichighlighter.h>
 
 #include <utils/asconst.h>
@@ -17,6 +18,8 @@ Q_LOGGING_CATEGORY(log, "qtc.ruby.rubocop");
 
 namespace Ruby {
 
+static RubocopHighlighter *theInstance = nullptr;
+
 class RubocopFuture : public QFutureInterface<TextEditor::HighlightingResult>, public QObject
 {
 public:
@@ -26,22 +29,45 @@ public:
     }
 };
 
+class TextMark : public TextEditor::TextMark
+{
+public:
+    static Utils::Theme::Color colorForSeverity(int severity)
+    {
+        switch (severity)
+        {
+        case 1: return Utils::Theme::ProjectExplorer_TaskWarn_TextMarkColor;
+        case 2: return Utils::Theme::ProjectExplorer_TaskError_TextMarkColor;
+        default: return Utils::Theme::TextColorNormal;
+        }
+    }
+    TextMark(const QString &fileName, int line, int severity, const QString &text)
+        : TextEditor::TextMark(fileName, line, "Rubocop")
+    {
+        setColor(colorForSeverity(severity));
+        setPriority(TextEditor::TextMark::Priority(severity));
+        setToolTip(text);
+        setLineAnnotation(text);
+    }
+};
+
 RubocopHighlighter::RubocopHighlighter()
 {
+    theInstance = this;
     QTextCharFormat format;
-    format.setUnderlineColor(Qt::darkYellow);
+    format.setUnderlineColor(Qt::darkGreen);
     format.setUnderlineStyle(QTextCharFormat::WaveUnderline);
     m_extraFormats[0] = format;
+    format.setUnderlineColor(Qt::darkYellow);
     m_extraFormats[1] = format;
-    m_extraFormats[1].setUnderlineColor(Qt::darkGreen);
+    format.setUnderlineColor(Qt::red);
     m_extraFormats[2] = format;
-    m_extraFormats[2].setUnderlineColor(Qt::red);
-
-    initRubocopProcess();
 }
 
 RubocopHighlighter::~RubocopHighlighter()
 {
+    if (!m_rubocop)
+        return;
     m_rubocop->closeWriteChannel();
     m_rubocop->waitForFinished(3000);
     delete m_rubocop;
@@ -49,13 +75,14 @@ RubocopHighlighter::~RubocopHighlighter()
 
 RubocopHighlighter *RubocopHighlighter::instance()
 {
-    static RubocopHighlighter rubocop;
-    return &rubocop;
+    return theInstance;
 }
 
 // return false if we are busy, true if everything is ok (or rubocop wasn't found)
 bool RubocopHighlighter::run(TextEditor::TextDocument *document, const QString &fileNameTip)
 {
+    if (!m_rubocop)
+        initRubocopProcess();
     if (m_busy || m_rubocop->state() == QProcess::Starting)
         return false;
     if (!m_rubocopFound)
@@ -74,15 +101,6 @@ bool RubocopHighlighter::run(TextEditor::TextDocument *document, const QString &
     QByteArray data = document->plainText().toUtf8();
     m_rubocop->write(data.constData(), data.length() + 1);
     return true;
-}
-
-QString RubocopHighlighter::diagnosticAt(const Utils::FileName &file, int pos)
-{
-    auto it = m_diagnostics.find(file);
-    if (it == m_diagnostics.end())
-        return QString();
-
-    return it->messages[Range(pos + 1, 0)];
 }
 
 void RubocopHighlighter::initRubocopProcess()
@@ -120,6 +138,12 @@ void RubocopHighlighter::finishRuboCopHighlight()
     }
 
     Offenses offenses = processRubocopOutput();
+    const Utils::FileName filePath = m_document->filePath();
+    for (Diagnostic &diag : m_diagnostics[filePath]) {
+        diag.textMark = std::make_shared<TextMark>(
+                    filePath.toString(), diag.line, diag.severity, diag.message);
+        m_document->addMark(diag.textMark.get());
+    }
     RubocopFuture rubocopFuture(offenses);
     TextEditor::SemanticHighlighter::incrementalApplyExtraAdditionalFormats(m_document->syntaxHighlighter(),
                                                                             rubocopFuture.future(), 0,
@@ -134,8 +158,8 @@ void RubocopHighlighter::finishRuboCopHighlight()
 static int kindOfSeverity(const QStringRef &severity)
 {
     switch (severity.at(0).toLatin1()) {
-    case 'W': return 0; // yellow
-    case 'C': return 1; // green
+    case 'C': return 0; // green
+    case 'W': return 1; // yellow
     default:  return 2; // red
     }
 }
@@ -158,9 +182,9 @@ Offenses RubocopHighlighter::processRubocopOutput()
         int length = fields[3].toInt();
         result << TextEditor::HighlightingResult(uint(lineN), uint(column), uint(length), kind);
 
-        int messagePos = fields[4].position();
+        int messagePos = fields[5].position() + 1;
         QStringRef message(line.string(), messagePos, line.position() + line.length() - messagePos);
-        diag.messages[lineColumnLengthToRange(lineN, column, length)] = message.toString();
+        diag.push_back(Diagnostic{lineN, kind, message.toString(), nullptr});
     }
     m_outputBuffer.clear();
 
@@ -169,10 +193,9 @@ Offenses RubocopHighlighter::processRubocopOutput()
 
 Ruby::Range RubocopHighlighter::lineColumnLengthToRange(int line, int column, int length)
 {
-    QTextBlock block = m_document->document()->findBlockByLineNumber(line - 1);
-    int pos = block.position() + column;
-
-    return Ruby::Range(pos, length);
+    const QTextBlock block = m_document->document()->findBlockByLineNumber(line - 1);
+    const int pos = block.position() + column;
+    return Range(line, pos, length);
 }
 
 }

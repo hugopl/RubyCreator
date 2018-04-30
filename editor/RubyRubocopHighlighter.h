@@ -12,6 +12,7 @@
 #include <QTemporaryFile>
 
 #include <functional>
+#include <memory>
 
 QT_FORWARD_DECLARE_CLASS(QProcess)
 
@@ -19,13 +20,17 @@ namespace TextEditor { class TextDocument; }
 
 namespace Ruby {
 
+class TextMark;
+
 class Range {
 public:
+    int line = 0;
     int pos = 0;
     int length = 0;
 
     Range() = default;
     Range(int pos, int length) : pos(pos), length(length) { }
+    Range(int line, int pos, int length) : line(line), pos(pos), length(length) { }
 
     // Not really equal, since the length attribute is ignored.
     bool operator==(const Range &other) const {
@@ -42,11 +47,18 @@ public:
 typedef TextEditor::HighlightingResult Offense;
 typedef QVector<TextEditor::HighlightingResult> Offenses;
 
-struct Diagnostics {
-    QMap<Range, QString> messages;
+struct Diagnostic
+{
+    int line;
+    int severity;
+    QString message;
+    std::shared_ptr<TextMark> textMark;
 };
 
-class RubocopHighlighter : public QObject {
+using Diagnostics = std::vector<Diagnostic>;
+
+class RubocopHighlighter : public QObject
+{
     Q_OBJECT
 public:
     RubocopHighlighter();
@@ -55,7 +67,7 @@ public:
     static RubocopHighlighter *instance();
 
     bool run(TextEditor::TextDocument *document, const QString &fileNameTip);
-    QString diagnosticAt(const Utils::FileName &file, int pos);
+
 private:
     bool m_rubocopFound = true;
     bool m_busy = false;
@@ -67,8 +79,8 @@ private:
     TextEditor::TextDocument *m_document = nullptr;
     QHash<int, QTextCharFormat> m_extraFormats;
 
-
     QHash<Utils::FileName, Diagnostics> m_diagnostics;
+    std::vector<TextMark *> m_textMarks;
 
     QElapsedTimer m_timer;
 

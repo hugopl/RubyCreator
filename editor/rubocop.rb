@@ -34,7 +34,7 @@ class RouboCop
   def parse(data)
     idx = data.index("\n")
     path = data[0, idx]
-    file = data[(idx + 1)..-1]
+    file = data[(idx + 1)..-2]
     offenses = @runner._inspect_code(file, path)
 
     offenses.sort! { |a, b| a.location.line <=> b.location.line }

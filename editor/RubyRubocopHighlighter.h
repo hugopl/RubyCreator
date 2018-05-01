@@ -9,6 +9,7 @@
 #include <QFuture>
 #include <QFutureWatcher>
 #include <QElapsedTimer>
+#include <QPointer>
 #include <QTemporaryFile>
 
 #include <functional>
@@ -76,7 +77,7 @@ private:
     QString m_outputBuffer;
 
     int m_startRevision = 0;
-    TextEditor::TextDocument *m_document = nullptr;
+    QPointer<TextEditor::TextDocument> m_document;
     QHash<int, QTextCharFormat> m_extraFormats;
 
     QHash<Utils::FileName, Diagnostics> m_diagnostics;

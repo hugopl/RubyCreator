@@ -114,7 +114,8 @@ void RubocopHighlighter::initRubocopProcess()
 
 void RubocopHighlighter::finishRuboCopHighlight()
 {
-    if (m_startRevision != m_document->document()->revision()) {
+    QTextDocument *doc = m_document ? m_document->document() : nullptr;
+    if (!doc || m_startRevision != doc->revision()) {
         m_busy = false;
         return;
     }

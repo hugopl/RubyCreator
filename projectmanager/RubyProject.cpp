@@ -103,10 +103,10 @@ void Project::refresh(ProjectExplorer::Target *target)
     connect(watcher, &QFutureWatcher<void>::finished,
             this, [this, watcher, target] {
         ProjectExplorer::BuildTargetInfoList appTargets;
-        auto newRoot = new ProjectNode(projectDirectory());
+        auto newRoot = std::make_unique<ProjectNode>(projectDirectory());
         for (const QString &f : m_files) {
             const Utils::FileName path = Utils::FileName::fromString(f);
-            newRoot->addNestedNode(new ProjectExplorer::FileNode(
+            newRoot->addNestedNode(std::make_unique<ProjectExplorer::FileNode>(
                                        path, ProjectExplorer::FileNode::fileTypeForFileName(path), false));
             using ProjectExplorer::FileType;
             if (!f.endsWith(".rubyproject")) {
@@ -117,7 +117,7 @@ void Project::refresh(ProjectExplorer::Target *target)
                 appTargets.list.append(bti);
             }
         }
-        setRootProjectNode(newRoot);
+        setRootProjectNode(std::move(newRoot));
         if (target)
             target->setApplicationTargets(appTargets);
         emitParsingFinished(true);

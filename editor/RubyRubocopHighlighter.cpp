@@ -1,5 +1,6 @@
 #include "RubyRubocopHighlighter.h"
 
+#include <coreplugin/messagemanager.h>
 #include <texteditor/textdocument.h>
 #include <texteditor/textmark.h>
 #include <texteditor/semantichighlighter.h>
@@ -9,7 +10,6 @@
 #include <QProcess>
 #include <QTextDocument>
 #include <QtConcurrent>
-#include <QMessageBox>
 #include <QTextBlock>
 
 Q_LOGGING_CATEGORY(log, "qtc.ruby.rubocop");
@@ -112,7 +112,9 @@ void RubocopHighlighter::initRubocopProcess()
     void (QProcess::*signal)(int) = &QProcess::finished;
     QObject::connect(m_rubocop, signal, [&](int status) {
         if (status) {
-            QMessageBox::critical(0, "Rubocop", QString::fromUtf8(m_rubocop->readAllStandardError().trimmed()));
+            Core::MessageManager::instance()->write(
+                        QString::fromUtf8(m_rubocop->readAllStandardError().trimmed()),
+                        Core::MessageManager::ModeSwitch);
             m_rubocopFound = false;
         }
     });

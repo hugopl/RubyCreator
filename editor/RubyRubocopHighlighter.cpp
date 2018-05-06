@@ -60,12 +60,12 @@ RubocopHighlighter::RubocopHighlighter()
     m_extraFormats[1] = format;
     format.setUnderlineColor(Qt::red);
     m_extraFormats[2] = format;
-
-    initRubocopProcess();
 }
 
 RubocopHighlighter::~RubocopHighlighter()
 {
+    if (!m_rubocop)
+        return;
     m_rubocop->closeWriteChannel();
     m_rubocop->waitForFinished(3000);
     delete m_rubocop;
@@ -79,6 +79,8 @@ RubocopHighlighter *RubocopHighlighter::instance()
 // return false if we are busy, true if everything is ok (or rubocop wasn't found)
 bool RubocopHighlighter::run(TextEditor::TextDocument *document, const QString &fileNameTip)
 {
+    if (!m_rubocop)
+        initRubocopProcess();
     if (m_busy || m_rubocop->state() == QProcess::Starting)
         return false;
     if (!m_rubocopFound)

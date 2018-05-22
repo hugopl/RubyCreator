@@ -50,8 +50,11 @@ void Project::readProjectSettings(const Utils::FileName &fileName)
     base.append("/");
     QSettings settings(fileName.toString(), QSettings::IniFormat);
     settings.beginGroup("Config");
-    for (const QString &path : settings.value("Ignore").toStringList())
+    for (const QString &path : settings.value("Ignore").toStringList()) {
+        if (path.isEmpty())
+            continue;
         m_ignoredDirectories << base + path;
+    }
     settings.endGroup();
 }
 

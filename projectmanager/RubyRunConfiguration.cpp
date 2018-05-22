@@ -5,7 +5,6 @@
 #include <projectexplorer/localenvironmentaspect.h>
 #include <projectexplorer/runconfigurationaspects.h>
 #include <projectexplorer/project.h>
-#include <projectexplorer/runnables.h>
 #include <projectexplorer/target.h>
 
 #include <QFileInfo>
@@ -32,7 +31,7 @@ RunConfiguration::RunConfiguration(Target *target, const Core::Id &id)
 
 Runnable RunConfiguration::runnable() const
 {
-    StandardRunnable result;
+    Runnable result;
     result.runMode = extraAspect<TerminalAspect>()->runMode();
     result.executable = extraAspect<ExecutableAspect>()->executable().toString();
     result.commandLineArguments = extraAspect<ArgumentsAspect>()->arguments();

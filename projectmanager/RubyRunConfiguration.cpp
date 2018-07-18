@@ -21,7 +21,6 @@ RunConfiguration::RunConfiguration(Target *target, const Core::Id &id)
     : ProjectExplorer::RunConfiguration(target, id)
 {
     auto terminalAspect = new TerminalAspect(this, "Ruby.RunConfiguration.TerminalAspect");
-    terminalAspect->setRunMode(ApplicationLauncher::Gui);
     addExtraAspect(terminalAspect);
     addExtraAspect(new ArgumentsAspect(this, "Ruby.RunConfiguration.ArgumentAspect"));
     addExtraAspect(new ExecutableAspect(this));
@@ -32,7 +31,6 @@ RunConfiguration::RunConfiguration(Target *target, const Core::Id &id)
 Runnable RunConfiguration::runnable() const
 {
     Runnable result;
-    result.runMode = extraAspect<TerminalAspect>()->runMode();
     result.executable = extraAspect<ExecutableAspect>()->executable().toString();
     result.commandLineArguments = extraAspect<ArgumentsAspect>()->arguments();
     result.workingDirectory = extraAspect<WorkingDirectoryAspect>()->workingDirectory().toString();

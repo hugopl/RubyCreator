@@ -20,12 +20,12 @@ namespace Ruby {
 RunConfiguration::RunConfiguration(Target *target, const Core::Id &id)
     : ProjectExplorer::RunConfiguration(target, id)
 {
-    auto terminalAspect = new TerminalAspect(this, "Ruby.RunConfiguration.TerminalAspect");
+    auto terminalAspect = new TerminalAspect(this);
     addExtraAspect(terminalAspect);
-    addExtraAspect(new ArgumentsAspect(this, "Ruby.RunConfiguration.ArgumentAspect"));
+    addExtraAspect(new ArgumentsAspect(this));
     addExtraAspect(new ExecutableAspect(this));
     addExtraAspect(new LocalEnvironmentAspect(this, LocalEnvironmentAspect::BaseEnvironmentModifier()));
-    addExtraAspect(new WorkingDirectoryAspect(this, "Ruby.RunConfiguration.WorkingDirectoryAspect"));
+    addExtraAspect(new WorkingDirectoryAspect(this));
 }
 
 Runnable RunConfiguration::runnable() const

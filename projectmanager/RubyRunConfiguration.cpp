@@ -20,7 +20,7 @@ namespace Ruby {
 RunConfiguration::RunConfiguration(Target *target, const Core::Id &id)
     : ProjectExplorer::RunConfiguration(target, id)
 {
-    addAspect<LocalEnvironmentAspect>(LocalEnvironmentAspect::BaseEnvironmentModifier());
+    addAspect<LocalEnvironmentAspect>(target, LocalEnvironmentAspect::BaseEnvironmentModifier());
     addAspect<ExecutableAspect>();
     addAspect<ArgumentsAspect>();
     addAspect<WorkingDirectoryAspect>();
@@ -31,8 +31,8 @@ Runnable RunConfiguration::runnable() const
 {
     Runnable result;
     result.executable = extraAspect<ExecutableAspect>()->executable().toString();
-    result.commandLineArguments = extraAspect<ArgumentsAspect>()->arguments();
-    result.workingDirectory = extraAspect<WorkingDirectoryAspect>()->workingDirectory().toString();
+    result.commandLineArguments = extraAspect<ArgumentsAspect>()->arguments(macroExpander());
+    result.workingDirectory = extraAspect<WorkingDirectoryAspect>()->workingDirectory(macroExpander()).toString();
     result.environment = extraAspect<EnvironmentAspect>()->environment();
     return result;
 }

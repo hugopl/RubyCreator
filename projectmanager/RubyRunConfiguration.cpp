@@ -48,6 +48,7 @@ RunConfigurationFactory::RunConfigurationFactory()
 {
     registerRunConfiguration<RunConfiguration>("Ruby.RunConfiguration.");
     addSupportedProjectType(Constants::ProjectId);
+    addRunWorkerFactory<SimpleTargetRunner>(ProjectExplorer::Constants::NORMAL_RUN_MODE);
 }
 
 } // namespace Ruby

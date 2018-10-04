@@ -44,8 +44,17 @@ public:
     {
         setColor(colorForSeverity(severity));
         setPriority(TextEditor::TextMark::Priority(severity));
-        setToolTip(text);
         setLineAnnotation(text);
+        QString tooltip;
+        const int lastBracket = text.lastIndexOf('[');
+        if (lastBracket == -1) {
+            tooltip = text;
+        } else {
+            QStringRef issue = text.midRef(lastBracket + 1, text.size() - lastBracket - 2);
+            tooltip = text.left(lastBracket)
+                    + "[<a href=\"https://www.rubydoc.info/gems/rubocop/RuboCop/Cop/" + issue + "\">" + issue + "</a>]";
+        }
+        setToolTip(tooltip);
     }
 };
 

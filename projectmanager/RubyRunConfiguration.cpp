@@ -30,17 +30,17 @@ RunConfiguration::RunConfiguration(Target *target, const Core::Id &id)
 Runnable RunConfiguration::runnable() const
 {
     Runnable result;
-    result.executable = extraAspect<ExecutableAspect>()->executable().toString();
-    result.commandLineArguments = extraAspect<ArgumentsAspect>()->arguments(macroExpander());
-    result.workingDirectory = extraAspect<WorkingDirectoryAspect>()->workingDirectory(macroExpander()).toString();
-    result.environment = extraAspect<EnvironmentAspect>()->environment();
+    result.executable = aspect<ExecutableAspect>()->executable().toString();
+    result.commandLineArguments = aspect<ArgumentsAspect>()->arguments(macroExpander());
+    result.workingDirectory = aspect<WorkingDirectoryAspect>()->workingDirectory(macroExpander()).toString();
+    result.environment = aspect<EnvironmentAspect>()->environment();
     return result;
 }
 
 void RunConfiguration::doAdditionalSetup(const RunConfigurationCreationInfo &info)
 {
     const FileName script = FileName::fromString(info.buildKey);
-    extraAspect<ExecutableAspect>()->setExecutable(script);
+    aspect<ExecutableAspect>()->setExecutable(script);
     setDefaultDisplayName(tr("Run %1").arg(script.fileName()));
 }
 

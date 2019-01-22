@@ -24,7 +24,7 @@ EditorFactory::EditorFactory()
     addMimeType(Constants::ProjectMimeType);
 
     setDocumentCreator([]() { return new EditorDocument; });
-    setIndenterCreator([]() { return new Indenter; });
+    setIndenterCreator([](QTextDocument *doc) { return new Indenter(doc); });
     setEditorWidgetCreator([]() { return new EditorWidget; });
     setEditorCreator([]() { return new Editor; });
     setAutoCompleterCreator([]() { return new AutoCompleter; });
@@ -45,7 +45,7 @@ void EditorFactory::decorateEditor(TextEditor::TextEditorWidget *editor)
 {
     if (TextEditor::TextDocument *document = editor->textDocument()) {
         document->setSyntaxHighlighter(new Highlighter);
-        document->setIndenter(new Indenter);
+        document->setIndenter(new Indenter(document->document()));
     }
 }
 

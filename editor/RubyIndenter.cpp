@@ -15,7 +15,11 @@ static bool didBlockStart(const QTextBlock &block)
     return scanner.indentVariation() > 0 || scanner.didBlockInterrupt();
 }
 
-void Indenter::indentBlock(QTextDocument*, const QTextBlock &block, const QChar &, const TextEditor::TabSettings &settings)
+Indenter::Indenter(QTextDocument *doc) : TextEditor::TextIndenter(doc)
+{
+}
+
+void Indenter::indentBlock(const QTextBlock &block, const QChar &, const TextEditor::TabSettings &settings)
 {
     int indent;
 

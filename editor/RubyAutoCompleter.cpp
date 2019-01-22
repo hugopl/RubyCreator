@@ -129,9 +129,8 @@ int AutoCompleter::paragraphSeparatorAboutToBeInserted(QTextCursor &cursor)
             || text.startsWith("elsif")
             || text.startsWith("rescue")
             || text == "ensure") {
-        Indenter indenter;
-        indenter.indentBlock(const_cast<QTextDocument*>(block.document()),
-                             block, QChar(), tabSettings());
+        Indenter indenter(const_cast<QTextDocument*>(block.document()));
+        indenter.indentBlock(block, QChar(), tabSettings());
     }
 
     return 0;

@@ -32,9 +32,9 @@ QWidget *CodeStylePreferencesFactory::createEditor(TextEditor::ICodeStylePrefere
     return new QLabel(tr("There's no configuration widget yet, sorry."), parent);
 }
 
-TextEditor::Indenter *CodeStylePreferencesFactory::createIndenter() const
+TextEditor::Indenter *CodeStylePreferencesFactory::createIndenter(QTextDocument *doc) const
 {
-    return new Indenter;
+    return new Indenter(doc);
 }
 
 QString CodeStylePreferencesFactory::snippetProviderGroupId() const

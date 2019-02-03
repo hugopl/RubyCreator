@@ -19,7 +19,10 @@ Indenter::Indenter(QTextDocument *doc) : TextEditor::TextIndenter(doc)
 {
 }
 
-void Indenter::indentBlock(const QTextBlock &block, const QChar &, const TextEditor::TabSettings &settings)
+void Indenter::indentBlock(const QTextBlock &block,
+                           const QChar &,
+                           const TextEditor::TabSettings &settings,
+                           int)
 {
     int indent;
 

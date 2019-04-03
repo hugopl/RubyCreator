@@ -4,6 +4,7 @@
 
 #include <projectexplorer/localenvironmentaspect.h>
 #include <projectexplorer/runconfigurationaspects.h>
+#include <projectexplorer/runcontrol.h>
 #include <projectexplorer/project.h>
 #include <projectexplorer/target.h>
 
@@ -20,7 +21,7 @@ namespace Ruby {
 RunConfiguration::RunConfiguration(Target *target, const Core::Id &id)
     : ProjectExplorer::RunConfiguration(target, id)
 {
-    addAspect<LocalEnvironmentAspect>(target, LocalEnvironmentAspect::BaseEnvironmentModifier());
+    addAspect<LocalEnvironmentAspect>(target);
     addAspect<ExecutableAspect>();
     addAspect<ArgumentsAspect>();
     addAspect<WorkingDirectoryAspect>();
@@ -48,7 +49,6 @@ RunConfigurationFactory::RunConfigurationFactory()
 {
     registerRunConfiguration<RunConfiguration>("Ruby.RunConfiguration.");
     addSupportedProjectType(Constants::ProjectId);
-    addRunWorkerFactory<SimpleTargetRunner>(ProjectExplorer::Constants::NORMAL_RUN_MODE);
 }
 
 } // namespace Ruby

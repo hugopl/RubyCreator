@@ -110,7 +110,7 @@ void Project::refresh(ProjectExplorer::Target *target)
         for (const QString &f : m_files) {
             const Utils::FileName path = Utils::FileName::fromString(f);
             newRoot->addNestedNode(std::make_unique<ProjectExplorer::FileNode>(
-                                       path, ProjectExplorer::FileNode::fileTypeForFileName(path), false));
+                                       path, ProjectExplorer::FileNode::fileTypeForFileName(path)));
             using ProjectExplorer::FileType;
             if (!f.endsWith(".rubyproject")) {
                 ProjectExplorer::BuildTargetInfo bti;

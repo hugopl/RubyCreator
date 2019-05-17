@@ -76,7 +76,7 @@ Plugin *Plugin::instance()
 
 bool Plugin::initialize(const QStringList &, QString *errorString)
 {
-    Q_UNUSED(errorString);
+    Q_UNUSED(errorString)
 
     initializeToolsSettings();
 

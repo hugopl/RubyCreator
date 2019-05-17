@@ -58,7 +58,7 @@ void EditorWidget::findLinkAt(const QTextCursor &cursor,
                               bool resolveTarget,
                               bool inNextSplit)
 {
-    Q_UNUSED(resolveTarget);
+    Q_UNUSED(resolveTarget)
     QString text = cursor.block().text();
     if (text.isEmpty()) {
         processLinkCallback(Utils::Link());
@@ -122,7 +122,7 @@ void EditorWidget::unCommentSelection()
 
 void EditorWidget::aboutToOpen(const QString &fileName, const QString &realFileName)
 {
-    Q_UNUSED(fileName);
+    Q_UNUSED(fileName)
     m_filePathDueToMaybeABug = realFileName;
 }
 

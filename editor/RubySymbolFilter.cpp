@@ -13,11 +13,10 @@ SymbolFilter::SymbolFilter(SymbolProvider provider, const char *description, QCh
     setId(description);
     setDisplayName(tr(description));
     setShortcutString(shortcut);
-    setIncludedByDefault(false);
+    setIncludedByDefault(true);
 
     connect(Core::EditorManager::instance(), &Core::EditorManager::currentEditorChanged,
             this, &SymbolFilter::onCurrentEditorChanged);
-
 }
 
 QList<Core::LocatorFilterEntry> SymbolFilter::matchesFor(QFutureInterface<Core::LocatorFilterEntry> &, const QString &entry)
@@ -51,14 +50,10 @@ void SymbolFilter::refresh(QFutureInterface<void> &)
 
 void SymbolFilter::onCurrentEditorChanged(Core::IEditor *editor)
 {
-    if (!editor) {
-        setEnabled(false);
+    if (editor)
+        m_fileName = editor->document()->filePath();
+    else
         m_fileName.clear();
-        return;
-    }
-
-    m_fileName = editor->document()->filePath();
-    setEnabled(m_fileName.endsWith(".rb"));
 }
 
 }

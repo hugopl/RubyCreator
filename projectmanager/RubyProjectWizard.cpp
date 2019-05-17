@@ -49,7 +49,7 @@ Core::GeneratedFiles ProjectWizard::generateFiles(const QWizard *widget, QString
     const QString projectName = page->fileName();
 
     Core::GeneratedFile projectFile(QFileInfo(dir, projectName + ".rubyproject").absoluteFilePath());
-    projectFile.setContents("[Config]\nIgnore=");
+    projectFile.setContents("[Config]\nIgnore=node_modules,public,tmp\n");
     projectFile.setAttributes(Core::GeneratedFile::OpenProjectAttribute);
 
     return Core::GeneratedFiles() << projectFile;

@@ -22,6 +22,7 @@ public:
         identifiers.clear();
         constants.clear();
         classes.clear();
+        constantsDelc.clear();
         symbols.clear();
     }
 

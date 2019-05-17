@@ -45,5 +45,6 @@ end
 
 Dir.chdir(BUILD_DIR) do
   system("qmake QTC_SOURCE=#{qtc_dir} QTC_BUILD=/usr ..")
+  system("sed -i 's/-lKSyntaxHighlighting/-lKF5SyntaxHighlighting/g' Makefile")
   puts "Project configured under #{BUILD_DIR} directory, go there and call make."
 end

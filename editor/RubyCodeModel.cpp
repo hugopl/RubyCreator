@@ -9,6 +9,18 @@
 
 namespace Ruby {
 
+static bool isRubyFile(const QString& fileName)
+{
+    if (fileName.endsWith(".rb") || fileName.endsWith(".rake"))
+        return true;
+    QFile file(fileName);
+    if (file.open(QFile::ReadOnly)) {
+        QByteArray line = file.readLine();
+        return line.startsWith("#!") && line.indexOf("ruby"); // Stupid heuristic that should work 99% of times :-)
+    }
+    return false;
+}
+
 class CodeModel::Data
 {
     Q_DISABLE_COPY(Data)
@@ -22,6 +34,7 @@ public:
         identifiers.clear();
         constants.clear();
         classes.clear();
+        constantsDelc.clear();
         symbols.clear();
     }
 
@@ -59,7 +72,7 @@ void CodeModel::removeSymbolsFrom(const QString &file)
 
 void CodeModel::addFile(const QString &file)
 {
-    if (!file.endsWith(".rb") && !file.endsWith(".rake"))
+    if (!isRubyFile(file))
         return;
 
     QFileInfo info(file);

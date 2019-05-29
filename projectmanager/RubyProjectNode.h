@@ -3,14 +3,12 @@
 
 #include <projectexplorer/projectnodes.h>
 
-namespace Utils { class FileName; }
-
 namespace Ruby {
 
 class ProjectNode : public ProjectExplorer::ProjectNode
 {
 public:
-    ProjectNode(const Utils::FileName &projectFilePath)
+    ProjectNode(const Utils::FilePath &projectFilePath)
         : ProjectExplorer::ProjectNode(projectFilePath)
     {
     }

@@ -31,7 +31,7 @@ private:
 
 private:
     QIcon m_icon;
-    Utils::FileName m_fileName;
+    Utils::FilePath m_fileName;
     SymbolProvider m_symbolProvider;
 };
 

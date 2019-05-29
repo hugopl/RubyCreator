@@ -80,7 +80,7 @@ private:
     QPointer<TextEditor::TextDocument> m_document;
     QHash<int, QTextCharFormat> m_extraFormats;
 
-    QHash<Utils::FileName, Diagnostics> m_diagnostics;
+    QHash<Utils::FilePath, Diagnostics> m_diagnostics;
     std::vector<TextMark *> m_textMarks;
 
     QElapsedTimer m_timer;

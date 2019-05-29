@@ -20,11 +20,11 @@ class Project : public ProjectExplorer::Project
     Q_OBJECT
 
 public:
-    explicit Project(const Utils::FileName &fileName);
+    explicit Project(const Utils::FilePath &fileName);
     ~Project();
 
 private:
-    void readProjectSettings(const Utils::FileName &fileName);
+    void readProjectSettings(const Utils::FilePath &fileName);
     void scheduleProjectScan();
     void populateProject();
     void refresh(ProjectExplorer::Target *target = nullptr);

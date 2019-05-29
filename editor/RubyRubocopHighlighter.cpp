@@ -39,7 +39,7 @@ public:
         default: return Utils::Theme::TextColorNormal;
         }
     }
-    TextMark(const Utils::FileName &fileName, int line, int severity, const QString &text)
+    TextMark(const Utils::FilePath &fileName, int line, int severity, const QString &text)
         : TextEditor::TextMark(fileName, line, "Rubocop")
     {
         setColor(colorForSeverity(severity));
@@ -148,7 +148,7 @@ void RubocopHighlighter::finishRuboCopHighlight()
     }
 
     Offenses offenses = processRubocopOutput();
-    const Utils::FileName filePath = m_document->filePath();
+    const Utils::FilePath filePath = m_document->filePath();
     for (Diagnostic &diag : m_diagnostics[filePath]) {
         diag.textMark = std::make_shared<TextMark>(
                     filePath, diag.line, diag.severity, diag.message);

@@ -40,7 +40,7 @@ Runnable RunConfiguration::runnable() const
 
 void RunConfiguration::doAdditionalSetup(const RunConfigurationCreationInfo &info)
 {
-    const FileName script = FileName::fromString(info.buildKey);
+    const FilePath script = FilePath::fromString(info.buildKey);
     aspect<ExecutableAspect>()->setExecutable(script);
     setDefaultDisplayName(tr("Run %1").arg(script.fileName()));
 }

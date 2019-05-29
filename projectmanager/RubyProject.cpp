@@ -21,7 +21,7 @@ namespace Ruby {
 
 const int MIN_TIME_BETWEEN_PROJECT_SCANS = 4500;
 
-Project::Project(const Utils::FileName &fileName) :
+Project::Project(const Utils::FilePath &fileName) :
     ProjectExplorer::Project(Constants::MimeType, fileName, [this] { scheduleProjectScan(); })
 {
     setId(Constants::ProjectId);
@@ -44,7 +44,7 @@ Project::~Project()
     }
 }
 
-void Project::readProjectSettings(const Utils::FileName &fileName)
+void Project::readProjectSettings(const Utils::FilePath &fileName)
 {
     QString base = fileName.toFileInfo().absoluteDir().absolutePath();
     base.append("/");
@@ -108,14 +108,14 @@ void Project::refresh(ProjectExplorer::Target *target)
         QList<ProjectExplorer::BuildTargetInfo> appTargets;
         auto newRoot = std::make_unique<ProjectNode>(projectDirectory());
         for (const QString &f : m_files) {
-            const Utils::FileName path = Utils::FileName::fromString(f);
+            const Utils::FilePath path = Utils::FilePath::fromString(f);
             newRoot->addNestedNode(std::make_unique<ProjectExplorer::FileNode>(
                                        path, ProjectExplorer::FileNode::fileTypeForFileName(path)));
             using ProjectExplorer::FileType;
             if (!f.endsWith(".rubyproject")) {
                 ProjectExplorer::BuildTargetInfo bti;
                 bti.buildKey = f;
-                bti.targetFilePath = Utils::FileName::fromString(f);
+                bti.targetFilePath = Utils::FilePath::fromString(f);
                 bti.projectFilePath = projectFilePath();
                 appTargets.append(bti);
             }

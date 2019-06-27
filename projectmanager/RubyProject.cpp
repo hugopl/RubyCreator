@@ -134,11 +134,11 @@ void Project::recursiveScanDirectory(const QDir &dir)
         return;
     QRegularExpression projectFilePattern(".*\\.rubyproject(?:\\.user)?$");
     const auto files = dir.entryInfoList(QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot
-                                         | QDir::NoSymLinks | QDir::CaseSensitive);
+                                         | QDir::NoSymLinks | QDir::CaseSensitive | QDir::Hidden);
     for (const QFileInfo &info : files) {
         if (m_projectScanFuture.isCanceled())
             return;
-        if (info.isDir() && !shouldIgnoreDir(info.filePath()))
+        if (info.isDir() && !info.isHidden() && !shouldIgnoreDir(info.filePath()))
             recursiveScanDirectory(QDir(info.filePath()));
         else if (!projectFilePattern.match(info.fileName()).hasMatch())
             m_files << info.filePath();

@@ -12,11 +12,13 @@ Packages are available only for Arch Linux in AUR, for anything different you wi
 
 # Note About branches
 
-`master` branch should work with the `master` branch of QtCreator, it may not compile because QtCreator may have changed some API and we had no time to adapt to the changes.
+`master` branch should work with the `master` branch of QtCreator, it may not compile since QtCreator changes their API very often.
 
-Current development is done on branch qt-3.x, where x is the current QtCreator version on Arch Linux, `master` branch is updated mostly upon contributions.
+There is usually one, sometimes two, branches named with a version number like 4.9.x, etc. These version numbers should match the QtCreator version they are supposed to work.
 
-Old versions of this plugin that works with old versions of QtCreator can be found in tags v3.1, v3.3, etc, these versions will not get any updates, if you like to contribute, do it in the development branch.
+As I use this plugin on my every day work, I do the development on a version branch that matches the current QtCreator version packaged by ArchLinux.
+
+When Archlinux upgrades the QtCreator package minor version, I just create a version tag and another version branch to match the new version.
 
 ## How to compile
 

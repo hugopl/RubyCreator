@@ -1,5 +1,6 @@
 #include "RubyIndenter.h"
 #include "RubyScanner.h"
+#include "RubyBlockState.h"
 
 #include <texteditor/tabsettings.h>
 #include <QRegularExpression>
@@ -32,10 +33,10 @@ void Indenter::indentBlock(const QTextBlock &block,
         indent = previous.text().indexOf(QRegularExpression("\\S")) / settings.m_indentSize;
     } else {
         // Use the stored indent plus some bizarre heuristics that even myself remember how it works.
-        indent = block.userState() >> 20;
+        indent = RUBY_BLOCK_IDENT(block.userState());
         if (indent < 0) {
             while (indent == -1 && previous.isValid()) {
-                indent = previous.userState() >> 20;
+                indent = RUBY_BLOCK_IDENT(previous.userState());
                 previous = previous.previous();
             }
         }

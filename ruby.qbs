@@ -27,6 +27,7 @@ QtcPlugin {
         files: [
             "RubyAmbiguousMethodAssistProvider.cpp", "RubyAmbiguousMethodAssistProvider.h",
             "RubyAutoCompleter.cpp", "RubyAutoCompleter.h",
+            "RubyBlockState.h",
             "RubyCodeModel.cpp", "RubyCodeModel.h",
             "RubyCodeStylePreferencesFactory.cpp", "RubyCodeStylePreferencesFactory.h",
             "RubyCompletionAssist.cpp", "RubyCompletionAssist.h",

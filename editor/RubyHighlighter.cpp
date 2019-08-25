@@ -1,5 +1,6 @@
 #include "RubyHighlighter.h"
 #include "RubyScanner.h"
+#include "RubyBlockState.h"
 
 #include <texteditor/textdocument.h>
 #include <texteditor/texteditorconstants.h>
@@ -72,7 +73,7 @@ int Highlighter::highlightLine(const QString &text, int state)
     m_currentBlockParentheses.clear();
 
     Scanner scanner(&text);
-    scanner.setState(state & 0xfffff);
+    scanner.setState(RUBY_BLOCK_SCANNER_STATE(state));
 
     static QString openParenthesis = "([{";
     static QString closeParenthesis = ")]}";
@@ -89,7 +90,7 @@ int Highlighter::highlightLine(const QString &text, int state)
         }
     }
 
-    int indentLevel = state >> 20;
+    int indentLevel = RUBY_BLOCK_IDENT(state);
     int nextIndentLevel = indentLevel + scanner.indentVariation();
     if (scanner.didBlockInterrupt())
         indentLevel--;
@@ -99,7 +100,7 @@ int Highlighter::highlightLine(const QString &text, int state)
 
     TextEditor::TextDocumentLayout::setFoldingIndent(currentBlock(), indentLevel);
     TextEditor::TextDocumentLayout::setParentheses(currentBlock(), m_currentBlockParentheses);
-    return (nextIndentLevel << 20) | scanner.state();
+    return RUBY_BLOCK_PACK(nextIndentLevel, scanner.state());
 }
 
 QTextCharFormat Highlighter::formatForToken(const Token &token)

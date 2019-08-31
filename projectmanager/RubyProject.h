@@ -35,7 +35,6 @@ private:
     RestoreResult fromMap(const QVariantMap &map, QString *errorMessage) override;
     bool setupTarget(ProjectExplorer::Target *t) override;
     bool needsConfiguration() const final { return false; }
-    bool needsBuildConfigurations() const final { return false; }
 
     QDir m_projectDir;
     QSet<QString> m_files;

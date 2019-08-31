@@ -22,7 +22,7 @@ namespace Ruby {
 const int MIN_TIME_BETWEEN_PROJECT_SCANS = 4500;
 
 Project::Project(const Utils::FilePath &fileName) :
-    ProjectExplorer::Project(Constants::MimeType, fileName, [this] { scheduleProjectScan(); })
+    ProjectExplorer::Project(Constants::MimeType, fileName)
 {
     setId(Constants::ProjectId);
     m_projectDir = QDir(fileName.parentDir().toString());
@@ -31,6 +31,7 @@ Project::Project(const Utils::FilePath &fileName) :
     m_projectScanTimer.setSingleShot(true);
     connect(&m_projectScanTimer, &QTimer::timeout, this, [this] { refresh(); });
 
+    connect(this, &Project::projectFileIsDirty, this, &Project::scheduleProjectScan);
     connect(&m_fsWatcher, &QFileSystemWatcher::directoryChanged, this, &Project::scheduleProjectScan);
 
     setDisplayName(m_projectDir.dirName());
@@ -96,7 +97,7 @@ void Project::refresh(ProjectExplorer::Target *target)
         m_projectScanTimer.start();
         return;
     }
-    emitParsingStarted();
+    ParseGuard guard(guardParsingRun());
     m_projectScanFuture = QtConcurrent::run(this, &Project::populateProject);
     auto *watcher = new QFutureWatcher<void>();
     watcher->setFuture(m_projectScanFuture);
@@ -123,7 +124,6 @@ void Project::refresh(ProjectExplorer::Target *target)
         setRootProjectNode(std::move(newRoot));
         if (target)
             target->setApplicationTargets(appTargets);
-        emitParsingFinished(true);
         watcher->deleteLater();
     });
 }
@@ -160,9 +160,7 @@ Project::RestoreResult Project::fromMap(const QVariantMap &map, QString *errorMe
     if (res == RestoreResult::Ok) {
         refresh();
 
-        ProjectExplorer::Kit *defaultKit = ProjectExplorer::KitManager::defaultKit();
-        if (!activeTarget() && defaultKit)
-            addTarget(createTarget(defaultKit));
+        addTargetForDefaultKit();
     }
 
     return res;

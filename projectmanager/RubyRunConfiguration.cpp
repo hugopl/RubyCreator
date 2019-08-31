@@ -31,7 +31,7 @@ RunConfiguration::RunConfiguration(Target *target, const Core::Id &id)
 Runnable RunConfiguration::runnable() const
 {
     Runnable result;
-    result.executable = aspect<ExecutableAspect>()->executable().toString();
+    result.executable = aspect<ExecutableAspect>()->executable();
     result.commandLineArguments = aspect<ArgumentsAspect>()->arguments(macroExpander());
     result.workingDirectory = aspect<WorkingDirectoryAspect>()->workingDirectory(macroExpander()).toString();
     result.environment = aspect<EnvironmentAspect>()->environment();

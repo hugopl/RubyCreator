@@ -22,7 +22,8 @@ public:
     bool removeSubProject(const QString &) override { return false; }
 
     bool addFiles(const QStringList &, QStringList*) override { return true; }
-    bool removeFiles(const QStringList &, QStringList*) override { return true; }
+    ProjectExplorer::RemovedFilesFromProject removeFiles(const QStringList &, QStringList*) override
+    { return ProjectExplorer::RemovedFilesFromProject::Ok; }
     bool deleteFiles(const QStringList &) override { return true; }
     bool renameFile(const QString &, const QString &) override { return true; }
 };

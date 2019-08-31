@@ -10,7 +10,6 @@ bool ProjectNode::supportsAction(ProjectAction action, const Node *) const
     case AddNewFile:
     case EraseFile:
     case Rename:
-    case DuplicateFile:
         return true;
     default:
         return false;

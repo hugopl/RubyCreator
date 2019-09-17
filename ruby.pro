@@ -37,6 +37,7 @@ HEADERS += RubyPlugin.h \
     RubyConstants.h \
     editor/RubyAmbiguousMethodAssistProvider.h \
     editor/RubyAutoCompleter.h \
+    editor/RubyBlockState.h \
     editor/RubyCodeModel.h \
     editor/RubyCodeStylePreferencesFactory.h \
     editor/RubyCompletionAssist.h \

@@ -54,7 +54,6 @@ QtcPlugin {
         files: [
             "RubyProject.cpp", "RubyProject.h",
             "RubyProjectManager.cpp", "RubyProjectManager.h",
-            "RubyProjectNode.h",
             "RubyProjectWizard.cpp", "RubyProjectWizard.h",
             "RubyRunConfiguration.cpp", "RubyRunConfiguration.h",
         ]

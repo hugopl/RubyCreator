@@ -38,13 +38,6 @@ Runnable RunConfiguration::runnable() const
     return result;
 }
 
-void RunConfiguration::doAdditionalSetup(const RunConfigurationCreationInfo &info)
-{
-    const FilePath script = FilePath::fromString(info.buildKey);
-    aspect<ExecutableAspect>()->setExecutable(script);
-    setDefaultDisplayName(tr("Run %1").arg(script.fileName()));
-}
-
 RunConfigurationFactory::RunConfigurationFactory()
 {
     registerRunConfiguration<RunConfiguration>("Ruby.RunConfiguration.");

@@ -15,7 +15,6 @@ public:
     explicit RunConfiguration(ProjectExplorer::Target *target, const Core::Id &id);
 
     ProjectExplorer::Runnable runnable() const override;
-    void doAdditionalSetup(const ProjectExplorer::RunConfigurationCreationInfo &info) override;
 };
 
 class RunConfigurationFactory : public ProjectExplorer::RunConfigurationFactory

@@ -1,31 +1,30 @@
-#ifndef Ruby_ProjectNode_h
-#define Ruby_ProjectNode_h
+#ifndef Ruby_BuildSystem_h
+#define Ruby_BuildSystem_h
 
-#include <projectexplorer/projectnodes.h>
+#include <projectexplorer/buildsystem.h>
 
 namespace Ruby {
 
-class ProjectNode : public ProjectExplorer::ProjectNode
+class BuildSystem : public ProjectExplorer::BuildSystem
 {
 public:
-    ProjectNode(const Utils::FilePath &projectFilePath)
-        : ProjectExplorer::ProjectNode(projectFilePath)
+    explicit BuildSystem(ProjectExplorer::Target *target)
+        : ProjectExplorer::BuildSystem(target)
     {
     }
 
-    bool supportsAction(ProjectExplorer::ProjectAction action, const Node *node) const override;
+    bool supportsAction(ProjectExplorer::Node *context,
+                        ProjectExplorer::ProjectAction action,
+                        const ProjectExplorer::Node *node) const override;
 
-    bool canAddSubProject(const QString &) const override { return false; }
-    bool canRenameFile(const QString &, const QString &) override { return true; }
+    bool canRenameFile(ProjectExplorer::Node *, const QString &, const QString &) override { return true; }
 
-    bool addSubProject(const QString &) override { return false; }
-    bool removeSubProject(const QString &) override { return false; }
-
-    bool addFiles(const QStringList &, QStringList*) override { return true; }
-    ProjectExplorer::RemovedFilesFromProject removeFiles(const QStringList &, QStringList*) override
+    ProjectExplorer::RemovedFilesFromProject removeFiles(ProjectExplorer::Node *,
+                                                         const QStringList &,
+                                                         QStringList*) override
     { return ProjectExplorer::RemovedFilesFromProject::Ok; }
-    bool deleteFiles(const QStringList &) override { return true; }
-    bool renameFile(const QString &, const QString &) override { return true; }
+    bool deleteFiles(ProjectExplorer::Node *, const QStringList &) override { return true; }
+    bool renameFile(ProjectExplorer::Node *, const QString &, const QString &) override { return true; }
 };
 
 }

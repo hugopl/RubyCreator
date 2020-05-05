@@ -2,16 +2,20 @@
 
 #include "../editor/RubyCodeModel.h"
 #include "../RubyConstants.h"
-#include "RubyProjectNode.h"
 
 #include <QDebug>
-#include <QtConcurrent>
+#include <QElapsedTimer>
 #include <QFileInfo>
+#include <QFileSystemWatcher>
+#include <QFuture>
 #include <QFutureWatcher>
 #include <QRegularExpression>
+#include <QtConcurrent>
 #include <QThread>
+#include <QTimer>
 
 #include <coreplugin/progressmanager/progressmanager.h>
+#include <projectexplorer/buildsystem.h>
 #include <projectexplorer/buildtargetinfo.h>
 #include <projectexplorer/kitmanager.h>
 #include <projectexplorer/target.h>
@@ -19,25 +23,82 @@
 
 namespace Ruby {
 
+class BuildSystem : public ProjectExplorer::BuildSystem
+{
+public:
+    explicit BuildSystem(ProjectExplorer::Target *target);
+    ~BuildSystem();
+
+    void triggerParsing() final;
+
+private:
+    QStringList m_rawFileList;
+    QHash<QString, QString> m_rawListEntries;
+    QSet<QString> m_files;
+    QTimer m_projectScanTimer;
+    QStringList m_ignoredDirectories;
+    QElapsedTimer m_lastProjectScan;
+    QFileSystemWatcher m_fsWatcher;
+    QFuture<void> m_projectScanFuture;
+
+    void scheduleProjectScan();
+    void populateProject();
+    void recursiveScanDirectory(const QDir &dir);
+    bool shouldIgnoreDir(const QString &filePath) const;
+    void readProjectSettings(const Utils::FilePath &fileName);
+};
+
+class ProjectNode : public ProjectExplorer::ProjectNode
+{
+public:
+    ProjectNode(const Utils::FilePath &path)
+        : ProjectExplorer::ProjectNode(path)
+    {
+        setDisplayName(path.toFileInfo().completeBaseName());
+        setAddFileFilter("*.rb");
+    }
+};
+
+/**
+ * @brief Provides displayName relative to project node
+ */
+class FileNode : public ProjectExplorer::FileNode
+{
+public:
+    FileNode(const Utils::FilePath &filePath, const QString &nodeDisplayName)
+        : ProjectExplorer::FileNode(filePath, ProjectExplorer::FileType::Source)
+        , m_displayName(nodeDisplayName)
+    {}
+
+    QString displayName() const override { return m_displayName; }
+private:
+    QString m_displayName;
+};
+
+BuildSystem::BuildSystem(ProjectExplorer::Target *target)
+    : ProjectExplorer::BuildSystem(target)
+{
+    m_projectScanTimer.setSingleShot(true);
+    connect(&m_projectScanTimer, &QTimer::timeout, this, &BuildSystem::triggerParsing);
+    connect(target->project(), &Project::projectFileIsDirty, this, &BuildSystem::triggerParsing);
+    connect(&m_fsWatcher, &QFileSystemWatcher::directoryChanged, this, &BuildSystem::scheduleProjectScan);
+    QTimer::singleShot(0, this, &BuildSystem::triggerParsing);
+    readProjectSettings(projectFilePath());
+}
+
 const int MIN_TIME_BETWEEN_PROJECT_SCANS = 4500;
 
 Project::Project(const Utils::FilePath &fileName) :
     ProjectExplorer::Project(Constants::MimeType, fileName)
 {
     setId(Constants::ProjectId);
-    m_projectDir = QDir(fileName.parentDir().toString());
-    readProjectSettings(fileName);
+    setDisplayName(fileName.toFileInfo().completeBaseName());
 
-    m_projectScanTimer.setSingleShot(true);
-    connect(&m_projectScanTimer, &QTimer::timeout, this, [this] { refresh(); });
-
-    connect(this, &Project::projectFileIsDirty, this, &Project::scheduleProjectScan);
-    connect(&m_fsWatcher, &QFileSystemWatcher::directoryChanged, this, &Project::scheduleProjectScan);
-
-    setDisplayName(m_projectDir.dirName());
+    setNeedsBuildConfigurations(false);
+    setBuildSystemCreator([](ProjectExplorer::Target *t) { return new BuildSystem(t); });
 }
 
-Project::~Project()
+BuildSystem::~BuildSystem()
 {
     if (m_projectScanFuture.isRunning()) {
         m_projectScanFuture.cancel();
@@ -45,7 +106,7 @@ Project::~Project()
     }
 }
 
-void Project::readProjectSettings(const Utils::FilePath &fileName)
+void BuildSystem::readProjectSettings(const Utils::FilePath &fileName)
 {
     QString base = fileName.toFileInfo().absoluteDir().absolutePath();
     base.append("/");
@@ -59,7 +120,7 @@ void Project::readProjectSettings(const Utils::FilePath &fileName)
     settings.endGroup();
 }
 
-void Project::scheduleProjectScan()
+void BuildSystem::scheduleProjectScan()
 {
     auto elapsedTime = m_lastProjectScan.elapsed();
     if (elapsedTime < MIN_TIME_BETWEEN_PROJECT_SCANS) {
@@ -68,16 +129,17 @@ void Project::scheduleProjectScan()
             m_projectScanTimer.start();
         }
     } else {
-        refresh();
+        triggerParsing();
     }
 }
 
-void Project::populateProject()
+void BuildSystem::populateProject()
 {
     m_lastProjectScan.start();
     QSet<QString> oldFiles(m_files);
     m_files.clear();
-    recursiveScanDirectory(m_projectDir);
+    const QDir baseDir(projectDirectory().toString());
+    recursiveScanDirectory(baseDir);
     if (m_projectScanFuture.isCanceled())
         return;
 
@@ -90,45 +152,49 @@ void Project::populateProject()
         CodeModel::instance()->addFile(file);
 }
 
-void Project::refresh(ProjectExplorer::Target *target)
+void BuildSystem::triggerParsing()
 {
     if (isParsing()) {
         m_projectScanTimer.setInterval(MIN_TIME_BETWEEN_PROJECT_SCANS);
         m_projectScanTimer.start();
         return;
     }
-    ParseGuard guard(guardParsingRun());
-    m_projectScanFuture = QtConcurrent::run(this, &Project::populateProject);
+    m_projectScanFuture = QtConcurrent::run(this, &BuildSystem::populateProject);
     auto *watcher = new QFutureWatcher<void>();
     watcher->setFuture(m_projectScanFuture);
     Core::ProgressManager::instance()->addTask(m_projectScanFuture, tr("Parsing Ruby Files"), Constants::RubyProjectTask);
-    if (!target)
-        target = activeTarget();
     connect(watcher, &QFutureWatcher<void>::finished,
-            this, [this, watcher, target] {
+            this, [this, watcher] {
+        BuildSystem::ParseGuard guard(guardParsingRun());
+        const QDir baseDir(projectDirectory().toString());
         QList<ProjectExplorer::BuildTargetInfo> appTargets;
         auto newRoot = std::make_unique<ProjectNode>(projectDirectory());
-        for (const QString &f : m_files) {
-            const Utils::FilePath path = Utils::FilePath::fromString(f);
-            newRoot->addNestedNode(std::make_unique<ProjectExplorer::FileNode>(
-                                       path, ProjectExplorer::FileNode::fileTypeForFileName(path)));
-            using ProjectExplorer::FileType;
-            if (!f.endsWith(".rubyproject")) {
-                ProjectExplorer::BuildTargetInfo bti;
-                bti.buildKey = f;
-                bti.targetFilePath = Utils::FilePath::fromString(f);
-                bti.projectFilePath = projectFilePath();
-                appTargets.append(bti);
-            }
+        for (const QString &f : qAsConst(m_files)) {
+            const QString displayName = baseDir.relativeFilePath(f);
+            const Utils::FilePath filePath = Utils::FilePath::fromString(f);
+
+            newRoot->addNestedNode(std::make_unique<FileNode>(filePath, displayName));
+            if (f.endsWith(".rubyproject"))
+                continue;
+            ProjectExplorer::BuildTargetInfo bti;
+            bti.buildKey = f;
+            bti.targetFilePath = filePath;
+            bti.projectFilePath = projectFilePath();
+            qDebug() << filePath;
+            appTargets.append(bti);
         }
         setRootProjectNode(std::move(newRoot));
-        if (target)
-            target->setApplicationTargets(appTargets);
+
+        setApplicationTargets(appTargets);
+
+        guard.markAsSuccess();
+
+        emitBuildSystemUpdated();
         watcher->deleteLater();
     });
 }
 
-void Project::recursiveScanDirectory(const QDir &dir)
+void BuildSystem::recursiveScanDirectory(const QDir &dir)
 {
     if (m_projectScanFuture.isCanceled())
         return;
@@ -146,7 +212,7 @@ void Project::recursiveScanDirectory(const QDir &dir)
     m_fsWatcher.addPath(dir.absolutePath());
 }
 
-bool Project::shouldIgnoreDir(const QString &filePath) const
+bool BuildSystem::shouldIgnoreDir(const QString &filePath) const
 {
     for (const QString& path : m_ignoredDirectories)
         if (filePath.startsWith(path))
@@ -157,19 +223,10 @@ bool Project::shouldIgnoreDir(const QString &filePath) const
 Project::RestoreResult Project::fromMap(const QVariantMap &map, QString *errorMessage)
 {
     RestoreResult res = ProjectExplorer::Project::fromMap(map, errorMessage);
-    if (res == RestoreResult::Ok) {
-        refresh();
-
+    if (res == RestoreResult::Ok)
         addTargetForDefaultKit();
-    }
 
     return res;
-}
-
-bool Project::setupTarget(ProjectExplorer::Target *t)
-{
-    refresh(t);
-    return ProjectExplorer::Project::setupTarget(t);
 }
 
 }

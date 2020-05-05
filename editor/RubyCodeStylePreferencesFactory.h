@@ -7,6 +7,7 @@ namespace Ruby {
 
 class CodeStylePreferencesFactory : public TextEditor::ICodeStylePreferencesFactory
 {
+  Q_DECLARE_TR_FUNCTIONS(CodeStylePreferencesFactory)
 public:
     Core::Id languageId() override;
     QString displayName() override;

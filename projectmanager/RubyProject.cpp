@@ -45,7 +45,7 @@ private:
     void populateProject();
     void recursiveScanDirectory(const QDir &dir);
     bool shouldIgnoreDir(const QString &filePath) const;
-    void readProjectSettings(const Utils::FilePath &fileName);
+    void readProjectSettings(const Utils::FilePath &filePath);
 };
 
 class ProjectNode : public ProjectExplorer::ProjectNode
@@ -67,7 +67,7 @@ class FileNode : public ProjectExplorer::FileNode
 public:
     FileNode(const Utils::FilePath &filePath)
         : ProjectExplorer::FileNode(filePath, ProjectExplorer::FileType::Source)
-        , m_displayName(filePath.toFileInfo().fileName())
+        , m_displayName(filePath.fileName())
     {
     }
 
@@ -89,11 +89,11 @@ BuildSystem::BuildSystem(ProjectExplorer::Target *target)
 
 const int MIN_TIME_BETWEEN_PROJECT_SCANS = 4500;
 
-Project::Project(const Utils::FilePath &fileName) :
-    ProjectExplorer::Project(Constants::MimeType, fileName)
+Project::Project(const Utils::FilePath &filePath) :
+    ProjectExplorer::Project(Constants::MimeType, filePath)
 {
     setId(Constants::ProjectId);
-    setDisplayName(fileName.toFileInfo().completeBaseName());
+    setDisplayName(filePath.toFileInfo().completeBaseName());
 
     setNeedsBuildConfigurations(false);
     setBuildSystemCreator([](ProjectExplorer::Target *t) { return new BuildSystem(t); });
@@ -107,11 +107,11 @@ BuildSystem::~BuildSystem()
     }
 }
 
-void BuildSystem::readProjectSettings(const Utils::FilePath &fileName)
+void BuildSystem::readProjectSettings(const Utils::FilePath &filePath)
 {
-    QString base = fileName.toFileInfo().absoluteDir().absolutePath();
+    QString base = filePath.toFileInfo().absoluteDir().absolutePath();
     base.append("/");
-    QSettings settings(fileName.toString(), QSettings::IniFormat);
+    QSettings settings(filePath.toString(), QSettings::IniFormat);
     settings.beginGroup("Config");
     for (const QString &path : settings.value("Ignore").toStringList()) {
         if (path.isEmpty())

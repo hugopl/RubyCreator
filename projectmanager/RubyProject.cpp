@@ -65,10 +65,11 @@ public:
 class FileNode : public ProjectExplorer::FileNode
 {
 public:
-    FileNode(const Utils::FilePath &filePath, const QString &nodeDisplayName)
+    FileNode(const Utils::FilePath &filePath)
         : ProjectExplorer::FileNode(filePath, ProjectExplorer::FileType::Source)
-        , m_displayName(nodeDisplayName)
-    {}
+        , m_displayName(filePath.toFileInfo().fileName())
+    {
+    }
 
     QString displayName() const override { return m_displayName; }
 private:
@@ -170,10 +171,9 @@ void BuildSystem::triggerParsing()
         QList<ProjectExplorer::BuildTargetInfo> appTargets;
         auto newRoot = std::make_unique<ProjectNode>(projectDirectory());
         for (const QString &f : qAsConst(m_files)) {
-            const QString displayName = baseDir.relativeFilePath(f);
             const Utils::FilePath filePath = Utils::FilePath::fromString(f);
 
-            newRoot->addNestedNode(std::make_unique<FileNode>(filePath, displayName));
+            newRoot->addNestedNode(std::make_unique<FileNode>(filePath));
             if (f.endsWith(".rubyproject"))
                 continue;
             ProjectExplorer::BuildTargetInfo bti;

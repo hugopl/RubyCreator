@@ -31,6 +31,19 @@ public:
 
     void triggerParsing() final;
 
+    bool supportsAction(ProjectExplorer::Node *context,
+                        ProjectExplorer::ProjectAction action,
+                        const ProjectExplorer::Node *node) const override;
+
+    bool canRenameFile(ProjectExplorer::Node *, const QString &, const QString &) override { return true; }
+
+    ProjectExplorer::RemovedFilesFromProject removeFiles(ProjectExplorer::Node *,
+                                                         const QStringList &,
+                                                         QStringList*) override
+    { return ProjectExplorer::RemovedFilesFromProject::Ok; }
+    bool deleteFiles(ProjectExplorer::Node *, const QStringList &) override { return true; }
+    bool renameFile(ProjectExplorer::Node *, const QString &, const QString &) override { return true; }
+
 private:
     QStringList m_rawFileList;
     QHash<QString, QString> m_rawListEntries;
@@ -218,6 +231,20 @@ bool BuildSystem::shouldIgnoreDir(const QString &filePath) const
         if (filePath.startsWith(path))
           return true;
     return false;
+}
+
+bool BuildSystem::supportsAction(ProjectExplorer::Node *,
+                                 ProjectExplorer::ProjectAction action,
+                                 const ProjectExplorer::Node *) const
+{
+    switch (action) {
+    case ProjectExplorer::ProjectAction::AddNewFile:
+    case ProjectExplorer::ProjectAction::EraseFile:
+    case ProjectExplorer::ProjectAction::Rename:
+        return true;
+    default:
+        return false;
+    }
 }
 
 Project::RestoreResult Project::fromMap(const QVariantMap &map, QString *errorMessage)

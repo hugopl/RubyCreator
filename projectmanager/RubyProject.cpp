@@ -193,7 +193,6 @@ void BuildSystem::triggerParsing()
             bti.buildKey = f;
             bti.targetFilePath = filePath;
             bti.projectFilePath = projectFilePath();
-            qDebug() << filePath;
             appTargets.append(bti);
         }
         setRootProjectNode(std::move(newRoot));

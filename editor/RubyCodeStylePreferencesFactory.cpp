@@ -12,7 +12,7 @@
 
 namespace Ruby {
 
-Core::Id CodeStylePreferencesFactory::languageId()
+Utils::Id CodeStylePreferencesFactory::languageId()
 {
     return Constants::SettingsId;
 }

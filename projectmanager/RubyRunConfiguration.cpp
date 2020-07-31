@@ -18,7 +18,7 @@ using namespace Utils;
 
 namespace Ruby {
 
-RunConfiguration::RunConfiguration(Target *target, const Core::Id &id)
+RunConfiguration::RunConfiguration(Target *target, const Utils::Id &id)
     : ProjectExplorer::RunConfiguration(target, id)
 {
     addAspect<LocalEnvironmentAspect>(target);

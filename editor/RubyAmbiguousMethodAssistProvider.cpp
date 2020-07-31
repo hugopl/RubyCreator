@@ -42,7 +42,7 @@ public:
         Core::EditorManager::openEditorAt(*m_symbol.file,
                                           m_symbol.line,
                                           m_symbol.column,
-                                          Core::Id(Constants::EditorId),
+                                          Utils::Id(Constants::EditorId),
                                           flags);
     }
 private:

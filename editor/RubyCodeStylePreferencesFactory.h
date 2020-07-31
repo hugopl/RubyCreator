@@ -9,7 +9,7 @@ class CodeStylePreferencesFactory : public TextEditor::ICodeStylePreferencesFact
 {
     Q_DECLARE_TR_FUNCTIONS(CodeStylePreferencesFactory)
 public:
-    Core::Id languageId() override;
+    Utils::Id languageId() override;
     QString displayName() override;
     TextEditor::ICodeStylePreferences *createCodeStyle() const override;
     QWidget *createEditor(TextEditor::ICodeStylePreferences*, QWidget *parent) const override;

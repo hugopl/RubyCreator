@@ -12,7 +12,7 @@ class RunConfiguration : public ProjectExplorer::RunConfiguration
     Q_OBJECT
 
 public:
-    explicit RunConfiguration(ProjectExplorer::Target *target, const Core::Id &id);
+    explicit RunConfiguration(ProjectExplorer::Target *target, const Utils::Id &id);
 
     ProjectExplorer::Runnable runnable() const override;
 };

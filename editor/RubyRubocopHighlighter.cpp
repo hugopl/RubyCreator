@@ -120,8 +120,8 @@ void RubocopHighlighter::initRubocopProcess()
     }
 
     m_rubocop = new QProcess;
-    void (QProcess::*signal)(int) = &QProcess::finished;
-    QObject::connect(m_rubocop, signal, [&](int status) {
+    QObject::connect(m_rubocop, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+                     [this](int status) {
         if (status) {
             Core::MessageManager::instance()->write(
                         QString::fromUtf8(m_rubocop->readAllStandardError().trimmed()),

@@ -16,7 +16,7 @@ Packages are available only for Arch Linux in AUR, for anything different you wi
 
 There is usually one, sometimes two, branches named with a version number like 4.9.x, etc. These version numbers should match the QtCreator version they are supposed to work.
 
-As I use this plugin on my every day work, I do the development on a version branch that matches the current QtCreator version packaged by ArchLinux.
+~As I use this plugin on my every day work~ (now I'm using/developing [Tijolo](https://github.com/hugopl/tijolo)), I do the development on a version branch that matches the current QtCreator version packaged by ArchLinux.
 
 When Archlinux upgrades the QtCreator package minor version, I just create a version tag and another version branch to match the new version.
 

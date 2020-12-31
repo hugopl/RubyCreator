@@ -2,7 +2,6 @@
 #include "../RubyConstants.h"
 #include "RubyIndenter.h"
 
-#include <coreplugin/id.h>
 #include <texteditor/simplecodestylepreferences.h>
 #include <texteditor/snippets/snippetprovider.h>
 

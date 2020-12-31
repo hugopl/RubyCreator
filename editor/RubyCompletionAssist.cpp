@@ -3,7 +3,6 @@
 #include "RubyCodeModel.h"
 #include "RubyScanner.h"
 
-#include <coreplugin/id.h>
 #include <texteditor/codeassist/assistproposalitem.h>
 #include <texteditor/codeassist/genericproposal.h>
 #include <texteditor/codeassist/genericproposalmodel.h>
@@ -131,7 +130,7 @@ TextEditor::IAssistProposal *CompletionAssistProcessor::perform(const TextEditor
     CodeModel *cm = CodeModel::instance();
 
     QString myTyping = interface->textAt(startPosition, interface->position() - startPosition);
-    const QString fileName = interface->fileName();
+    const QString fileName = interface->filePath().fileName();
 
     QList<TextEditor::AssistProposalItemInterface *> proposals;
 

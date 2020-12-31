@@ -2,7 +2,6 @@
 #include "../RubyConstants.h"
 
 #include <coreplugin/basefilewizard.h>
-#include <coreplugin/id.h>
 #include <projectexplorer/customwizard/customwizard.h>
 #include <projectexplorer/projectexplorerconstants.h>
 #include <utils/filewizardpage.h>
